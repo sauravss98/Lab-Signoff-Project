@@ -1,24 +1,34 @@
 from rest_framework import serializers
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from .models import User
 
 class UserAuthSerializer(serializers.ModelSerializer):
     """
-    Serializer for User Authenication
+    Serializer for User Authentication
     """
     class Meta:
         model = User
-        fields = ['id', 'email', 'password', 'first_name', 'last_name']
+        fields = ['email', 'password', 'first_name', 'last_name']
+        extra_kwargs = {'password': {'write_only': True}}
 
-    extra_kwargs = {
-        'password': {'write_only': True},
-    }
+    def validate_password(self, value):
+        """
+        Validate the password to ensure it meets the required complexity.
+        """
+        try:
+            validate_password(value)
+        except ValidationError as e:
+            raise serializers.ValidationError(str(e))
+        return value
 
     def create(self, validated_data):
-        user = User(email=validated_data['email'])
-        user.set_password(validated_data['password'])
-        user.first_name = validated_data['first_name']
-        user.last_name = validated_data['last_name']
-        user.save()
+        user = User.objects.create_user(
+            email=validated_data['email'],
+            password=validated_data['password'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name']
+        )
         return user
 
 
@@ -28,4 +38,4 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        fields = ['id','email',"first_name","last_name"]
+        fields = ['id', 'email', 'first_name', 'last_name']
