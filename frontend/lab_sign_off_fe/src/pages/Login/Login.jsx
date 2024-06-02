@@ -99,13 +99,13 @@ const Login = () => {
             </button>
             {showText ? <Text /> : null}
 
-            <div className="notUser">
-              <h3 className="notUserText">Not A User?</h3>
-              <button className="notUserButton" onClick={navigateToSignup}>
-                Sign Up
-              </button>
-              {/* <button onClick={navigatetoHome}>Home</button> */}
-            </div>
+            {/* <div className="notUser"> */}
+            {/* <h3 className="notUserText">Not A User?</h3> */}
+            {/* <button className="notUserButton" onClick={navigateToSignup}> */}
+            {/* Sign Up */}
+            {/* </button> */}
+            {/* <button onClick={navigatetoHome}>Home</button> */}
+            {/* </div> */}
           </form>
         </div>
       </div>
