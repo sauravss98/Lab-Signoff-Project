@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div>
-      {/* {isAuthenticated.is_authenticated ? <Header /> : null} */}
+      {isAuthenticated.is_authenticated ? <Header /> : null}
       <AppRouters />
     </div>
   );
