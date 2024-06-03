@@ -2,17 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Login/Login.css";
 import axiosInstance from "../../utils/Axios.jsx";
-// import axios from "axios";
 
 const Login = () => {
   const [showText, setShowText] = useState(false);
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [loginDetails, setLoginDetails] = useState({
     email: "",
     password: "",
   });
@@ -23,9 +17,7 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(form.email);
-    console.log(form.password);
-    let newUser = {
+    const newUser = {
       email: form.email,
       password: form.password,
     };
@@ -51,10 +43,6 @@ const Login = () => {
         setShowText(true);
       }
     }
-    setLoginDetails({
-      email: "",
-      password: "",
-    });
   };
 
   const navigateToSignup = () => {
