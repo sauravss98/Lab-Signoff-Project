@@ -7,6 +7,7 @@ class User(AbstractUser):
     Model for Custom User
     """
     STATUS = (
+        ("admin","Admin"),
         ("staff","Staff"), 
         ("student","Student")
     )
