@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-from dotenv import load_dotenv
+from dotenv import load_dotenv # type: ignore
 import os
 
 
@@ -45,9 +45,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    "rest_framework.authtoken",
+    'rest_framework.authtoken',
     'user',
-    "corsheaders",
+    'corsheaders',
+    'course',
+    'labsession',
+    'program',
 ]
 
 AUTH_USER_MODEL = 'user.USER'
