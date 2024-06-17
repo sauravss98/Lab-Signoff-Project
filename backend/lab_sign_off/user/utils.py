@@ -1,5 +1,7 @@
 import random
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 def generate_random_numbers():
     """
@@ -19,14 +21,20 @@ def send_new_user_created_mail(email):
     """
     Function to send the otp mail
     """
+    subject = "New user Created"
+    from_email = 'sauravsuresh171@gmail.com'
+    to_email =[email]
+    html_message = render_to_string('lab_sign_off/new_user_email.html', {})
+    plain_message = strip_tags(html_message)
+
     send_mail(
-            'New user Created',
-            'Hi, A new student account has been created for you and the password is your email+your Firstname',
-            'sauravsuresh171@gmail.com',
-            [email],
+            subject,
+            plain_message,
+            from_email,
+            to_email,
             fail_silently=False,  # Set it to True to suppress exceptions
             auth_user=None,
             auth_password=None,
             connection=None,
-            html_message=None,
+            html_message=html_message,
         )
