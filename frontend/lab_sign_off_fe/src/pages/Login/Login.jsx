@@ -45,9 +45,9 @@ const Login = () => {
     }
   };
 
-  const navigateToSignup = () => {
-    navigate("/signUp");
-  };
+  // const navigateToSignup = () => {
+  //   navigate("/signUp");
+  // };
   const Text = () => <p>Please Enter Correct Details</p>;
 
   return (

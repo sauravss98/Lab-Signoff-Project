@@ -34,16 +34,16 @@ def signup(request):
     Api for signing up the new user
     """
     serializer = UserAuthSerializer(data=request.data)
-    otp = generate_otp()
+    # otp = generate_otp()
     if serializer.is_valid():
         serializer.save()
         user = User.objects.get(email=request.data['email'])
         user.set_password(request.data["password"])
         user.username = request.data['email']+request.data['first_name']
-        user.otp = otp
-        user.email_verified = False
+        # user.otp = otp
+        user.email_verified = True
         user.save()
-        send_otp_mail(otp,user.email)
+        # send_otp_mail(otp,user.email)
         token= Token.objects.create(user=user)
         return Response({"token": token.key, "user": serializer.data}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
