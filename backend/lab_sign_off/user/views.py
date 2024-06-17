@@ -47,7 +47,7 @@ def create_user(request):
         user = User.objects.get(email=request.data['email'])
         user.set_password(request.data['email']+request.data['first_name'])
         user.username = request.data['email']+request.data['first_name']
-        user.status = request.data["status"]
+        user.user_type = request.data["user_type"]
         # user.otp = otp
         user.email_verified = True
         user.save()
@@ -85,6 +85,18 @@ def verify_otp(request):
 @permission_classes([IsAuthenticated])
 def test_token(request):
     return Response("passed for {}".format(request.user.email))
+
+@api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_details_from_token(request):
+    return Response(
+        {"email":request.user.email, 
+        "first_name":request.user.first_name,
+        "last_name":request.user.last_name,
+        "user_type":request.user.user_type},
+        status=status.HTTP_200_OK
+        )
 
 
 class UserLogout(APIView):

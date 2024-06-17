@@ -6,14 +6,14 @@ class User(AbstractUser):
     """
     Model for Custom User
     """
-    STATUS = (
+    USER_TYPE = (
         ("admin","Admin"),
         ("staff","Staff"), 
         ("student","Student")
     )
 
     email = models.EmailField(unique = True, error_messages=({'unique':"A user with that email already exists."}))
-    status = models.CharField(max_length = 10, choices = STATUS,default="student")
+    user_type = models.CharField(max_length = 10, choices = USER_TYPE,default="student")
     updated_on = models.DateTimeField(auto_now=True)
     otp = models.PositiveIntegerField(default = 000000)
     email_verified = models.BooleanField(default = False)
