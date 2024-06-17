@@ -7,9 +7,16 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    UpdateAPIView,
+    RetrieveAPIView
+)
 
 
-from .serializers import UserAuthSerializer
+from .serializers import UserAuthSerializer,UserDetailsSerializer
 from .models import User
 
 from .utils import generate_otp,send_new_user_created_mail
@@ -87,3 +94,26 @@ class UserLogout(APIView):
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_200_OK)
+    
+class UsersListView(ListAPIView):
+    """
+    Api for users list api view. There is a filter that filters the status
+    """
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class= UserDetailsSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.filter(status=self.request.data.get("status"))
+        return queryset
+    
+class UserListView(RetrieveAPIView):
+    """
+    Api for a single user
+    """
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class= UserDetailsSerializer
+    def get_queryset(self):
+        queryset = User.objects.all()
+        return queryset
