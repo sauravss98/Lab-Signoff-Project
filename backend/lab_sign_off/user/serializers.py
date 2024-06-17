@@ -12,21 +12,21 @@ class UserAuthSerializer(serializers.ModelSerializer):
         fields = ['email', 'password', 'first_name', 'last_name']
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate_password(self, value):
-        """
-        Validate the password to ensure it meets the required complexity.
-        """
-        try:
-            validate_password(value)
-        except ValidationError as e:
-            raise serializers.ValidationError(str(e))
-        return value
+    # def validate_password(self, value):
+    #     """
+    #     Validate the password to ensure it meets the required complexity.
+    #     """
+    #     try:
+    #         validate_password(value)
+    #     except ValidationError as e:
+    #         raise serializers.ValidationError(str(e))
+    #     return value
 
     def create(self, validated_data):
         user = User.objects.create_user(
             email=validated_data['email'],
             username = validated_data['email']+validated_data['first_name'],
-            password=validated_data['password'],
+            password=validated_data['email']+validated_data['first_name'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name']
         )

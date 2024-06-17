@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from .serializers import UserAuthSerializer
 from .models import User
 
-from .utils import generate_otp,send_otp_mail
+from .utils import generate_otp,send_new_user_created_mail
 
 @api_view(['POST'])
 def login(request):
@@ -29,7 +29,7 @@ def login(request):
     return Response({"message":"sucess","token": token.key, "user_email": serializer.data['email']}, status =  status.HTTP_200_OK)
 
 @api_view(['POST'])
-def signup(request):
+def create_user(request):
     """"
     Api for signing up the new user
     """
@@ -38,14 +38,15 @@ def signup(request):
     if serializer.is_valid():
         serializer.save()
         user = User.objects.get(email=request.data['email'])
-        user.set_password(request.data["password"])
+        user.set_password(request.data['email']+request.data['first_name'])
         user.username = request.data['email']+request.data['first_name']
+        user.status = request.data["status"]
         # user.otp = otp
         user.email_verified = True
         user.save()
-        # send_otp_mail(otp,user.email)
-        token= Token.objects.create(user=user)
-        return Response({"token": token.key, "user": serializer.data}, status=status.HTTP_201_CREATED)
+        send_new_user_created_mail(user.email)
+        # token= Token.objects.create(user=user)
+        return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

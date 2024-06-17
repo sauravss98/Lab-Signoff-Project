@@ -15,13 +15,13 @@ def generate_otp():
     random_numbers = generate_random_numbers()
     return random_numbers
 
-def send_otp_mail(otp,email):
+def send_new_user_created_mail(email):
     """
     Function to send the otp mail
     """
     send_mail(
-            'Subject here',
-            f'Your OTP is: {otp}',
+            'New user Created',
+            'Hi, A new student account has been created for you and the password is your email+your Firstname',
             'sauravsuresh171@gmail.com',
             [email],
             fail_silently=False,  # Set it to True to suppress exceptions
