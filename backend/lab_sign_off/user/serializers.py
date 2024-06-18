@@ -28,6 +28,7 @@ class UserAuthSerializer(serializers.ModelSerializer):
         else:
             user = User(**validated_data)
         
+        user.user_type = user_type
         user.username = user_name
         user.set_password(default_password)
         user.save()
