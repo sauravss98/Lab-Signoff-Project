@@ -43,16 +43,9 @@ def create_user(request):
     serializer = UserAuthSerializer(data=request.data)
     # otp = generate_otp()
     if serializer.is_valid():
-        serializer.save()
-        user = User.objects.get(email=request.data['email'])
-        user.set_password(request.data['email']+request.data['first_name'])
-        user.username = request.data['email']+request.data['first_name']
-        user.user_type = request.data["user_type"]
-        # user.otp = otp
+        user = serializer.save()
         user.email_verified = True
-        user.save()
         send_new_user_created_mail(user.email)
-        # token= Token.objects.create(user=user)
         return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -116,7 +109,11 @@ class UsersListView(ListAPIView):
     serializer_class= UserDetailsSerializer
 
     def get_queryset(self):
-        queryset = User.objects.filter(status=self.request.data.get("status"))
+        user_type_filter = self.request.data.get("user_type")
+        if user_type_filter:
+            queryset = User.objects.filter(user_type=user_type_filter)
+        else:
+            queryset = User.objects.all()
         return queryset
     
 class UserListView(RetrieveAPIView):

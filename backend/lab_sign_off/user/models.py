@@ -1,5 +1,6 @@
 from django.db import models # type: ignore
 from django.contrib.auth.models import AbstractUser # type: ignore
+from program.models import Programs
 
 # Create your models here.
 class User(AbstractUser):
@@ -25,3 +26,9 @@ class User(AbstractUser):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
         ordering = ['email']
+
+class Student(User):
+    course= models.ManyToManyField(Programs, related_name='students')
+    
+class Staff(User):
+    course= models.ManyToManyField(Programs, related_name='staffs')
