@@ -1,9 +1,10 @@
 from django.urls import path
-# from .apis import CreateProgramView,ProgramsListView,ProgramListView,UpdateProgramDetailsView
+from .apis import CourseCreateAPIView,CoursesListView,CourseView,CourseUpdateAPIView,CourseDestroyAPIView
 
 urlpatterns = [
-    # path('create/', CreateProgramView.as_view()),
-    # path('list/',ProgramsListView.as_view()),
-    # path('<int:pk>/',ProgramListView.as_view()),
-    # path('update/<int:pk>/',UpdateProgramDetailsView.as_view()),
+    path('create/', CourseCreateAPIView.as_view()),
+    path('list/',CoursesListView.as_view()),
+    path('<int:pk>/',CourseView.as_view()),
+    path('update/<int:pk>/',CourseUpdateAPIView.as_view()),
+    path('delete/<int:pk>/',CourseDestroyAPIView.as_view()),
 ]
