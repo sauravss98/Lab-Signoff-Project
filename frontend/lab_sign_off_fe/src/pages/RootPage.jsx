@@ -11,7 +11,7 @@ const RootPage = () => {
       navigate("/login");
       return;
     }
-  }, [token]);
+  }, [navigate, token]);
   return (
     <>
       <Header />
