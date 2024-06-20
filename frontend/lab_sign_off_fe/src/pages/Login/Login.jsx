@@ -24,17 +24,19 @@ const Login = () => {
 
     try {
       const response = await axiosInstance.post("/users/login", newUser);
-      console.log(response.data);
       if (response.status === 200) {
-        navigate("/home");
-        localStorage.setItem("user_data", JSON.stringify(response.data));
+        localStorage.setItem("token", response.data.token);
         localStorage.setItem(
           "authentication",
           JSON.stringify({ is_authenticated: true })
         );
+        const expiration = new Date();
+        expiration.setHours(expiration.getHours() + 1);
+        localStorage.setItem("expiration", expiration.toISOString());
+        navigate("/");
       }
     } catch (error) {
-      console.log(error.response);
+      console.log(error);
       if (error.response.status === 401) {
         console.log("In elif");
         setShowText(true);
