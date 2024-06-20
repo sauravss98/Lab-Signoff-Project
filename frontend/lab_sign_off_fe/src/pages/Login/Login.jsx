@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import "../Login/Login.css";
 import axiosInstance from "../../utils/Axios.jsx";
+import { authActions } from "../../store/auth.js";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [showText, setShowText] = useState(false);
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -25,6 +28,7 @@ const Login = () => {
     try {
       const response = await axiosInstance.post("/users/login", newUser);
       if (response.status === 200) {
+        console.log(response.data.user_type);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem(
           "authentication",
@@ -33,6 +37,8 @@ const Login = () => {
         const expiration = new Date();
         expiration.setHours(expiration.getHours() + 1);
         localStorage.setItem("expiration", expiration.toISOString());
+        console.log(response.data.user_type);
+        dispatch(authActions.login({ user_type: response.data.user_type }));
         navigate("/");
       }
     } catch (error) {

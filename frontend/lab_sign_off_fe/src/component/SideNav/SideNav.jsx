@@ -1,4 +1,5 @@
 import classes from "./SideNav.module.css";
+// eslint-disable-next-line react/prop-types
 const SideNav = ({ isOpen, toggleSidebar }) => {
   return (
     <>
