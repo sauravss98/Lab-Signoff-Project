@@ -17,6 +17,7 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+        loader: tokenLoader,
       },
       {
         path: "login",
