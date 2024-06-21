@@ -28,7 +28,6 @@ const Login = () => {
     try {
       const response = await axiosInstance.post("/users/login", newUser);
       if (response.status === 200) {
-        console.log(response.data.user_type);
         localStorage.setItem("token", response.data.token);
         localStorage.setItem(
           "authentication",

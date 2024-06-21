@@ -5,9 +5,9 @@ import Header from "../component/Header/Header";
 const RootPage = () => {
   const navigate = useNavigate();
   const token = useLoaderData();
-  console.log(token);
+
   useEffect(() => {
-    if (!token) {
+    if (!token || token === "EXPIRED") {
       navigate("/login");
       return;
     }

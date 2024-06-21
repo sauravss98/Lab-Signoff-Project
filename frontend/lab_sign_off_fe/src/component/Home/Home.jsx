@@ -1,4 +1,3 @@
-// import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import classes from "./Home.module.css";
 import SideNav from "../SideNav/SideNav";
@@ -7,28 +6,35 @@ import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
 import StaffHomePage from "../../pages/StaffHomePage/StaffHomePage";
 import StudentHomePage from "../../pages/StudentHomePage/StudentHomePage";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [userType, setUserType] = useState("");
   const userTypeRef = useRef("");
+
   const toggleSidebar = () => {
     setIsSideBarOpen(!isSideBarOpen);
   };
-  console.log("Token is " + tokenLoader());
 
   useEffect(() => {
-    const getData = async () => {
-      try {
+    const fetchData = async () => {
+      const token = tokenLoader();
+      if (token === "EXPIRED") {
+        navigate("/login");
+        return;
+      }
+      if (token) {
         const response = await axiosInstance.get("/users/user_details");
-        console.log(response.data);
         userTypeRef.current = response.data.user_type;
         setUserType(userTypeRef.current);
-      } catch (error) {
-        console.error("Error fetching user details:", error);
+      } else {
+        navigate("/login");
       }
     };
-    getData();
+
+    fetchData();
 
     const handleResize = () => {
       if (window.innerWidth < 700) {
@@ -45,6 +51,7 @@ const Home = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   return (
     <>
       <SideNav isOpen={isSideBarOpen} toggleSidebar={toggleSidebar} />
