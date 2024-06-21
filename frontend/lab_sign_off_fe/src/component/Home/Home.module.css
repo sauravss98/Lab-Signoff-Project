@@ -1,0 +1,14 @@
+.mainDiv {
+  margin-left: 200px;
+  transition: margin-left 0.3s ease;
+  padding-left: 10px;
+}
+
+@media screen and (max-width: 700px) {
+  .mainDiv {
+    margin-left: 0;
+  }
+  .mainDiv.sidenavOpen {
+    margin-left: 200px;
+  }
+}

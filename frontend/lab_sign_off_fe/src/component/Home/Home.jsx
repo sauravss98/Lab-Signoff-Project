@@ -1,6 +1,6 @@
 // import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import "../Home/Home.css";
+import classes from "./Home.module.css";
 import SideNav from "../SideNav/SideNav";
 import { useEffect, useState, useRef } from "react";
 import axiosInstance from "../../utils/Axios";
@@ -10,7 +10,7 @@ import StudentHomePage from "../../pages/StudentHomePage/StudentHomePage";
 
 const Home = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-  const [userType, setUserType] = useState(""); // State to trigger re-render
+  const [userType, setUserType] = useState("");
   const userTypeRef = useRef("");
   const toggleSidebar = () => {
     setIsSideBarOpen(!isSideBarOpen);
@@ -29,17 +29,34 @@ const Home = () => {
       }
     };
     getData();
+
+    const handleResize = () => {
+      if (window.innerWidth < 700) {
+        setIsSideBarOpen(false);
+      } else {
+        setIsSideBarOpen(true);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // Initial check
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
   return (
     <>
-      <div>
-        <div>
-          <Row>
-            <SideNav isOpen={isSideBarOpen} toggleSidebar={toggleSidebar} />
-            {userType === "student" && <StudentHomePage />}
-            {userType === "staff" && <StaffHomePage />}
-          </Row>
-        </div>
+      <SideNav isOpen={isSideBarOpen} toggleSidebar={toggleSidebar} />
+      <div
+        className={`${classes.mainDiv} ${
+          isSideBarOpen ? classes.sidenavOpen : ""
+        }`}
+      >
+        <Row>
+          {userType === "student" && <StudentHomePage />}
+          {userType === "staff" && <StaffHomePage />}
+        </Row>
       </div>
     </>
   );

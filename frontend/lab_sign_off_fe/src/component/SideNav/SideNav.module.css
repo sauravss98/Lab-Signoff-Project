@@ -9,6 +9,15 @@
   transition: transform 0.3s ease;
 }
 
+@media screen and (max-width: 700px) {
+  .sidebar {
+    transform: translateX(-200px);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
 .sidebar a {
   display: block;
   color: black;
@@ -26,13 +35,6 @@
   color: white;
 }
 
-.content {
-  margin-left: 200px;
-  padding: 1px 16px;
-  height: 1000px;
-  transition: margin-left 0.3s ease;
-}
-
 /* Hamburger button styles */
 .hamburger {
   display: none; /* Initially hide the hamburger button on larger screens */
@@ -40,15 +42,6 @@
 
 /* Show hamburger button on small screens */
 @media screen and (max-width: 700px) {
-  .sidebar {
-    transform: translateX(-200px);
-  }
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  .content {
-    margin-left: 0;
-  }
   .hamburger {
     display: block;
     font-size: 30px;
