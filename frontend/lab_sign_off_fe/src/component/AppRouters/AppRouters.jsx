@@ -9,6 +9,7 @@ const RootPage = React.lazy(() => import("../../pages/RootPage"));
 const SettingsPage = React.lazy(() =>
   import("../../pages/SettingsPage/SettingsPage")
 );
+const ErrorPage = React.lazy(() => import("../../pages/ErrorPage"));
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,8 @@ const router = createBrowserRouter([
     id: "root",
     loader: tokenLoader,
     fallback: <div>Loading...</div>,
+    // ErrorBoundary: <ErrorBoundary />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
