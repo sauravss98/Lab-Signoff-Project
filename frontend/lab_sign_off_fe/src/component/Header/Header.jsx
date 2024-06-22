@@ -12,7 +12,7 @@ function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userName, setUserName] = useState("");
-  const [userToken, setUserToken] = useState(tokenLoader());
+  const token = tokenLoader();
 
   const homeClick = () => {
     navigate("/");
@@ -34,14 +34,16 @@ function Header() {
 
   useEffect(() => {
     const fetchUserDetails = async () => {
-      const token = tokenLoader();
       if (token === "EXPIRED") {
         navigate("/login");
         return;
       }
       if (token) {
-        setUserToken(token);
-        const response = await axiosInstance.get("/users/user_details");
+        const response = await axiosInstance.get("/users/user_details", {
+          headers: {
+            Authorization: "Token " + token,
+          },
+        });
         const first_name = response.data.first_name;
         const second_name = response.data.last_name;
         const name = first_name + " " + second_name;
@@ -52,13 +54,13 @@ function Header() {
     };
 
     fetchUserDetails();
-  }, [userToken]);
+  }, [navigate, token]);
 
   return (
     <>
       <Navbar className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
         <Navbar.Brand onClick={homeClick}>Lab App</Navbar.Brand>
-        {userToken && (
+        {token && (
           <Navbar.Collapse
             className="justify-content-end"
             id={classes.navElement}

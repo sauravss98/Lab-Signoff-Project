@@ -2,11 +2,11 @@ import Row from "react-bootstrap/Row";
 import classes from "./Home.module.css";
 import SideNav from "../SideNav/SideNav";
 import { useEffect, useState, useRef } from "react";
-import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
 import StaffHomePage from "../../pages/StaffHomePage/StaffHomePage";
 import StudentHomePage from "../../pages/StudentHomePage/StudentHomePage";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/Axios";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -17,16 +17,20 @@ const Home = () => {
   const toggleSidebar = () => {
     setIsSideBarOpen(!isSideBarOpen);
   };
+  const token = tokenLoader();
 
   useEffect(() => {
     const fetchData = async () => {
-      const token = tokenLoader();
       if (token === "EXPIRED") {
         navigate("/login");
         return;
       }
       if (token) {
-        const response = await axiosInstance.get("/users/user_details");
+        const response = await axiosInstance.get("/users/user_details", {
+          headers: {
+            Authorization: "Token " + token,
+          },
+        });
         userTypeRef.current = response.data.user_type;
         setUserType(userTypeRef.current);
       } else {
@@ -50,7 +54,7 @@ const Home = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [navigate, token]);
 
   return (
     <>
