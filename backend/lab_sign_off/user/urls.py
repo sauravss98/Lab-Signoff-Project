@@ -1,14 +1,25 @@
 from django.urls import path
-from .views import create_user,login,test_token,UserLogout,verify_otp,UsersListView,UserListView,get_user_details_from_token
+from .views import (
+        create_user,
+        login,
+        test_token,
+        UserLogout,
+        verify_otp,
+        UsersListView,
+        UserListView,
+        get_user_details_from_token,
+        ChangePasswordView
+)
 # from .views import ViewUser
 
 urlpatterns = [ 
-        path('create_user', create_user),
-        path('login', login),
-        path('test_token', test_token),
-        path('user_details', get_user_details_from_token),
-        path('logout', UserLogout.as_view()),
-        path('verify_otp',verify_otp),
-        path('users_list',UsersListView.as_view()),
-        path('user/<int:pk>',UserListView.as_view()),
+        path('create_user', create_user,name="create user"),
+        path('login', login,name="login"),
+        path('test_token', test_token,name="test_token"),
+        path('user_details', get_user_details_from_token,name="user_details"),
+        path('logout', UserLogout.as_view(),name="logout"),
+        path('verify_otp',verify_otp,name="verify_otp"),
+        path('users_list',UsersListView.as_view(),name="users_list"),
+        path('user/<int:pk>',UserListView.as_view(),name="user list view"),
+        path('change-password/',ChangePasswordView.as_view(),name="change-password")
 ]

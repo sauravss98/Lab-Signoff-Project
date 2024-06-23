@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import logout
+from django.contrib.auth import logout,update_session_auth_hash
 from rest_framework import status
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -16,7 +16,7 @@ from rest_framework.generics import (
 )
 
 
-from .serializers import UserAuthSerializer,UserDetailsSerializer
+from .serializers import UserAuthSerializer,UserDetailsSerializer,PasswordChangeSerializer
 from .models import User
 
 from .utils import generate_otp,send_new_user_created_mail
@@ -126,3 +126,25 @@ class UserListView(RetrieveAPIView):
     def get_queryset(self):
         queryset = User.objects.all()
         return queryset
+
+
+class ChangePasswordView(APIView):
+    """
+    An endpoint for changing password.
+    """
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = PasswordChangeSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.user
+            if not user.check_password(serializer.validated_data['old_password']):
+                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user.set_password(serializer.validated_data['new_password'])
+            user.save()
+            update_session_auth_hash(request, user)  # Keeps the user authenticated after password change
+            return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

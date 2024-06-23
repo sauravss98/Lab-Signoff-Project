@@ -87,3 +87,21 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', "user_type"]
+        
+
+class PasswordChangeSerializer(serializers.Serializer):
+    """
+    Serializer for password changes
+
+    Args:
+        serializers (_type_): old_password,newpassword
+
+    Returns:
+        Validated data 
+    """
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
