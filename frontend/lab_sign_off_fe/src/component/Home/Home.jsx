@@ -26,13 +26,20 @@ const Home = () => {
         return;
       }
       if (token) {
-        const response = await axiosInstance.get("/users/user_details", {
-          headers: {
-            Authorization: "Token " + token,
-          },
-        });
-        userTypeRef.current = response.data.user_type;
-        setUserType(userTypeRef.current);
+        try {
+          const response = await axiosInstance.get("/users/user_details", {
+            headers: {
+              Authorization: "Token " + token,
+            },
+          });
+          userTypeRef.current = response.data.user_type;
+          setUserType(userTypeRef.current);
+        } catch (error) {
+          console.log(error);
+          if (error.response.status === 403) {
+            navigate("/login");
+          }
+        }
       } else {
         navigate("/login");
       }

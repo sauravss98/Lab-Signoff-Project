@@ -12,6 +12,7 @@ function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userName, setUserName] = useState("");
+  const [tokenAvailable, setTokenAvailable] = useState(false);
   const token = tokenLoader();
 
   const homeClick = () => {
@@ -28,6 +29,7 @@ function Header() {
       localStorage.removeItem("expiration");
       localStorage.removeItem("authentication");
       dispatch(authActions.logout);
+      setTokenAvailable(false);
       navigate("/login");
     }
   };
@@ -39,15 +41,21 @@ function Header() {
         return;
       }
       if (token) {
-        const response = await axiosInstance.get("/users/user_details", {
-          headers: {
-            Authorization: "Token " + token,
-          },
-        });
-        const first_name = response.data.first_name;
-        const second_name = response.data.last_name;
-        const name = first_name + " " + second_name;
-        setUserName(name);
+        try {
+          const response = await axiosInstance.get("/users/user_details", {
+            headers: {
+              Authorization: "Token " + token,
+            },
+          });
+          const first_name = response.data.first_name;
+          const second_name = response.data.last_name;
+          const name = first_name + " " + second_name;
+          setUserName(name);
+          setTokenAvailable(true);
+        } catch (error) {
+          console.log(error);
+          setTokenAvailable(false);
+        }
       } else {
         navigate("/login");
       }
@@ -60,7 +68,7 @@ function Header() {
     <>
       <Navbar className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
         <Navbar.Brand onClick={homeClick}>Lab App</Navbar.Brand>
-        {token && (
+        {tokenAvailable && (
           <Navbar.Collapse
             className="justify-content-end"
             id={classes.navElement}
