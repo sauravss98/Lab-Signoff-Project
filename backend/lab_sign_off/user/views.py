@@ -33,7 +33,15 @@ def login(request):
         return Response({"detail": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserAuthSerializer(instance=user)
-    return Response({"message":"sucess","token": token.key, "user_email": serializer.data['email'],"user_type":serializer.data["user_type"]}, status =  status.HTTP_200_OK)
+    return Response({
+        "message":"sucess",
+        "token": token.key, 
+        "user_email": serializer.data['email'],
+        "user_type":serializer.data["user_type"],
+        "user_first_name":serializer.data["first_name"],
+        "user_last_name":serializer.data["last_name"],
+        }, status =  status.HTTP_200_OK
+    )
 
 @api_view(['POST'])
 def create_user(request):
