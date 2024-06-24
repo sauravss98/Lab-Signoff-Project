@@ -1,9 +1,12 @@
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
+import { toast } from "react-toastify";
+import { Bounce } from "react-toastify";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
 
+// eslint-disable-next-line react/prop-types
 const ChangePasswordFormComponent = ({ handleClose }) => {
   const [form, setForm] = useState({
     old_password: "",
@@ -32,10 +35,36 @@ const ChangePasswordFormComponent = ({ handleClose }) => {
       );
       if (response.status === 200) {
         console.log(response);
+        toast("Password Changed Successfully!!!", {
+          position: "top-right",
+          autoClose: 5000,
+          type: "success",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
         handleClose();
       }
     } catch (error) {
       console.log(error);
+      if (error.response.status === 400) {
+        toast("Old Password Wrong", {
+          position: "top-right",
+          autoClose: 5000,
+          type: "error",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
     }
   };
   return (

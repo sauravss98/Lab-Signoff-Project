@@ -7,6 +7,7 @@ import UserProfileComponent from "../../component/UserProfileComponent/UserProfi
 import UserListComponent from "../../component/UsersListPage/UserListComponent";
 import ProgramsListComponent from "../../component/ProgramsListComponent/ProgramsListComponent";
 import CoursesListComponent from "../../component/CoursesListComponent/CoursesListComponent";
+import Toast from "../../component/Toast/Toast";
 
 const SettingsPage = () => {
   const settingsState = useSelector(
@@ -15,6 +16,7 @@ const SettingsPage = () => {
   return (
     <div>
       <Row>
+        <Toast />
         <Col lg={4}>
           <SettingsItems />
         </Col>
