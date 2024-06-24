@@ -14,6 +14,11 @@ const UserProfileComponent = () => {
   const changePasswordClick = () => {
     setModalShow(true);
   };
+
+  const handleCloseModal = () => {
+    setModalShow(false);
+  };
+
   return (
     <div>
       <Row>
@@ -55,6 +60,7 @@ const UserProfileComponent = () => {
       <ChangePasswordComponent
         show={modalShow}
         onHide={() => setModalShow(false)}
+        handleClose={handleCloseModal}
       />
       ;
     </div>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
 
-const ChangePasswordFormComponent = () => {
+const ChangePasswordFormComponent = ({ handleClose }) => {
   const [form, setForm] = useState({
     old_password: "",
     new_password: "",
@@ -32,6 +32,7 @@ const ChangePasswordFormComponent = () => {
       );
       if (response.status === 200) {
         console.log(response);
+        handleClose();
       }
     } catch (error) {
       console.log(error);

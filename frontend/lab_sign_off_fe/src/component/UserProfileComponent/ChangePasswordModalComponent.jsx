@@ -17,7 +17,7 @@ const ChangePasswordComponent = (props) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <ChangePasswordFormComponent />
+        <ChangePasswordFormComponent handleClose={props.handleClose} />
       </Modal.Body>
       <Modal.Footer>
         <Button variant="dark" onClick={props.onHide}>
