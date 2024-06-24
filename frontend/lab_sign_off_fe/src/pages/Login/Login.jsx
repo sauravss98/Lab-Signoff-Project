@@ -37,7 +37,14 @@ const Login = () => {
         expiration.setHours(expiration.getHours() + 1);
         localStorage.setItem("expiration", expiration.toISOString());
         console.log(response.data.user_type);
-        dispatch(authActions.login({ user_type: response.data.user_type }));
+        dispatch(
+          authActions.login({
+            user_type: response.data.user_type,
+            first_name: response.data.user_first_name,
+            last_name: response.data.user_last_name,
+            email: response.data.user_email,
+          })
+        );
         navigate("/");
       }
     } catch (error) {

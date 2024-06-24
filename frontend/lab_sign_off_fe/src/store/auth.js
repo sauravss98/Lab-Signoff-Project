@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getAuthToken } from "../utils/token";
-
 const initialAuthState = {
   isAuthenticated: false,
-  token: "",
-  user_type: undefined,
+  user_type: "",
+  first_name: "",
+  last_name: "",
+  email: "",
 };
 
 const authSlice = createSlice({
@@ -13,13 +13,17 @@ const authSlice = createSlice({
   reducers: {
     login(state, action) {
       state.isAuthenticated = true;
-      state.token = getAuthToken();
       state.user_type = action.payload.user_type;
+      state.first_name = action.payload.first_name;
+      state.last_name = action.payload.last_name;
+      state.email = action.payload.email;
     },
     logout(state) {
       state.isAuthenticated = false;
-      state.token = "";
       state.user_type = undefined;
+      state.first_name = "";
+      state.last_name = "";
+      state.email = "";
     },
   },
 });

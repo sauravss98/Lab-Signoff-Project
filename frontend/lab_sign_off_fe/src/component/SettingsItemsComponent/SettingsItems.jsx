@@ -12,12 +12,15 @@ const SettingsItems = () => {
   };
 
   return (
-    <Tab.Container id="list-group-tabs-example" defaultActiveKey="#link1">
+    <Tab.Container
+      id="list-group-tabs-example"
+      defaultActiveKey="#user-profile"
+    >
       <Col md={8}>
         <ListGroup>
           <ListGroup.Item
             action
-            href="#link1"
+            href="#user-profile"
             variant="dark"
             onClick={() => listClick("user_profile")}
           >
@@ -25,7 +28,7 @@ const SettingsItems = () => {
           </ListGroup.Item>
           <ListGroup.Item
             action
-            href="#link2"
+            href="#users-page"
             variant="dark"
             onClick={() => listClick("users_page")}
           >
@@ -33,7 +36,7 @@ const SettingsItems = () => {
           </ListGroup.Item>
           <ListGroup.Item
             action
-            href="#link3"
+            href="#programs-page"
             variant="dark"
             onClick={() => listClick("programs_page")}
           >
@@ -41,7 +44,7 @@ const SettingsItems = () => {
           </ListGroup.Item>
           <ListGroup.Item
             action
-            href="#link4"
+            href="#courses-page"
             variant="dark"
             onClick={() => listClick("courses_page")}
           >
