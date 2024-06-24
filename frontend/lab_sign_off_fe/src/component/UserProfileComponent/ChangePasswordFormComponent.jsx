@@ -50,9 +50,59 @@ const ChangePasswordFormComponent = ({ handleClose }) => {
         handleClose();
       }
     } catch (error) {
-      console.log(error);
-      if (error.response.status === 400) {
-        toast("Old Password Wrong", {
+      const errorData = error.response?.data || {};
+      if (errorData.old_password?.[0] === "Wrong password.") {
+        toast("Old Password entered is wrong. Please try again", {
+          position: "top-right",
+          autoClose: 5000,
+          type: "error",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+      if (
+        errorData.old_password?.[0] === "This field may not be blank." ||
+        errorData.new_password?.[0] === "This field may not be blank."
+      ) {
+        toast("Password fields cannot be empty", {
+          position: "top-right",
+          autoClose: 5000,
+          type: "error",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+      if (
+        errorData.old_password?.[0] ===
+          "This password is too short. It must contain at least 8 characters." ||
+        errorData.new_password?.[0] ===
+          "This password is too short. It must contain at least 8 characters."
+      ) {
+        toast("Password too short. Must be at least 8 characters long", {
+          position: "top-right",
+          autoClose: 5000,
+          type: "error",
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+      if (errorData.new_password?.[0] === "This password is too common.") {
+        toast("Password used is too common, Please change it.", {
           position: "top-right",
           autoClose: 5000,
           type: "error",
