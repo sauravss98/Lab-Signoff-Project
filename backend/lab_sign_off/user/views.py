@@ -110,14 +110,14 @@ class UserLogout(APIView):
     
 class UsersListView(ListAPIView):
     """
-    Api for users list api view. There is a filter that filters the status
+    API for users list API view. There is a filter that filters the status
     """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class= UserDetailsSerializer
+    serializer_class = UserDetailsSerializer
 
     def get_queryset(self):
-        user_type_filter = self.request.data.get("user_type")
+        user_type_filter = self.request.query_params.get("user_type")
         if user_type_filter:
             queryset = User.objects.filter(user_type=user_type_filter).order_by("id")
         else:
