@@ -4,7 +4,7 @@ import Col from "react-bootstrap/Col";
 import SettingsItems from "../../component/SettingsItemsComponent/SettingsItems";
 import { useSelector } from "react-redux";
 import UserProfileComponent from "../../component/UserProfileComponent/UserProfileComponent";
-import UserListComponent from "../../component/UsersListPage/UserListComponent";
+import UserListComponent from "../../component/UsersListPage/UserListSettingsComponent";
 import ProgramsListComponent from "../../component/ProgramsListComponent/ProgramsListComponent";
 import CoursesListComponent from "../../component/CoursesListComponent/CoursesListComponent";
 import Toast from "../../component/Toast/Toast";
