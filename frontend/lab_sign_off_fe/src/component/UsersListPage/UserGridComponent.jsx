@@ -32,15 +32,18 @@ const columns = [
     editable: false,
   },
 ];
-const UserGridComponent = () => {
+// eslint-disable-next-line react/prop-types
+const UserGridComponent = ({ tabState }) => {
   const [rows, setRows] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
       let results = [];
       let nextPageUrl = "users/users_list";
+      const params = tabState !== "all" ? { user_type: tabState } : {};
 
       while (nextPageUrl) {
         const response = await axiosInstance.get(nextPageUrl, {
+          params: params,
           headers: {
             Authorization: "Token " + token,
           },
@@ -52,7 +55,7 @@ const UserGridComponent = () => {
       setRows(results);
     };
     fetchData();
-  }, []);
+  }, [tabState]);
 
   return (
     <Box sx={{ height: 400, width: "100%" }}>
