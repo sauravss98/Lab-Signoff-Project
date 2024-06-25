@@ -119,9 +119,9 @@ class UsersListView(ListAPIView):
     def get_queryset(self):
         user_type_filter = self.request.data.get("user_type")
         if user_type_filter:
-            queryset = User.objects.filter(user_type=user_type_filter)
+            queryset = User.objects.filter(user_type=user_type_filter).order_by("id")
         else:
-            queryset = User.objects.all()
+            queryset = User.objects.all().order_by("id")
         return queryset
     
 class UserListView(RetrieveAPIView):
