@@ -1,5 +1,11 @@
+import ProgramGridComponent from "./ProgramGridComponent";
+
 const ProgramsListComponent = () => {
-  return <div>Programs List Component</div>;
+  return (
+    <div>
+      <ProgramGridComponent />
+    </div>
+  );
 };
 
 export default ProgramsListComponent;
