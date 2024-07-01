@@ -18,6 +18,7 @@ const UserCreateModal = ({ open, handleClose }) => {
   const onChangeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const getUserType = (userType) => {
     switch (userType) {
       case "1":
@@ -30,12 +31,10 @@ const UserCreateModal = ({ open, handleClose }) => {
         return "";
     }
   };
+
   const onCreateClick = async (event) => {
     event.preventDefault();
-    console.log(formData.email);
-    console.log(formData.userType);
     const user_type = getUserType(formData.userType);
-    console.log(user_type);
     const newUser = {
       email: formData.email,
       password: "default",
@@ -60,8 +59,22 @@ const UserCreateModal = ({ open, handleClose }) => {
         handleClose();
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Error creating user", {
+      const errorData = error.response?.data || {};
+      let errorMessage = "Error Creating user";
+      if (errorData.email?.[0] === "A user with that email already exists.") {
+        errorMessage = "A user with that email already exists.";
+      } else if (errorData.email?.[0] === "Email field may not be blank.") {
+        errorMessage = "Email field may not be blank.";
+      } else if (
+        errorData.first_name?.[0] === "First Name field may not be blank."
+      ) {
+        errorMessage = "First Name field may not be blank.";
+      } else if (
+        errorData.last_name?.[0] === "Last Name field may not be blank."
+      ) {
+        errorMessage = "Last Name field may not be blank.";
+      }
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -74,6 +87,7 @@ const UserCreateModal = ({ open, handleClose }) => {
       });
     }
   };
+
   return (
     <Modal
       show={open}
@@ -95,6 +109,7 @@ const UserCreateModal = ({ open, handleClose }) => {
               name="email"
               value={formData.email}
               onChange={onChangeHandler}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicFirstName">
@@ -105,6 +120,7 @@ const UserCreateModal = ({ open, handleClose }) => {
               name="first_name"
               value={formData.first_name}
               onChange={onChangeHandler}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicLastName">
@@ -115,6 +131,7 @@ const UserCreateModal = ({ open, handleClose }) => {
               name="last_name"
               value={formData.last_name}
               onChange={onChangeHandler}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicUserType">
