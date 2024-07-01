@@ -3,18 +3,22 @@ import Tab from "react-bootstrap/Tab";
 import Col from "react-bootstrap/Col";
 import { useDispatch } from "react-redux";
 import { setSelectedSettings } from "../../store/settingsPageState";
+import { useState } from "react";
 
 const SettingsItems = () => {
+  const [selectedTab, setSelectedTab] = useState("user_profile");
   const dispatch = useDispatch();
 
   const listClick = (clickedItem) => {
     dispatch(setSelectedSettings(clickedItem));
+    setSelectedTab(clickedItem);
   };
 
   return (
     <Tab.Container
       id="list-group-tabs-example"
       defaultActiveKey="#user-profile"
+      activeKey={selectedTab}
     >
       <Col md={8}>
         <ListGroup>
