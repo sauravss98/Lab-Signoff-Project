@@ -3,6 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
+import UserItemModal from "./UserItemModal";
 
 const token = tokenLoader();
 const columns = [
@@ -35,6 +36,19 @@ const columns = [
 // eslint-disable-next-line react/prop-types
 const UserGridComponent = ({ tabState }) => {
   const [rows, setRows] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const handleRowClick = (params) => {
+    setSelectedRow(params.row);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedRow(null);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       let results = [];
@@ -71,6 +85,16 @@ const UserGridComponent = ({ tabState }) => {
         }}
         pageSizeOptions={[5]}
         disableRowSelectionOnClick
+        onCellClick={(params) => {
+          if (params.field === "id") {
+            handleRowClick(params);
+          }
+        }}
+      />
+      <UserItemModal
+        open={open}
+        handleClose={handleClose}
+        selectedRow={selectedRow}
       />
     </Box>
   );
