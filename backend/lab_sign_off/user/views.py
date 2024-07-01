@@ -14,7 +14,7 @@ from rest_framework.generics import (
     UpdateAPIView,
     RetrieveAPIView
 )
-
+from user.permissions import IsAdminOrStaffUser
 
 from .serializers import UserAuthSerializer,UserDetailsSerializer,PasswordChangeSerializer
 from .models import User
@@ -44,6 +44,7 @@ def login(request):
     )
 
 @api_view(['POST'])
+@permission_classes([IsAdminOrStaffUser])
 def create_user(request):
     """"
     Api for signing up the new user
