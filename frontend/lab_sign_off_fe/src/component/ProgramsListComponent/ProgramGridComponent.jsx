@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
 import { Bounce, toast } from "react-toastify";
@@ -8,6 +8,7 @@ import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import ProgramEditComponent from "./ProgramEditComponent";
 
 const token = tokenLoader();
 
@@ -15,10 +16,13 @@ const ProgramGridComponent = () => {
   const [rows, setRows] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [openUserEditModal, setOpenUserEditModal] = useState(false);
+  const [selectedRowId, setSelectedRowId] = useState(null);
 
   const handleMenuOpen = (event, row) => {
     setMenuAnchor(event.currentTarget);
     setSelectedRow(row);
+    setSelectedRowId(null); // Reset the selectedRowId when opening the menu
   };
 
   const handleMenuClose = () => {
@@ -26,8 +30,15 @@ const ProgramGridComponent = () => {
     setSelectedRow(null);
   };
 
+  const handleEditModalClose = () => {
+    setOpenUserEditModal(false);
+    // handleMenuClose();
+  };
+
   const handleEditClick = () => {
-    console.log("Selected item = ", selectedRow);
+    setSelectedRowId(selectedRow.id); // Set the selectedRowId only when edit is clicked
+    setOpenUserEditModal(true);
+    handleMenuClose();
   };
 
   const handleDeleteClick = () => {
@@ -108,34 +119,36 @@ const ProgramGridComponent = () => {
   ];
 
   return (
-    <Box sx={{ height: 400, width: "100%" }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
+    <>
+      <Box sx={{ height: 400, width: "100%" }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
             },
-          },
-        }}
-        pageSizeOptions={[5]}
-        disableRowSelectionOnClick
-        // onCellClick={(params) => {
-        //   if (params.field === "id") {
-        //     handleRowClick(params);
-        //   }
-        // }}
+          }}
+          pageSizeOptions={[5]}
+          disableRowSelectionOnClick
+        />
+        <Menu
+          anchorEl={menuAnchor}
+          open={Boolean(menuAnchor)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+          <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
+        </Menu>
+      </Box>
+      <ProgramEditComponent
+        open={openUserEditModal}
+        handleClose={handleEditModalClose}
+        itemId={selectedRowId}
       />
-      <Menu
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem onClick={handleEditClick}>Edit</MenuItem>
-        <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
-      </Menu>
-    </Box>
+    </>
   );
 };
 
