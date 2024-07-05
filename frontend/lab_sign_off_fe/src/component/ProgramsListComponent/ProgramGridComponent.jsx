@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import axiosInstance from "../../utils/Axios";
@@ -19,6 +19,48 @@ const ProgramGridComponent = () => {
   const [openUserEditModal, setOpenUserEditModal] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
 
+  const fetchData = useCallback(async () => {
+    try {
+      let results = [];
+      let nextPageUrl = "/programs/list";
+      while (nextPageUrl) {
+        const response = await axiosInstance.get(nextPageUrl, {
+          headers: {
+            Authorization: "Token " + token,
+          },
+        });
+        results = results.concat(response.data.results);
+        nextPageUrl = response.data.next;
+      }
+      setRows(results);
+    } catch (error) {
+      let errorMessage = "Error loading data";
+      const errorData = error.response;
+      if (
+        errorData?.data.detail ===
+        "You do not have permission to perform this action."
+      ) {
+        errorMessage = "You do not have permission to perform this action.";
+      }
+      console.log(errorMessage);
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const handleMenuOpen = (event, row) => {
     setMenuAnchor(event.currentTarget);
     setSelectedRow(row);
@@ -32,7 +74,7 @@ const ProgramGridComponent = () => {
 
   const handleEditModalClose = () => {
     setOpenUserEditModal(false);
-    // handleMenuClose();
+    fetchData(); // Refresh data after closing the edit modal
   };
 
   const handleEditClick = () => {
@@ -44,47 +86,6 @@ const ProgramGridComponent = () => {
   const handleDeleteClick = () => {
     console.log("Selected item = ", selectedRow.id);
   };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let results = [];
-        let nextPageUrl = "/programs/list";
-        while (nextPageUrl) {
-          const response = await axiosInstance.get(nextPageUrl, {
-            headers: {
-              Authorization: "Token " + token,
-            },
-          });
-          results = results.concat(response.data.results);
-          nextPageUrl = response.data.next;
-        }
-        setRows(results);
-      } catch (error) {
-        let errorMessage = "Error loading data";
-        const errorData = error.response;
-        if (
-          errorData?.data.detail ===
-          "You do not have permission to perform this action."
-        ) {
-          errorMessage = "You do not have permission to perform this action.";
-        }
-        console.log(errorMessage);
-        toast.error(errorMessage, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-      }
-    };
-    fetchData();
-  }, []);
 
   const columns = [
     {
