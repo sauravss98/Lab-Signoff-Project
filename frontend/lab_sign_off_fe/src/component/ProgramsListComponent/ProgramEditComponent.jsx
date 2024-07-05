@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -9,7 +9,14 @@ import { tokenLoader } from "../../utils/token";
 const token = tokenLoader();
 
 const ProgramEditComponent = ({ open, handleClose, itemId }) => {
-  const [programDetails, setProgramDetails] = useState(null);
+  const [formData, setFormData] = useState({
+    program_name: "",
+    program_lenght: 0,
+  });
+
+  const onChangeHandler = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +27,8 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
               Authorization: "Token " + token,
             },
           });
-          setProgramDetails(response.data);
+          const { program_name, program_lenght } = response.data;
+          setFormData({ program_name, program_lenght });
         } catch (error) {
           console.error("Error fetching program details:", error);
         }
@@ -31,7 +39,10 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
 
   useEffect(() => {
     if (!open) {
-      setProgramDetails(null); // Reset program details when modal is closed
+      setFormData({
+        program_name: "",
+        program_lenght: 0,
+      });
     }
   }, [open]);
 
@@ -47,7 +58,30 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
         <Modal.Title>Program Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {programDetails ? programDetails.program_name : "Loading..."}
+        <Form>
+          <Form.Group className="mb-3" controlId="formProgramName">
+            <Form.Label>Program Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Edit Program Name"
+              name="program_name"
+              value={formData.program_name}
+              onChange={onChangeHandler}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="formProgramLenght">
+            <Form.Label>Program Length</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Edit Program Length"
+              name="program_lenght"
+              value={formData.program_lenght}
+              onChange={onChangeHandler}
+              required
+            />
+          </Form.Group>
+        </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
