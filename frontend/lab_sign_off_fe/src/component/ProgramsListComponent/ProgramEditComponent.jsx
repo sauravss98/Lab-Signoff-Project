@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import PropTypes from "prop-types";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
+import { Bounce, toast } from "react-toastify";
 
 const token = tokenLoader();
 
@@ -46,6 +47,67 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
     }
   }, [open]);
 
+  const onEditClick = async (event) => {
+    event.preventDefault();
+    const program_name = formData.program_name;
+    const program_lenght = formData.program_lenght;
+    if (program_name === "" || program_lenght < 1) {
+      toast.error(`Name field cannot be empty and lenght cannot be 0`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    } else {
+      const editedData = {
+        program_name: program_name,
+        program_lenght: program_lenght,
+      };
+      try {
+        const response = await axiosInstance.patch(
+          `programs/update/${itemId}/`,
+          editedData,
+          {
+            headers: {
+              Authorization: "Token " + token,
+            },
+          }
+        );
+        if (response.status === 200) {
+          toast.success("User Edited Successfully", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+          });
+          handleClose();
+        }
+      } catch (error) {
+        toast.error(`Editing Failed: ${error}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+    }
+  };
+
   return (
     <Modal
       show={open}
@@ -58,7 +120,7 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
         <Modal.Title>Program Details</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form>
+        <Form onSubmit={onEditClick}>
           <Form.Group className="mb-3" controlId="formProgramName">
             <Form.Label>Program Name</Form.Label>
             <Form.Control
@@ -81,6 +143,9 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
               required
             />
           </Form.Group>
+          <Button variant="dark" type="submit">
+            Submit
+          </Button>
         </Form>
       </Modal.Body>
       <Modal.Footer>
