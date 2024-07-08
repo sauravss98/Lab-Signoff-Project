@@ -1,5 +1,7 @@
+import CoursesGridComponent from "./CoursesGridComponent";
+
 const CoursesListComponent = () => {
-  return <div>Courses List Component</div>;
+  return <CoursesGridComponent />;
 };
 
 export default CoursesListComponent;
