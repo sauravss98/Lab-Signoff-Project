@@ -7,8 +7,10 @@ import { Bounce, toast } from "react-toastify";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Menu from "@mui/material/Menu";
+import Button from "react-bootstrap/Button";
 import MenuItem from "@mui/material/MenuItem";
 import ProgramEditComponent from "./ProgramEditComponent";
+import ProgramCreateComponent from "./ProgramCreateComponent";
 
 const token = tokenLoader();
 
@@ -18,6 +20,7 @@ const ProgramGridComponent = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [openUserEditModal, setOpenUserEditModal] = useState(false);
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -67,6 +70,10 @@ const ProgramGridComponent = () => {
     setSelectedRowId(null); // Reset the selectedRowId when opening the menu
   };
 
+  const handleCreateProgramClick = () => {
+    setOpenCreateModal(true);
+  };
+
   const handleMenuClose = () => {
     setMenuAnchor(null);
     setSelectedRow(null);
@@ -75,6 +82,11 @@ const ProgramGridComponent = () => {
   const handleEditModalClose = () => {
     setOpenUserEditModal(false);
     fetchData(); // Refresh data after closing the edit modal
+  };
+
+  const handleCreateModalClose = () => {
+    setOpenCreateModal(false);
+    fetchData();
   };
 
   const handleEditClick = () => {
@@ -149,6 +161,13 @@ const ProgramGridComponent = () => {
         handleClose={handleEditModalClose}
         itemId={selectedRowId}
       />
+      <ProgramCreateComponent
+        open={openCreateModal}
+        handleClose={handleCreateModalClose}
+      />
+      <Button onClick={handleCreateProgramClick} variant="dark">
+        Create new Program
+      </Button>
     </>
   );
 };

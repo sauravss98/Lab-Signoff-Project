@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
@@ -9,45 +9,17 @@ import { Bounce, toast } from "react-toastify";
 
 const token = tokenLoader();
 
-const ProgramEditComponent = ({ open, handleClose, itemId }) => {
+const ProgramCreateComponent = ({ open, handleClose }) => {
   const [formData, setFormData] = useState({
     program_name: "",
-    program_lenght: 0,
+    program_lenght: "",
   });
 
   const onChangeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (open && itemId) {
-        try {
-          const response = await axiosInstance.get(`programs/${itemId}`, {
-            headers: {
-              Authorization: "Token " + token,
-            },
-          });
-          const { program_name, program_lenght } = response.data;
-          setFormData({ program_name, program_lenght });
-        } catch (error) {
-          console.error("Error fetching program details:", error);
-        }
-      }
-    };
-    fetchData();
-  }, [open, itemId]);
-
-  useEffect(() => {
-    if (!open) {
-      setFormData({
-        program_name: "",
-        program_lenght: 0,
-      });
-    }
-  }, [open]);
-
-  const onEditClick = async (event) => {
+  const onCreateClick = async (event) => {
     event.preventDefault();
     const program_name = formData.program_name;
     const program_lenght = formData.program_lenght;
@@ -64,22 +36,22 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
         transition: Bounce,
       });
     } else {
-      const editedData = {
+      const createdData = {
         program_name: program_name,
         program_lenght: program_lenght,
       };
       try {
-        const response = await axiosInstance.patch(
-          `programs/update/${itemId}/`,
-          editedData,
+        const response = await axiosInstance.post(
+          "/programs/create/",
+          createdData,
           {
             headers: {
               Authorization: "Token " + token,
             },
           }
         );
-        if (response.status === 200) {
-          toast.success("Program Edited Successfully", {
+        if (response.status === 201) {
+          toast.success("New Program Created Successfully", {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -91,9 +63,11 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
             transition: Bounce,
           });
           handleClose();
+          setFormData({ program_name: "", program_lenght: "" });
         }
       } catch (error) {
-        toast.error(`Editing Failed: ${error}`, {
+        console.log(error);
+        toast.error(`Creating new program Failed: ${error}`, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -117,12 +91,11 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
       aria-labelledby="contained-modal-title-vcenter"
     >
       <Modal.Header closeButton>
-        <Modal.Title>Program Details</Modal.Title>
+        <Modal.Title>Create New Program</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={onEditClick}>
+        <Form onSubmit={onCreateClick}>
           <Form.Group className="mb-3" controlId="formProgramName">
-            <Form.Label>Program Name</Form.Label>
             <Form.Control
               type="text"
               placeholder="Edit Program Name"
@@ -148,19 +121,13 @@ const ProgramEditComponent = ({ open, handleClose, itemId }) => {
           </Button>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Close
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 };
 
-ProgramEditComponent.propTypes = {
+ProgramCreateComponent.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  itemId: PropTypes.number,
 };
 
-export default ProgramEditComponent;
+export default ProgramCreateComponent;
