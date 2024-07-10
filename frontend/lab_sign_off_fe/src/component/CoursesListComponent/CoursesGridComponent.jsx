@@ -7,6 +7,7 @@ import { tokenLoader } from "../../utils/token";
 import { useCallback, useEffect, useState } from "react";
 import { Bounce, toast } from "react-toastify";
 import Menu from "@mui/material/Menu";
+import Badge from "react-bootstrap/Badge";
 import MenuItem from "@mui/material/MenuItem";
 
 const token = tokenLoader();
@@ -16,6 +17,7 @@ const CoursesGridComponent = () => {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
+
   const fetchData = useCallback(async () => {
     try {
       let results = [];
@@ -68,6 +70,22 @@ const CoursesGridComponent = () => {
     setSelectedRow(null);
   };
 
+  const renderPrograms = (programs) => {
+    return programs.map((program) => (
+      <Badge key={program.id} pill bg="dark" className="me-1">
+        {program.program_name}
+      </Badge>
+    ));
+  };
+
+  const renderStaff = (staff) => {
+    return staff.map((staffMember) => (
+      <Badge key={staffMember.id} pill bg="dark" className="me-1">
+        {staffMember.first_name + " " + staffMember.last_name}
+      </Badge>
+    ));
+  };
+
   const columns = [
     {
       field: "actions",
@@ -91,6 +109,20 @@ const CoursesGridComponent = () => {
       headerName: "Course name",
       width: 300,
       editable: false,
+    },
+    {
+      field: "staff",
+      headerName: "Staff",
+      width: 300,
+      editable: false,
+      renderCell: (params) => <Box>{renderStaff(params.row.staff)}</Box>,
+    },
+    {
+      field: "programs",
+      headerName: "Programs",
+      width: 300,
+      editable: false,
+      renderCell: (params) => <Box>{renderPrograms(params.row.programs)}</Box>,
     },
   ];
 
