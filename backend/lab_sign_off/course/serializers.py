@@ -5,7 +5,7 @@ from .models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'user_type']
+        fields = ['id', 'username', 'email', 'user_type','first_name', 'last_name']
 
 class CoursesCreateSerializer(serializers.ModelSerializer):
     staff = UserSerializer(many=True, read_only=True)
@@ -27,7 +27,9 @@ class CoursesSerializer(serializers.ModelSerializer):
                     staff_list.append(
                         {
                             "id":item.id,
-                            "email":item.email
+                            "email":item.email,
+                            "first_name": item.first_name,
+                            "last_name": item.last_name,
                         }
                     )
                 return staff_list
