@@ -1,22 +1,25 @@
+import { useCallback, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
-import { useCallback, useEffect, useState } from "react";
 import { Bounce, toast } from "react-toastify";
 import Menu from "@mui/material/Menu";
-import Badge from "react-bootstrap/Badge";
 import MenuItem from "@mui/material/MenuItem";
+import Badge from "react-bootstrap/Badge";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Button from "react-bootstrap/Button";
+import CourseCreateComponent from "./CourseCreateComponent";
 
 const token = tokenLoader();
 
 const CoursesGridComponent = () => {
   const [rows, setRows] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [selectedRowId, setSelectedRowId] = useState(null);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
+  // const [selectedRow, setSelectedRow] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -59,18 +62,17 @@ const CoursesGridComponent = () => {
     fetchData();
   }, [fetchData]);
 
-  const handleMenuOpen = (event, row) => {
+  const handleMenuOpen = (event) => {
     setMenuAnchor(event.currentTarget);
-    setSelectedRow(row);
-    setSelectedRowId(null); // Reset the selectedRowId when opening the menu
+    // setSelectedRow(row);
   };
 
   const handleMenuClose = () => {
     setMenuAnchor(null);
-    setSelectedRow(null);
+    // setSelectedRow(null);
   };
 
-  const renderPrograms = (programs) => {
+  const renderPrograms = (programs = []) => {
     return programs.map((program) => (
       <Badge key={program.id} pill bg="dark" className="me-1">
         {program.program_name}
@@ -78,12 +80,34 @@ const CoursesGridComponent = () => {
     ));
   };
 
-  const renderStaff = (staff) => {
+  const renderStaff = (staff = []) => {
     return staff.map((staffMember) => (
       <Badge key={staffMember.id} pill bg="dark" className="me-1">
         {staffMember.first_name + " " + staffMember.last_name}
       </Badge>
     ));
+  };
+
+  const getRowHeight = (params) => {
+    if (!params.row) return 52; // Return default height if row is undefined
+
+    const staffCount = params.row.staff ? params.row.staff.length : 0;
+    const programsCount = params.row.programs ? params.row.programs.length : 0;
+    const baseHeight = 52; // Default row height
+    const extraHeight = 25; // Extra height per additional row of items
+
+    // Calculate the required number of lines
+    const numLines = Math.max(staffCount, programsCount);
+    return baseHeight + (numLines > 1 ? (numLines - 1) * extraHeight : 0);
+  };
+
+  const handleCreateModalClose = () => {
+    setOpenCreateModal(false);
+    fetchData();
+  };
+
+  const handleCreateCoursemClick = () => {
+    setOpenCreateModal(true);
   };
 
   const columns = [
@@ -127,37 +151,51 @@ const CoursesGridComponent = () => {
   ];
 
   return (
-    <Box sx={{ height: 400, width: "100%" }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
-            },
-          },
-        }}
-        pageSizeOptions={[5]}
-        disableRowSelectionOnClick
+    <>
+      <Box sx={{ height: 400, width: "100%" }}>
+        {rows.length > 0 ? (
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            getRowHeight={getRowHeight}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 5,
+                },
+              },
+            }}
+            pageSizeOptions={[5]}
+            disableRowSelectionOnClick
+          />
+        ) : (
+          <p>Loading...</p>
+        )}
+        <Menu
+          anchorEl={menuAnchor}
+          open={Boolean(menuAnchor)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem
+          // Add your edit function here
+          >
+            Edit
+          </MenuItem>
+          <MenuItem
+          // Add your delete function here
+          >
+            Delete
+          </MenuItem>
+        </Menu>
+      </Box>
+      <CourseCreateComponent
+        open={openCreateModal}
+        handleClose={handleCreateModalClose}
       />
-      <Menu
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem
-        // onClick={handleEditClick}
-        >
-          Edit
-        </MenuItem>
-        <MenuItem
-        // onClick={handleDeleteClick}
-        >
-          Delete
-        </MenuItem>
-      </Menu>
-    </Box>
+      <Button onClick={handleCreateCoursemClick} variant="dark">
+        Create new Course
+      </Button>
+    </>
   );
 };
 
