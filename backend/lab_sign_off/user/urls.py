@@ -8,7 +8,8 @@ from .views import (
         UsersListView,
         UserListView,
         get_user_details_from_token,
-        ChangePasswordView
+        ChangePasswordView,
+        UsersDropDownListView
 )
 # from .views import ViewUser
 
@@ -21,5 +22,6 @@ urlpatterns = [
         path('verify_otp',verify_otp,name="verify_otp"),
         path('users_list',UsersListView.as_view(),name="users_list"),
         path('user/<int:pk>',UserListView.as_view(),name="user list view"),
-        path('change-password/',ChangePasswordView.as_view(),name="change-password")
+        path('change-password/',ChangePasswordView.as_view(),name="change-password"),
+        path('dropdown/user',UsersDropDownListView.as_view(),name="users_dropdown_list")
 ]

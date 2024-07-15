@@ -7,7 +7,7 @@ from rest_framework.generics import (
 )
 from django.contrib.auth import get_user_model
 from .models import Programs
-from .serializers import ProgramsSerializer
+from .serializers import ProgramsSerializer,ProgramsDropDownSerializer
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from user.permissions import IsAdminOrStaffUser
 from rest_framework.authentication import SessionAuthentication,TokenAuthentication
@@ -27,6 +27,19 @@ class ProgramsListView(ListAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAdminOrStaffUser]
     serializer_class = ProgramsSerializer
+
+    def get_queryset(self):
+        queryset = Programs.objects.all()
+        return queryset
+    
+class ProgramsDropDownListView(ListAPIView):
+    """
+    Api view to list all the programs in dropdown
+    """
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAdminOrStaffUser]
+    serializer_class = ProgramsDropDownSerializer
+    pagination_class = None  
 
     def get_queryset(self):
         queryset = Programs.objects.all()

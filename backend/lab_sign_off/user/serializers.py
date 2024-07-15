@@ -92,6 +92,14 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', "user_type"]
         
+class UserDropDownSerializer(serializers.ModelSerializer):
+    """
+    Serializer for User Detail dropdown
+    """
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name']
+        
 
 class PasswordChangeSerializer(serializers.Serializer):
     """

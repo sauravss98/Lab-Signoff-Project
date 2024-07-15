@@ -16,7 +16,7 @@ from rest_framework.generics import (
 )
 from user.permissions import IsAdminOrStaffUser
 
-from .serializers import UserAuthSerializer,UserDetailsSerializer,PasswordChangeSerializer
+from .serializers import UserAuthSerializer,UserDetailsSerializer,PasswordChangeSerializer,UserDropDownSerializer
 from .models import User
 
 from .utils import generate_otp,send_new_user_created_mail
@@ -123,6 +123,19 @@ class UsersListView(ListAPIView):
             queryset = User.objects.filter(user_type=user_type_filter).order_by("id")
         else:
             queryset = User.objects.all().order_by("id")
+        return queryset
+    
+class UsersDropDownListView(ListAPIView):
+    """
+    API for users list API dropdown view.
+    """
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserDropDownSerializer
+    pagination_class = None  
+
+    def get_queryset(self):
+        queryset = User.objects.filter(user_type="staff").order_by("id")
         return queryset
     
 class UserListView(RetrieveAPIView):
