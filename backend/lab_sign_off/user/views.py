@@ -69,9 +69,6 @@ def verify_otp(request):
     if request.method == 'POST':
         otp_entered = request.data['otp']
         user = request.user
-        print(user)
-        print(f"otp form user {otp_entered}")
-        print(f"otp stored in db {user.otp}")
         if int(user.otp) == int(otp_entered):
             # OTP matched, mark email as verified
             user.email_verified = True
