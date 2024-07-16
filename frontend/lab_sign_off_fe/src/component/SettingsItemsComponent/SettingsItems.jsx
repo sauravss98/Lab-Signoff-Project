@@ -31,16 +31,18 @@ const SettingsItems = () => {
           >
             User Profile
           </ListGroup.Item>
+          {userType !== "student" && userType != "staff" && (
+            <ListGroup.Item
+              action
+              href="#users-page"
+              variant="dark"
+              onClick={() => listClick("users_page")}
+            >
+              Users
+            </ListGroup.Item>
+          )}
           {userType !== "student" && (
             <>
-              <ListGroup.Item
-                action
-                href="#users-page"
-                variant="dark"
-                onClick={() => listClick("users_page")}
-              >
-                Users
-              </ListGroup.Item>
               <ListGroup.Item
                 action
                 href="#programs-page"

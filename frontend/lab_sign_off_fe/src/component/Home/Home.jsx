@@ -7,6 +7,7 @@ import StaffHomePage from "../../pages/StaffHomePage/StaffHomePage";
 import StudentHomePage from "../../pages/StudentHomePage/StudentHomePage";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/Axios";
+import AdminHomePage from "../../pages/AdminHomePage/AdminHomePage";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -74,6 +75,7 @@ const Home = () => {
         <Row>
           {userType === "student" && <StudentHomePage />}
           {userType === "staff" && <StaffHomePage />}
+          {userType === "admin" && <AdminHomePage />}
         </Row>
       </div>
     </>

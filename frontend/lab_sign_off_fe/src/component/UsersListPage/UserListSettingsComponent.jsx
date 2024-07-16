@@ -3,6 +3,7 @@ import UserGridComponent from "./UserGridComponent";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import UserCreateModal from "./UserCreateModal";
+import Button from "react-bootstrap/esm/Button";
 
 const UserListComponent = () => {
   const [tabState, setTabState] = useState("all");
@@ -32,7 +33,9 @@ const UserListComponent = () => {
       </Tabs>
       <UserGridComponent tabState={tabState} />
       <UserCreateModal open={openUserCreateModal} handleClose={handleClose} />
-      <button onClick={handleNewUserClick}>Create New User</button>
+      <Button variant="dark" onClick={handleNewUserClick}>
+        Create New User
+      </Button>
     </div>
   );
 };
