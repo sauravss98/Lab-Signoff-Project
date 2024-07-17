@@ -1,21 +1,36 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models import Max
+from django.core.exceptions import ValidationError
 
 User = get_user_model()
 # Create your models here.
 class LabSession(models.Model):
     course = models.ForeignKey('course.Courses', on_delete=models.CASCADE, related_name='lab_sessions')
     name = models.CharField(max_length=255)
-    order = models.PositiveIntegerField()
+    order = models.PositiveIntegerField(editable=False)
 
     class Meta:
         ordering = ['order']
-        constraints = [
-            models.UniqueConstraint(fields=['course', 'order'], name='unique_course_order')
+        unique_together = [
+            ['course', 'order'],
+            ['course', 'name']  # This ensures name uniqueness within a course
         ]
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only set order for new objects
+            max_order = LabSession.objects.filter(course=self.course).aggregate(Max('order'))['order__max']
+            self.order = (max_order or 0) + 1
+        self.full_clean()  # This will check for uniqueness constraints
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.course.course_name} - Session {self.order}: {self.name}"
+
+    def clean(self):
+        existing = LabSession.objects.filter(course=self.course, name=self.name).exclude(pk=self.pk)
+        if existing.exists():
+            raise ValidationError({'name': 'A session with this name already exists for this course.'})
 
 class StudentEnrollment(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')

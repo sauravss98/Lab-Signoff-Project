@@ -2,6 +2,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
 from course.models import Courses
 from .models import LabSession, StudentEnrollment, StudentLabSession
 from .serializers import (
@@ -25,15 +26,20 @@ class LabSessionCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except ValidationError as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     def perform_create(self, serializer):
         course_id = self.kwargs['course_id']
-        course = get_object_or_404(Courses, id=course_id)
-        lab_session = serializer.save(course=course)
-
-        # Create StudentLabSession instances for all enrolled students
-        enrolled_students = StudentEnrollment.objects.filter(course=course)
-        for enrollment in enrolled_students:
-            StudentLabSession.objects.get_or_create(student=enrollment.student, lab_session=lab_session)
+        course = Courses.objects.get(id=course_id)
+        serializer.save(course=course)
 
 class LabSessionRetrieveAPIView(generics.RetrieveAPIView):
     queryset = LabSession.objects.all()
@@ -46,6 +52,21 @@ class LabSessionUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LabSessionSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        
+        try:
+            self.perform_update(serializer)
+            return Response(serializer.data)
+        except ValidationError as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_update(self, serializer):
+        serializer.save()
 
 class LabSessionDestroyAPIView(generics.DestroyAPIView):
     queryset = LabSession.objects.all()

@@ -4,7 +4,23 @@ from .models import LabSession, StudentEnrollment, StudentLabSession
 class LabSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = LabSession
-        fields = ['id', 'name', 'order', 'course']
+        fields = ['id', 'name', 'course']
+        read_only_fields = ['order']
+
+    def validate(self, data):
+        course = data.get('course')
+        name = data.get('name')
+        instance = self.instance  # This will be None for create operations
+
+        # Check if a session with this name already exists for the course
+        existing = LabSession.objects.filter(course=course, name=name)
+        if instance:
+            existing = existing.exclude(pk=instance.pk)
+
+        if existing.exists():
+            raise serializers.ValidationError({'name': 'A session with this name already exists for this course.'})
+
+        return data
 
 class StudentEnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
