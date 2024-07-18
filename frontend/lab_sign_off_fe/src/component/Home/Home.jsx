@@ -1,6 +1,5 @@
 import Row from "react-bootstrap/Row";
 import classes from "./Home.module.css";
-import SideNav from "../SideNav/SideNav";
 import { useEffect, useState, useRef } from "react";
 import { tokenLoader } from "../../utils/token";
 import StaffHomePage from "../../pages/StaffHomePage/StaffHomePage";
@@ -8,6 +7,7 @@ import StudentHomePage from "../../pages/StudentHomePage/StudentHomePage";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/Axios";
 import AdminHomePage from "../../pages/AdminHomePage/AdminHomePage";
+import SideNavComponent from "../SideNav/SideNavComponent";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ const Home = () => {
 
   return (
     <>
-      <SideNav isOpen={isSideBarOpen} toggleSidebar={toggleSidebar} />
+      <SideNavComponent isOpen={isSideBarOpen} toggleSidebar={toggleSidebar} />
       <div
         className={`${classes.mainDiv} ${
           isSideBarOpen ? classes.sidenavOpen : ""
