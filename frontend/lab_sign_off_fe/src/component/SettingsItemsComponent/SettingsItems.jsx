@@ -2,7 +2,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Tab from "react-bootstrap/Tab";
 import Col from "react-bootstrap/Col";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedSettings } from "../../store/settingsPageState";
+import { settingsActions } from "../../store/settingsPageState";
 import { useState } from "react";
 
 const SettingsItems = () => {
@@ -10,7 +10,7 @@ const SettingsItems = () => {
   const dispatch = useDispatch();
 
   const listClick = (clickedItem) => {
-    dispatch(setSelectedSettings(clickedItem));
+    dispatch(settingsActions.setSelectedSettings(clickedItem));
     setSelectedTab(clickedItem);
   };
   const userType = useSelector((state) => state.auth.user_type);

@@ -11,8 +11,11 @@ const settingSlice = createSlice({
     setSelectedSettings(state, action) {
       state.selected_settings = action.payload;
     },
+    clearSelectedSettings(state) {
+      state.selected_settings = "user_profile";
+    },
   },
 });
 
-export const { setSelectedSettings } = settingSlice.actions;
+export const settingsActions = settingSlice.actions;
 export default settingSlice.reducer;

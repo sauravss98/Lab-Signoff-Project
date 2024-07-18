@@ -4,6 +4,7 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import classes from "./Header.module.css";
 import { useEffect, useState } from "react";
 import axiosInstance from "../../utils/Axios";
+import { settingsActions } from "../../store/settingsPageState";
 import { authActions } from "../../store/auth";
 import { useNavigate } from "react-router-dom";
 import { tokenLoader } from "../../utils/token";
@@ -28,7 +29,8 @@ function Header() {
       localStorage.removeItem("token");
       localStorage.removeItem("expiration");
       localStorage.removeItem("authentication");
-      dispatch(authActions.logout);
+      dispatch(settingsActions.clearSelectedSettings());
+      dispatch(authActions.logout());
       setTokenAvailable(false);
       navigate("/login");
     }
