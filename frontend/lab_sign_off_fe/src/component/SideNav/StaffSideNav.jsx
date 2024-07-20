@@ -1,4 +1,5 @@
 import classes from "./SideNav.module.css";
+import { NavLink } from "react-router-dom";
 // eslint-disable-next-line react/prop-types
 const StaffSideNav = ({ isOpen, toggleSidebar }) => {
   return (
@@ -7,10 +8,10 @@ const StaffSideNav = ({ isOpen, toggleSidebar }) => {
         &#9776;
       </div>
       <div className={`${classes.sidebar} ${isOpen ? classes.open : ""}`}>
-        <a>Home Staff</a>
-        <a>Labs</a>
-        <a>Students</a>
-        <a>Requests</a>
+        <NavLink to="/staff">Home Staff</NavLink>
+        <NavLink to="/staff/labs">Labs</NavLink>
+        <NavLink to="/staff/students">Students</NavLink>
+        <NavLink to="/staff/requests">Requests</NavLink>
       </div>
     </>
   );

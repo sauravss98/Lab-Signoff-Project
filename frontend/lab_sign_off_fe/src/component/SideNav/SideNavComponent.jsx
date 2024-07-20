@@ -3,11 +3,13 @@ import StaffSideNav from "./StaffSideNav";
 import StudentSideNav from "./StudentSideNav";
 import AdminSideNav from "./AdminSideNav";
 
-const SideNavComponent = () => {
+const SideNavComponent = ({ isOpen, toggleSidebar }) => {
   const userType = useSelector((state) => state.auth.user_type);
   return (
     <>
-      {userType === "staff" && <StaffSideNav />}
+      {userType === "staff" && (
+        <StaffSideNav isOpen={isOpen} toggleSidebar={toggleSidebar} />
+      )}
       {userType === "student" && <StudentSideNav />}
       {userType === "admin" && <AdminSideNav />}
     </>

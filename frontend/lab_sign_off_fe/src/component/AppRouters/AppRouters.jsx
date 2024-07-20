@@ -10,6 +10,16 @@ const SettingsPage = React.lazy(() =>
   import("../../pages/SettingsPage/SettingsPage")
 );
 const ErrorPage = React.lazy(() => import("../../pages/ErrorPage"));
+const StaffMainPage = React.lazy(() =>
+  import("../../pages/StaffMainPage/StaffMainPage")
+);
+const StaffHomePage = React.lazy(() => import("../Staff/StaffHomePage"));
+const StaffLabPageComponent = React.lazy(() =>
+  import("../Staff/StaffLabPageComponent")
+);
+const StudentPageComponent = React.lazy(() =>
+  import("../Staff/StudentPageComponent")
+);
 
 const router = createBrowserRouter([
   {
@@ -33,6 +43,24 @@ const router = createBrowserRouter([
       {
         path: "settings",
         element: <SettingsPage />,
+      },
+      {
+        path: "staff",
+        element: <StaffMainPage />,
+        children: [
+          {
+            index: true,
+            element: <StaffHomePage />,
+          },
+          {
+            path: "labs",
+            element: <StaffLabPageComponent />,
+          },
+          {
+            path: "students",
+            element: <StudentPageComponent />,
+          },
+        ],
       },
     ],
   },
