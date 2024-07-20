@@ -7,7 +7,7 @@ from rest_framework.generics import (
 )
 from django.contrib.auth import get_user_model
 from .models import Courses
-from .serializers import CoursesSerializer,CoursesCreateSerializer
+from .serializers import CoursesSerializer,CoursesCreateSerializer,CoursesWithLabSessionsSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -133,3 +133,20 @@ class CourseDestroyAPIView(DestroyAPIView):
     permission_classes = [IsAdminOrStaffUser]
     queryset = Courses.objects.all()
     serializer_class = CoursesSerializer
+
+
+class CoursesWithLabSessionsListAPIView(ListAPIView):
+    """List Api for courses and lab sessions
+
+    Args:
+        ListAPIView (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAdminOrStaffUser]
+    serializer_class = CoursesWithLabSessionsSerializer
+
+    def get_queryset(self):
+        return Courses.objects.all().order_by("id")

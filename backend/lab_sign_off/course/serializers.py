@@ -2,6 +2,7 @@ from rest_framework import serializers
 from program.serializers import ProgramsSerializer
 from user.models import User
 from course.models import Courses
+from labsession.models import LabSession
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,7 +58,34 @@ class CoursesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Courses
         fields = ['id', 'course_name', 'staff', 'programs']
-        
+ 
+class LabSessionDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LabSession
+        fields = ['id', 'name']
+
+class CoursesWithLabSessionsSerializer(serializers.ModelSerializer):
+    """Serializer for courses and couunt of lab sessions
+
+    Args:
+        serializers (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    lab_sessions_count = serializers.SerializerMethodField()
+    lab_sessions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Courses
+        fields = ['id', 'course_name', 'lab_sessions_count', 'lab_sessions']
+
+    def get_lab_sessions_count(self, obj):
+        return obj.lab_sessions.count()
+
+    def get_lab_sessions(self, obj):
+        lab_sessions = obj.lab_sessions.all()
+        return LabSessionDetailSerializer(lab_sessions, many=True).data
     # def to_internal_value(self, data):
     #     print(data)
     #     # Convert 'staff' and 'programs' to lists of integers if they are provided as comma-separated strings
