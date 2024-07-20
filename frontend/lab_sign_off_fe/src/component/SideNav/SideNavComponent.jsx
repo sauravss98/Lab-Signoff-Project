@@ -10,8 +10,12 @@ const SideNavComponent = ({ isOpen, toggleSidebar }) => {
       {userType === "staff" && (
         <StaffSideNav isOpen={isOpen} toggleSidebar={toggleSidebar} />
       )}
-      {userType === "student" && <StudentSideNav />}
-      {userType === "admin" && <AdminSideNav />}
+      {userType === "student" && (
+        <StudentSideNav isOpen={isOpen} toggleSidebar={toggleSidebar} />
+      )}
+      {userType === "admin" && (
+        <AdminSideNav isOpen={isOpen} toggleSidebar={toggleSidebar} />
+      )}
     </>
   );
 };

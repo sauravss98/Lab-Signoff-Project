@@ -20,6 +20,14 @@ const StaffLabPageComponent = React.lazy(() =>
 const StudentPageComponent = React.lazy(() =>
   import("../Staff/StudentPageComponent")
 );
+const StudentMainPage = React.lazy(() =>
+  import("../../pages/StudentMainPage/StudentMainPage")
+);
+const StudentHomePage = React.lazy(() => import("../Student/StudentHomePage"));
+const AdminMainPage = React.lazy(() =>
+  import("../../pages/AdminMainPage/AdminMainPage")
+);
+const AdminHomePage = React.lazy(() => import("../AdminPages/AdminHomePage"));
 
 const router = createBrowserRouter([
   {
@@ -59,6 +67,26 @@ const router = createBrowserRouter([
           {
             path: "students",
             element: <StudentPageComponent />,
+          },
+        ],
+      },
+      {
+        path: "student",
+        element: <StudentMainPage />,
+        children: [
+          {
+            index: true,
+            element: <StudentHomePage />,
+          },
+        ],
+      },
+      {
+        path: "admin",
+        element: <AdminMainPage />,
+        children: [
+          {
+            index: true,
+            element: <AdminHomePage />,
           },
         ],
       },
