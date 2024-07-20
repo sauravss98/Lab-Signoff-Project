@@ -2,12 +2,12 @@ import Row from "react-bootstrap/Row";
 import classes from "./Home.module.css";
 import { useEffect, useState, useRef } from "react";
 import { tokenLoader } from "../../utils/token";
-import StaffHomePage from "../../pages/StaffHomePage/StaffHomePage";
-import StudentHomePage from "../../pages/StudentHomePage/StudentHomePage";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/Axios";
-import AdminHomePage from "../../pages/AdminHomePage/AdminHomePage";
 import SideNavComponent from "../SideNav/SideNavComponent";
+import StudentMainPage from "../../pages/StudentMainPage/StudentMainPage";
+import StaffMainPage from "../../pages/StaffMainPage/StaffMainPage";
+import AdminMainPage from "../../pages/AdminMainPage/AdminMainPage";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -73,9 +73,9 @@ const Home = () => {
         }`}
       >
         <Row>
-          {userType === "student" && <StudentHomePage />}
-          {userType === "staff" && <StaffHomePage />}
-          {userType === "admin" && <AdminHomePage />}
+          {userType === "student" && <StudentMainPage />}
+          {userType === "staff" && <StaffMainPage />}
+          {userType === "admin" && <AdminMainPage />}
         </Row>
       </div>
     </>
