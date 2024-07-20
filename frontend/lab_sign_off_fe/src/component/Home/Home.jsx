@@ -5,6 +5,7 @@ import axiosInstance from "../../utils/Axios";
 
 const Home = () => {
   const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
   const [userType, setUserType] = useState("");
   const userTypeRef = useRef("");
 
