@@ -1,30 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
-import IconButton from "@mui/material/IconButton";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
 import { Bounce, toast } from "react-toastify";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Badge from "react-bootstrap/Badge";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Button from "react-bootstrap/Button";
-import CourseCreateComponent from "./CourseCreateComponent";
+import { Box, IconButton, Menu, MenuItem } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const token = tokenLoader();
 
-const CoursesGridComponent = () => {
+const CoursesLabsGridComponent = () => {
   const [rows, setRows] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
-  const [openCreateModal, setOpenCreateModal] = useState(false);
-  // const [selectedRow, setSelectedRow] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
       let results = [];
-      let nextPageUrl = "/courses/list/";
+      let nextPageUrl = "/courses/courses-with-sessions-list/";
       while (nextPageUrl) {
         const response = await axiosInstance.get(nextPageUrl, {
           headers: {
@@ -72,44 +63,6 @@ const CoursesGridComponent = () => {
     // setSelectedRow(null);
   };
 
-  const renderPrograms = (programs = []) => {
-    return programs.map((program) => (
-      <Badge key={program.id} pill bg="dark" className="me-1">
-        {program.program_name}
-      </Badge>
-    ));
-  };
-
-  const renderStaff = (staff = []) => {
-    return staff.map((staffMember) => (
-      <Badge key={staffMember.id} pill bg="dark" className="me-1">
-        {staffMember.first_name + " " + staffMember.last_name}
-      </Badge>
-    ));
-  };
-
-  const getRowHeight = (params) => {
-    if (!params.row) return 52; // Return default height if row is undefined
-
-    const staffCount = params.row.staff ? params.row.staff.length : 0;
-    const programsCount = params.row.programs ? params.row.programs.length : 0;
-    const baseHeight = 52; // Default row height
-    const extraHeight = 25; // Extra height per additional row of items
-
-    // Calculate the required number of lines
-    const numLines = Math.max(staffCount, programsCount);
-    return baseHeight + (numLines > 1 ? (numLines - 1) * extraHeight : 0);
-  };
-
-  const handleCreateModalClose = () => {
-    setOpenCreateModal(false);
-    fetchData();
-  };
-
-  const handleCreateCoursemClick = () => {
-    setOpenCreateModal(true);
-  };
-
   const columns = [
     {
       field: "actions",
@@ -135,29 +88,20 @@ const CoursesGridComponent = () => {
       editable: false,
     },
     {
-      field: "staff",
-      headerName: "Staff",
+      field: "lab_sessions_count",
+      headerName: "Lab Sessions",
       width: 300,
       editable: false,
-      renderCell: (params) => <Box>{renderStaff(params.row.staff)}</Box>,
-    },
-    {
-      field: "programs",
-      headerName: "Programs",
-      width: 300,
-      editable: false,
-      renderCell: (params) => <Box>{renderPrograms(params.row.programs)}</Box>,
     },
   ];
 
   return (
     <>
-      <Box sx={{ height: 400, width: "100%" }}>
+      <Box sx={{ width: "100%" }}>
         {rows.length > 0 ? (
           <DataGrid
             rows={rows}
             columns={columns}
-            getRowHeight={getRowHeight}
             initialState={{
               pagination: {
                 paginationModel: {
@@ -188,15 +132,8 @@ const CoursesGridComponent = () => {
           </MenuItem>
         </Menu>
       </Box>
-      <CourseCreateComponent
-        open={openCreateModal}
-        handleClose={handleCreateModalClose}
-      />
-      <Button onClick={handleCreateCoursemClick} variant="dark">
-        Create new Course
-      </Button>
     </>
   );
 };
 
-export default CoursesGridComponent;
+export default CoursesLabsGridComponent;

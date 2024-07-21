@@ -1,5 +1,12 @@
+import { Container } from "@mui/material";
+import CoursesLabsGridComponent from "./CoursesLabsGridComponent";
+
 const StaffLabPageComponent = () => {
-  return <div>Staff Lab Page</div>;
+  return (
+    <Container>
+      <CoursesLabsGridComponent />
+    </Container>
+  );
 };
 
 export default StaffLabPageComponent;
