@@ -2,10 +2,17 @@ import { useCallback, useEffect, useState } from "react";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
 import { Bounce, toast } from "react-toastify";
-import { Box, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
+import "./CoursesLabsGridComponent.css";
 
 const token = tokenLoader();
 
@@ -80,6 +87,7 @@ const CoursesLabsGridComponent = () => {
       renderCell: (params) => (
         <IconButton
           size="small"
+          className="iconButton"
           onClick={(e) => {
             e.stopPropagation();
             handleMenuOpen(e, params.row);
@@ -99,45 +107,46 @@ const CoursesLabsGridComponent = () => {
     {
       field: "lab_sessions_count",
       headerName: "Lab Sessions",
-      width: 300,
+      width: 150,
       editable: false,
     },
   ];
 
   return (
-    <>
-      <Box sx={{ width: "100%" }}>
-        {rows.length > 0 ? (
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 10,
-                },
+    <Box className="container">
+      {rows.length > 0 ? (
+        <DataGrid
+          className="dataGrid"
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 10,
               },
-            }}
-            pageSizeOptions={[10]}
-            disableRowSelectionOnClick
-          />
-        ) : (
-          <p>Loading...</p>
-        )}
-        <Menu
-          anchorEl={menuAnchor}
-          open={Boolean(menuAnchor)}
-          onClose={handleMenuClose}
+            },
+          }}
+          pageSizeOptions={[10]}
+          disableRowSelectionOnClick
+        />
+      ) : (
+        <Box className="loadingContainer">
+          <CircularProgress />
+        </Box>
+      )}
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+        <MenuItem
+        // Add your delete function here
         >
-          <MenuItem onClick={handleEditClick}>Edit</MenuItem>
-          <MenuItem
-          // Add your delete function here
-          >
-            Delete
-          </MenuItem>
-        </Menu>
-      </Box>
-    </>
+          Delete
+        </MenuItem>
+      </Menu>
+    </Box>
   );
 };
 
