@@ -1,4 +1,12 @@
-import { Grid } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+  Grid,
+  Typography,
+} from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../utils/Axios";
@@ -49,22 +57,57 @@ const CoursesLabsDetailPage = () => {
   console.log(courseDetails);
 
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={12}>
-        <h1>Course Details for ID: {selectedRowId}</h1>
-      </Grid>
-      <Grid item xs={12}>
-        {courseDetails.id && <p>Course Description: {courseDetails.id}</p>}
-      </Grid>
-      <Grid item xs={12}>
-        {courseDetails.course_name && (
-          <p>Course Name: {courseDetails.course_name}</p>
-        )}
-      </Grid>
-      <Grid item xs={12}>
-        {/* Add more course details here */}
-      </Grid>
-    </Grid>
+    <Box sx={{ padding: 1 }}>
+      <Card variant="outlined">
+        <CardContent sx={{ padding: 1 }}>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <Typography variant="subtitle2">Course ID:</Typography>
+              <Typography variant="body2">
+                {courseDetails.id || "Loading..."}
+              </Typography>
+            </Grid>
+            <Divider variant="middle" sx={{ width: "100%", marginY: 0.5 }} />
+            <Grid item xs={12}>
+              <Typography variant="subtitle2">Course Name:</Typography>
+              <Typography variant="body2">
+                {courseDetails.course_name || "Loading..."}
+              </Typography>
+            </Grid>
+            <Divider variant="middle" sx={{ width: "100%", marginY: 0.5 }} />
+            <Grid item xs={12}>
+              <Typography variant="subtitle2">Staff:</Typography>
+              {courseDetails.staff ? (
+                courseDetails.staff.map((staffMember) => (
+                  <Chip
+                    key={staffMember.id}
+                    label={`${staffMember.first_name} ${staffMember.last_name}`}
+                    sx={{ marginRight: 0.5, marginBottom: 0.5 }}
+                  />
+                ))
+              ) : (
+                <Typography variant="body2">Loading...</Typography>
+              )}
+            </Grid>
+            <Divider variant="middle" sx={{ width: "100%", marginY: 0.5 }} />
+            <Grid item xs={12}>
+              <Typography variant="subtitle2">Programs:</Typography>
+              {courseDetails.programs ? (
+                courseDetails.programs.map((program) => (
+                  <Chip
+                    key={program.id}
+                    label={program.program_name}
+                    sx={{ marginRight: 0.5, marginBottom: 0.5 }}
+                  />
+                ))
+              ) : (
+                <Typography variant="body2">Loading...</Typography>
+              )}
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
