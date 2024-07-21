@@ -74,23 +74,10 @@ class CoursesWithLabSessionsSerializer(serializers.ModelSerializer):
         _type_: _description_
     """
     lab_sessions_count = serializers.SerializerMethodField()
-    lab_sessions = serializers.SerializerMethodField()
 
     class Meta:
         model = Courses
-        fields = ['id', 'course_name', 'lab_sessions_count', 'lab_sessions']
+        fields = ['id', 'course_name', 'lab_sessions_count']
 
     def get_lab_sessions_count(self, obj):
         return obj.lab_sessions.count()
-
-    def get_lab_sessions(self, obj):
-        lab_sessions = obj.lab_sessions.all()
-        return LabSessionDetailSerializer(lab_sessions, many=True).data
-    # def to_internal_value(self, data):
-    #     print(data)
-    #     # Convert 'staff' and 'programs' to lists of integers if they are provided as comma-separated strings
-    #     if isinstance(data.get('staff'), str):
-    #         data['staff'] = list(map(int, data['staff'].split(',')))
-    #     if isinstance(data.get('programs'), str):
-    #         data['programs'] = list(map(int, data['programs'].split(',')))
-    #     return super().to_internal_value(data)
