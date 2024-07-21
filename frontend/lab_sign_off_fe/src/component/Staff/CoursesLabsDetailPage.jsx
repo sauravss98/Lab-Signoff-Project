@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "../../utils/Axios";
 import { tokenLoader } from "../../utils/token";
 import { Bounce, toast } from "react-toastify";
+import CoursesLabsGrid from "./CoursesLabsGrid";
 
 const token = tokenLoader();
 
@@ -107,6 +108,7 @@ const CoursesLabsDetailPage = () => {
           </Grid>
         </CardContent>
       </Card>
+      <CoursesLabsGrid course_id={selectedRowId} />
     </Box>
   );
 };
