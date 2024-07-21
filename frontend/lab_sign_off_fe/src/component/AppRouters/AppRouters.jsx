@@ -28,6 +28,9 @@ const AdminMainPage = React.lazy(() =>
   import("../../pages/AdminMainPage/AdminMainPage")
 );
 const AdminHomePage = React.lazy(() => import("../AdminPages/AdminHomePage"));
+const CoursesLabsDetailPage = React.lazy(() =>
+  import("../Staff/CoursesLabsDetailPage")
+);
 
 const router = createBrowserRouter([
   {
@@ -63,6 +66,10 @@ const router = createBrowserRouter([
           {
             path: "labs",
             element: <StaffLabPageComponent />,
+          },
+          {
+            path: "course/:selectedRowId/details",
+            element: <CoursesLabsDetailPage />,
           },
           {
             path: "students",

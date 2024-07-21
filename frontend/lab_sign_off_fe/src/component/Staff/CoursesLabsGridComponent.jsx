@@ -5,12 +5,16 @@ import { Bounce, toast } from "react-toastify";
 import { Box, IconButton, Menu, MenuItem } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useNavigate } from "react-router-dom";
 
 const token = tokenLoader();
 
 const CoursesLabsGridComponent = () => {
   const [rows, setRows] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     try {
@@ -53,14 +57,19 @@ const CoursesLabsGridComponent = () => {
     fetchData();
   }, [fetchData]);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event, row) => {
     setMenuAnchor(event.currentTarget);
-    // setSelectedRow(row);
+    setSelectedRow(row);
   };
 
   const handleMenuClose = () => {
     setMenuAnchor(null);
-    // setSelectedRow(null);
+    setSelectedRow(null);
+  };
+
+  const handleEditClick = () => {
+    handleMenuClose();
+    navigate(`/staff/course/${selectedRow.id}/details`);
   };
 
   const columns = [
@@ -120,11 +129,7 @@ const CoursesLabsGridComponent = () => {
           open={Boolean(menuAnchor)}
           onClose={handleMenuClose}
         >
-          <MenuItem
-          // Add your edit function here
-          >
-            Edit
-          </MenuItem>
+          <MenuItem onClick={handleEditClick}>Edit</MenuItem>
           <MenuItem
           // Add your delete function here
           >
