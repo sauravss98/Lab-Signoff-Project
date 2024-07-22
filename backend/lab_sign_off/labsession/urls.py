@@ -24,6 +24,9 @@ urlpatterns = [
     path('enrollments/<int:pk>/', StudentEnrollmentRetrieveAPIView.as_view(), name='student-enrollment-detail'),
     path('enrollments/<int:pk>/update/', StudentEnrollmentUpdateAPIView.as_view(), name='student-enrollment-update'),
     path('enrollments/<int:pk>/delete/', StudentEnrollmentDestroyAPIView.as_view(), name='student-enrollment-delete'),
+    # Student list with enrollments
+    path('students-with-courses/', StudentWithCoursesListAPIView.as_view(), name='students-with-courses-list'),
+    path('student-enrollment/<int:pk>/', StudentWithCoursesDetailAPIView.as_view(), name='students-enrollment-detail'),
 
     # StudentLabSession URLs
     path('courses/<int:course_id>/student-lab-sessions/', StudentLabSessionListAPIView.as_view(), name='student-lab-session-list'),
@@ -31,8 +34,4 @@ urlpatterns = [
 
     # StudentProgress URL
     path('courses/<int:course_id>/progress/', StudentProgressRetrieveAPIView.as_view(), name='student-progress'),
-    
-    # Student list with enrollments
-    path('students-with-courses/', StudentWithCoursesListAPIView.as_view(), name='students-with-courses-list'),
-    path('student-enrollment/<int:pk>/', StudentWithCoursesDetailAPIView.as_view(), name='students-enrollment-detail'),
 ]
