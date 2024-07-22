@@ -6,7 +6,7 @@ from .apis import (
     StudentEnrollmentRetrieveAPIView, StudentEnrollmentUpdateAPIView,
     StudentEnrollmentDestroyAPIView,
     StudentLabSessionListAPIView, StudentLabSessionUpdateAPIView,
-    StudentProgressRetrieveAPIView
+    StudentProgressRetrieveAPIView,StudentWithCoursesListAPIView
 )
 
 urlpatterns = [
@@ -30,4 +30,7 @@ urlpatterns = [
 
     # StudentProgress URL
     path('courses/<int:course_id>/progress/', StudentProgressRetrieveAPIView.as_view(), name='student-progress'),
+    
+    # Student list with enrollments
+    path('students-with-courses/', StudentWithCoursesListAPIView.as_view(), name='students-with-courses-list'),
 ]

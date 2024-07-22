@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import LabSession, StudentEnrollment, StudentLabSession
+from user.models import User
+from course.models import Courses
 
 class LabSessionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -51,3 +53,22 @@ class StudentProgressSerializer(serializers.ModelSerializer):
             progress_percentage = (completed_sessions / total_sessions) * 100
             return f"{progress_percentage:.1f}%"
         return "0%"
+
+
+#Serializer for student list with enrollement serializer
+class StudentCourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Courses
+        fields = ['id', 'course_name']
+
+class StudentWithCoursesSerializer(serializers.ModelSerializer):
+    enrolled_courses = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'enrolled_courses']
+
+    def get_enrolled_courses(self, obj):
+        enrollments = StudentEnrollment.objects.filter(student=obj)
+        courses = Courses.objects.filter(id__in=enrollments.values_list('course', flat=True))
+        return StudentCourseSerializer(courses, many=True).data

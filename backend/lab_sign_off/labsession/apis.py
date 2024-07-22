@@ -3,11 +3,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
+from user.models import User
 from course.models import Courses
 from .models import LabSession, StudentEnrollment, StudentLabSession
 from .serializers import (
     LabSessionSerializer, StudentEnrollmentSerializer, 
-    StudentLabSessionSerializer, StudentProgressSerializer
+    StudentLabSessionSerializer, StudentProgressSerializer,
+    StudentWithCoursesSerializer
 )
 from user.permissions import IsAdminOrStaffUser
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -144,3 +146,13 @@ class StudentProgressRetrieveAPIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return get_object_or_404(StudentEnrollment, student=self.request.user, course_id=self.kwargs['course_id'])
+
+
+#Api for for student list with enrollement serializer
+class StudentWithCoursesListAPIView(generics.ListAPIView):
+    serializer_class = StudentWithCoursesSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get_queryset(self):
+        return User.objects.filter(user_type='student')
