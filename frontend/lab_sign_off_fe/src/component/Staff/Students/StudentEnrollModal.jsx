@@ -3,6 +3,7 @@ import { Modal, Form, Button } from "react-bootstrap";
 import axiosInstance from "../../../utils/Axios";
 import { toast, Bounce } from "react-toastify";
 import { tokenLoader } from "../../../utils/token";
+import PropTypes from "prop-types";
 
 const token = tokenLoader();
 
@@ -121,6 +122,17 @@ const StudentEnrollModal = ({ show, handleClose, studentId }) => {
       </Modal.Footer>
     </Modal>
   );
+};
+
+// StudentEnrollModal.propTypes = {
+//   studentId: PropTypes.number.isRequired,
+//   show: PropTypes.boolean.isRequired,
+//   handleClose: PropTypes.func.isRequired,
+// };
+StudentEnrollModal.propTypes = {
+  studentId: PropTypes.number.isRequired,
+  show: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };
 
 export default StudentEnrollModal;
