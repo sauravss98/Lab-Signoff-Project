@@ -11,6 +11,7 @@ from .serializers import (
     StudentLabSessionSerializer, StudentProgressSerializer,
     StudentWithCoursesSerializer
 )
+from course.serializers import CoursesSerializer
 from user.permissions import IsAdminOrStaffUser
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 
@@ -165,3 +166,25 @@ class StudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return User.objects.filter(user_type='student')
+    
+
+class AvailableCoursesListAPIView(generics.ListAPIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = CoursesSerializer
+
+    def get(self, request, student_id, *args, **kwargs):
+        try:
+            student = User.objects.get(id=student_id)
+        except User.DoesNotExist:
+            return Response({"error": "Student not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Get the courses the student is already enrolled in
+        enrolled_courses = StudentEnrollment.objects.filter(student=student).values_list('course_id', flat=True)
+
+        # Exclude the enrolled courses from the available courses
+        queryset = Courses.objects.exclude(id__in=enrolled_courses).order_by("id")
+        
+        # Serialize the queryset
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
