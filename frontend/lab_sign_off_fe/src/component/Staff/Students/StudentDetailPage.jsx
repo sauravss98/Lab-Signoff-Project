@@ -18,7 +18,7 @@ const StudentDetailPage = () => {
         aria-label="secondary tabs example"
       >
         <Tab value="enroll" label="Enroll Student" />
-        <Tab value="mark" label="Student Lab Status" />
+        <Tab value="mark" label="Student Lab Progress" />
       </Tabs>
       {tabItem === "enroll" && <StudentEnrollmentDetailTab />}
       {tabItem === "mark" && <StudentLabProgressComponent />}
