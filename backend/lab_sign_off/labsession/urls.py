@@ -7,7 +7,8 @@ from .apis import (
     StudentEnrollmentDestroyAPIView,
     StudentLabSessionListAPIView, StudentLabSessionUpdateAPIView,
     StudentProgressRetrieveAPIView,StudentWithCoursesListAPIView,
-    StudentWithCoursesDetailAPIView,AvailableCoursesListAPIView
+    StudentWithCoursesDetailAPIView,AvailableCoursesListAPIView,
+    StudentWithCoursesAndLabSessionsAPIView
 )
 
 urlpatterns = [
@@ -30,6 +31,7 @@ urlpatterns = [
     path('dropdown/courses/available/<int:student_id>/', AvailableCoursesListAPIView.as_view(), name='available-courses-list'),
 
     # StudentLabSession URLs
+    path('student/<int:pk>/lab-session-details/', StudentWithCoursesAndLabSessionsAPIView.as_view(), name='student-with-courses-and-lab-sessions'),
     path('courses/<int:course_id>/student-lab-sessions/', StudentLabSessionListAPIView.as_view(), name='student-lab-session-list'),
     path('student-lab-sessions/<int:pk>/update/', StudentLabSessionUpdateAPIView.as_view(), name='student-lab-session-update'),
 

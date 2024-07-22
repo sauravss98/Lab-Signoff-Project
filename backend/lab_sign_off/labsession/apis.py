@@ -9,7 +9,7 @@ from .models import LabSession, StudentEnrollment, StudentLabSession
 from .serializers import (
     LabSessionSerializer, StudentEnrollmentSerializer, 
     StudentLabSessionSerializer, StudentProgressSerializer,
-    StudentWithCoursesSerializer
+    StudentWithCoursesSerializer,StudentWithCoursesAndLabSessionsSerializer
 )
 from course.serializers import CoursesSerializer
 from user.permissions import IsAdminOrStaffUser
@@ -188,3 +188,11 @@ class AvailableCoursesListAPIView(generics.ListAPIView):
         # Serialize the queryset
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class StudentWithCoursesAndLabSessionsAPIView(generics.RetrieveAPIView):
+    serializer_class = StudentWithCoursesAndLabSessionsSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get_object(self):
+        return get_object_or_404(User, pk=self.kwargs['pk'], user_type='student')

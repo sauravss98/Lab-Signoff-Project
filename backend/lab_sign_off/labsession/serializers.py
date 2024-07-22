@@ -72,3 +72,45 @@ class StudentWithCoursesSerializer(serializers.ModelSerializer):
         enrollments = StudentEnrollment.objects.filter(student=obj)
         courses = Courses.objects.filter(id__in=enrollments.values_list('course', flat=True))
         return StudentCourseSerializer(courses, many=True).data
+    
+class CourseLabSessionsSerializer(serializers.ModelSerializer):
+    lab_sessions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Courses
+        fields = ['id', 'course_name', 'lab_sessions']
+
+    def get_lab_sessions(self, obj):
+        # Filter lab sessions related to the current course
+        lab_sessions = LabSession.objects.filter(course=obj)
+        # Get lab sessions for the specific student
+        student_lab_sessions = StudentLabSession.objects.filter(
+            student=self.context['student'],
+            lab_session__in=lab_sessions
+        )
+        # Serialize the lab sessions
+        lab_sessions_data = LabSessionSerializer(lab_sessions, many=True).data
+
+        # Add completed status to each lab session
+        for lab_session in lab_sessions_data:
+            lab_session_id = lab_session['id']
+            # Check if the lab session is completed for the student
+            lab_session['completed'] = any(
+                sls.completed for sls in student_lab_sessions if sls.lab_session.id == lab_session_id
+            )
+
+        return lab_sessions_data
+
+class StudentWithCoursesAndLabSessionsSerializer(serializers.ModelSerializer):
+    enrolled_courses = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'enrolled_courses']
+
+    def get_enrolled_courses(self, obj):
+        enrollments = StudentEnrollment.objects.filter(student=obj)
+        courses = Courses.objects.filter(id__in=enrollments.values_list('course', flat=True))
+        # Use context to pass the student object to the course serializer
+        serializer = CourseLabSessionsSerializer(courses, many=True, context={'student': obj})
+        return serializer.data
