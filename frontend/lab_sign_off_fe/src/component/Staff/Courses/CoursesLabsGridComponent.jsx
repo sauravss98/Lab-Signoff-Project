@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import axiosInstance from "../../utils/Axios";
-import { tokenLoader } from "../../utils/token";
+import axiosInstance from "../../../utils/Axios";
+import { tokenLoader } from "../../../utils/token";
 import { Bounce, toast } from "react-toastify";
 import {
   Box,

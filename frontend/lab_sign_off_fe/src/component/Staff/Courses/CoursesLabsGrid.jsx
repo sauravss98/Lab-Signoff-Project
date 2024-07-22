@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useCallback, useEffect, useState } from "react";
-import axiosInstance from "../../utils/Axios";
+import axiosInstance from "../../../utils/Axios";
 import { Bounce, toast } from "react-toastify";
-import { tokenLoader } from "../../utils/token";
+import { tokenLoader } from "../../../utils/token";
 import PropTypes from "prop-types";
 
 const token = tokenLoader();

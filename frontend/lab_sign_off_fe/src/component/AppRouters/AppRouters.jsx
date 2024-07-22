@@ -29,7 +29,7 @@ const AdminMainPage = React.lazy(() =>
 );
 const AdminHomePage = React.lazy(() => import("../AdminPages/AdminHomePage"));
 const CoursesLabsDetailPage = React.lazy(() =>
-  import("../Staff/CoursesLabsDetailPage")
+  import("../Staff/Courses/CoursesLabsDetailPage")
 );
 
 const router = createBrowserRouter([

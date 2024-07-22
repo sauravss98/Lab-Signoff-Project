@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axiosInstance from "../../utils/Axios";
-import { tokenLoader } from "../../utils/token";
+import axiosInstance from "../../../utils/Axios";
+import { tokenLoader } from "../../../utils/token";
 import { Bounce, toast } from "react-toastify";
 import CoursesLabsGrid from "./CoursesLabsGrid";
 

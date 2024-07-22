@@ -1,5 +1,5 @@
 import { Container } from "@mui/material";
-import CoursesLabsGridComponent from "./CoursesLabsGridComponent";
+import CoursesLabsGridComponent from "./Courses/CoursesLabsGridComponent";
 
 const StaffLabPageComponent = () => {
   return (
