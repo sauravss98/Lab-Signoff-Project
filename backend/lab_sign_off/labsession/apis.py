@@ -156,3 +156,12 @@ class StudentWithCoursesListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return User.objects.filter(user_type='student')
+    
+
+class StudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = StudentWithCoursesSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get_queryset(self):
+        return User.objects.filter(user_type='student')
