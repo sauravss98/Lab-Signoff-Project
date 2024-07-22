@@ -155,7 +155,7 @@ class StudentWithCoursesListAPIView(generics.ListAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_queryset(self):
-        return User.objects.filter(user_type='student')
+        return User.objects.filter(user_type='student').order_by("id")
     
 
 class StudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
