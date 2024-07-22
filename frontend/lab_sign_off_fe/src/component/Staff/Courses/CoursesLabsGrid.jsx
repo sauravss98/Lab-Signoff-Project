@@ -14,6 +14,7 @@ import axiosInstance from "../../../utils/Axios";
 import { Bounce, toast } from "react-toastify";
 import { tokenLoader } from "../../../utils/token";
 import PropTypes from "prop-types";
+import LabSessionCreateModal from "./LabSessionCreateModal";
 
 const token = tokenLoader();
 
@@ -21,6 +22,7 @@ const CoursesLabsGrid = ({ course_id }) => {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [openCreateModal, setOpenCreateModal] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -73,6 +75,14 @@ const CoursesLabsGrid = ({ course_id }) => {
     setMenuAnchor(null);
   };
 
+  const handleCreateModalClose = () => {
+    setOpenCreateModal(false);
+    fetchData();
+  };
+  const handleCreateSessionClick = () => {
+    setOpenCreateModal(true);
+  };
+
   const columns = [
     {
       field: "actions",
@@ -100,77 +110,86 @@ const CoursesLabsGrid = ({ course_id }) => {
   ];
 
   return (
-    <Box sx={{ padding: 2 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 2,
-        }}
-      >
-        <Typography variant="h6" component="div">
-          Lab Sessions
-        </Typography>
-        <Button variant="dark">Create New Lab Session</Button>
-      </Box>
-      {loading ? (
+    <>
+      <Box sx={{ padding: 2 }}>
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "space-between",
             alignItems: "center",
-            height: 300,
+            marginBottom: 2,
           }}
         >
-          <CircularProgress />
+          <Typography variant="h6" component="div">
+            Lab Sessions
+          </Typography>
+          <Button onClick={handleCreateSessionClick} variant="dark">
+            Create New Lab Session
+          </Button>
         </Box>
-      ) : data.length > 0 ? (
-        <Box
-          sx={{
-            height: 400,
-            width: "100%",
-            "& .MuiDataGrid-root": {
-              border: "none",
-            },
-            "& .MuiDataGrid-cell": {
-              borderBottom: "1px solid #e0e0e0",
-            },
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "#f5f5f5",
-              borderBottom: "1px solid #e0e0e0",
-            },
-            "& .MuiDataGrid-footerContainer": {
-              borderTop: "1px solid #e0e0e0",
-            },
-          }}
-        >
-          <DataGrid
-            rows={data}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 5,
-                },
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: 300,
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : data.length > 0 ? (
+          <Box
+            sx={{
+              height: 400,
+              width: "100%",
+              "& .MuiDataGrid-root": {
+                border: "none",
+              },
+              "& .MuiDataGrid-cell": {
+                borderBottom: "1px solid #e0e0e0",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "#f5f5f5",
+                borderBottom: "1px solid #e0e0e0",
+              },
+              "& .MuiDataGrid-footerContainer": {
+                borderTop: "1px solid #e0e0e0",
               },
             }}
-            pageSizeOptions={[5]}
-            disableRowSelectionOnClick
-          />
-        </Box>
-      ) : (
-        <Typography variant="body1">No lab sessions found.</Typography>
-      )}
-      <Menu
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem onClick={handleMenuClose}>Edit</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
-      </Menu>
-    </Box>
+          >
+            <DataGrid
+              rows={data}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: {
+                    pageSize: 5,
+                  },
+                },
+              }}
+              pageSizeOptions={[5]}
+              disableRowSelectionOnClick
+            />
+          </Box>
+        ) : (
+          <Typography variant="body1">No lab sessions found.</Typography>
+        )}
+        <Menu
+          anchorEl={menuAnchor}
+          open={Boolean(menuAnchor)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleMenuClose}>Edit</MenuItem>
+          <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
+        </Menu>
+      </Box>
+      <LabSessionCreateModal
+        open={openCreateModal}
+        handleClose={handleCreateModalClose}
+        course_id={course_id}
+      />
+    </>
   );
 };
 
