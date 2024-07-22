@@ -1,6 +1,12 @@
+import { Container } from "@mui/material";
+import StudentsListMainGridComponent from "./Students/StudentsListMainGridComponent";
 
 const StudentPageComponent = () => {
-  return <div>Student list</div>;
+  return (
+    <Container>
+      <StudentsListMainGridComponent />
+    </Container>
+  );
 };
 
 export default StudentPageComponent;
