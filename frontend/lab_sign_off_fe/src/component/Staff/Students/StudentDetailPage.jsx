@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { tokenLoader } from "../../../utils/token";
 import axiosInstance from "../../../utils/Axios";
@@ -14,50 +14,59 @@ import {
   ListItemText,
   CircularProgress,
 } from "@mui/material";
-import Button from "react-bootstrap/esm/Button";
+import StudentEnrollModal from "./StudentEnrollModal";
+import { Button } from "react-bootstrap";
 
 const token = tokenLoader();
 
 const StudentDetailPage = () => {
   const [data, setData] = useState(null);
   const { selectedRowId } = useParams();
+  const [showModal, setShowModal] = useState(false);
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `lab-session/student-enrollment/${selectedRowId}/`,
+        {
+          headers: {
+            Authorization: "Token " + token,
+          },
+        }
+      );
+      setData(response.data);
+    } catch (error) {
+      let errorMessage = "Error loading data";
+      const errorData = error.response;
+      if (
+        errorData?.data.detail ===
+        "You do not have permission to perform this action."
+      ) {
+        errorMessage = "You do not have permission to perform this action.";
+      }
+      toast.error(errorMessage, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `lab-session/student-enrollment/${selectedRowId}/`,
-          {
-            headers: {
-              Authorization: "Token " + token,
-            },
-          }
-        );
-        setData(response.data);
-      } catch (error) {
-        let errorMessage = "Error loading data";
-        const errorData = error.response;
-        if (
-          errorData?.data.detail ===
-          "You do not have permission to perform this action."
-        ) {
-          errorMessage = "You do not have permission to perform this action.";
-        }
-        toast.error(errorMessage, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-      }
-    };
     fetchData();
   }, [selectedRowId]);
+
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => {
+    setShowModal(false);
+    fetchData();
+  };
 
   if (!data) {
     return (
@@ -73,7 +82,7 @@ const StudentDetailPage = () => {
       <Typography variant="h4" gutterBottom>
         Student Details
       </Typography>
-      <Card>
+      <Card style={{ marginBottom: "20px" }}>
         <CardContent>
           <Typography variant="h5" component="div">
             {data.first_name} {data.last_name}
@@ -93,7 +102,14 @@ const StudentDetailPage = () => {
           </List>
         </CardContent>
       </Card>
-      <Button variant="dark">Enroll</Button>
+      <Button variant="dark" onClick={handleShowModal}>
+        Enroll Student
+      </Button>
+      <StudentEnrollModal
+        show={showModal}
+        handleClose={handleCloseModal}
+        studentId={selectedRowId}
+      />
     </Container>
   );
 };

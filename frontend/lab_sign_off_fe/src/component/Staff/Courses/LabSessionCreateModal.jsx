@@ -67,7 +67,6 @@ const LabSessionCreateModal = ({ open, handleClose, course_id }) => {
           setFormData({ program_name: "", program_lenght: "" });
         }
       } catch (error) {
-        console.log(error);
         toast.error(`Creating new session Failed: ${error}`, {
           position: "top-right",
           autoClose: 5000,
