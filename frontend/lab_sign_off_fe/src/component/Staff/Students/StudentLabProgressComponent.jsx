@@ -9,7 +9,11 @@ import {
   Container,
   Box,
   Chip,
+  Card,
+  CardContent,
+  Divider,
 } from "@mui/material";
+import { Button } from "react-bootstrap";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axiosInstance from "../../../utils/Axios";
 import { tokenLoader } from "../../../utils/token";
@@ -64,6 +68,61 @@ const StudentLabProgressComponent = () => {
     fetchData();
   }, [selectedRowId]);
 
+  const handleMarkAsComplete = async (courseId, sessionId) => {
+    try {
+      const data = { completed: true };
+      await axiosInstance.patch(
+        `lab-session/student-lab-sessions/${selectedRowId}/${sessionId}/update/`,
+        data,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
+
+      // Update the state to mark the session as completed
+      setData((prevData) => {
+        const updatedCourses = prevData.enrolled_courses.map((course) => {
+          if (course.id === courseId) {
+            const updatedSessions = course.lab_sessions.map((session) => {
+              if (session.id === sessionId) {
+                return { ...session, completed: true };
+              }
+              return session;
+            });
+            return { ...course, lab_sessions: updatedSessions };
+          }
+          return course;
+        });
+        return { ...prevData, enrolled_courses: updatedCourses };
+      });
+      toast.success("Lab session marked as complete", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } catch (error) {
+      toast.error("Error marking lab session as complete", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  };
+
   if (loading) {
     return (
       <Container>
@@ -90,15 +149,12 @@ const StudentLabProgressComponent = () => {
     <Container>
       <Box mt={4}>
         {data.enrolled_courses.map((course) => (
-          <Accordion key={course.id} sx={{ mb: 2 }}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls={`panel-${course.id}-content`}
-              id={`panel-${course.id}-header`}
-            >
-              <Typography variant="h6">{course.course_name}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
+          <Card key={course.id} sx={{ mb: 3 }}>
+            <CardContent>
+              <Typography variant="h5" gutterBottom>
+                {course.course_name}
+              </Typography>
+              <Divider />
               {course.lab_sessions && course.lab_sessions.length > 0 ? (
                 course.lab_sessions.map((session) => (
                   <Accordion key={session.id} sx={{ mb: 1 }}>
@@ -110,7 +166,7 @@ const StudentLabProgressComponent = () => {
                       <Typography>{session.name}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Typography>
+                      <Box display="flex" alignItems="center">
                         <Chip
                           label={
                             session.completed ? "Completed" : "Not Completed"
@@ -118,15 +174,25 @@ const StudentLabProgressComponent = () => {
                           color={session.completed ? "success" : "warning"}
                           variant="outlined"
                         />
-                      </Typography>
+                        {!session.completed && (
+                          <Button
+                            variant="dark"
+                            onClick={() =>
+                              handleMarkAsComplete(course.id, session.id)
+                            }
+                          >
+                            Mark as Complete
+                          </Button>
+                        )}
+                      </Box>
                     </AccordionDetails>
                   </Accordion>
                 ))
               ) : (
                 <Typography>No lab sessions available</Typography>
               )}
-            </AccordionDetails>
-          </Accordion>
+            </CardContent>
+          </Card>
         ))}
       </Box>
     </Container>
