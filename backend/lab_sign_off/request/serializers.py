@@ -1,18 +1,29 @@
 from rest_framework import serializers
+from django.db.models import QuerySet
 from .models import LabRequest, RequestMessage
-from user.serializers import UserDetailsSerializer as UserSerializer
 from labsession.serializers import StudentLabSessionSerializer
+from user.models import User
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'first_name', 'last_name', 'user_type']
+
+    def to_representation(self, instance):
+        if isinstance(instance, QuerySet):
+            return [super().to_representation(item) for item in instance]
+        return super().to_representation(instance)
 
 class RequestMessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)
+    sender = UserDetailsSerializer(read_only=True)
 
     class Meta:
         model = RequestMessage
         fields = ['id', 'sender', 'message', 'file', 'created_at']
 
 class LabRequestSerializer(serializers.ModelSerializer):
-    student = UserSerializer(read_only=True)
-    staff = UserSerializer(read_only=True)
+    student = UserDetailsSerializer(read_only=True)
+    staff = UserDetailsSerializer(many=True, read_only=True)
     student_lab_session = StudentLabSessionSerializer(read_only=True)
     messages = RequestMessageSerializer(many=True, read_only=True)
 
