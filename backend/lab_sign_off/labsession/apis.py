@@ -150,9 +150,9 @@ class StudentLabSessionUpdateAPIView(generics.UpdateAPIView):
 
     def get_object(self):
         student_id = self.kwargs['student_id']
-        pk = self.kwargs['pk']
+        lab_session_id = self.kwargs['lab_session_id']
 
-        queryset = StudentLabSession.objects.filter(student_id=student_id, lab_session_id=pk)
+        queryset = StudentLabSession.objects.filter(student_id=student_id, lab_session_id=lab_session_id)
 
         obj = get_object_or_404(queryset)
         self.check_object_permissions(self.request, obj)
