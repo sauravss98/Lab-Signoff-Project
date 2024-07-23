@@ -95,7 +95,7 @@ const CourseDetailPage = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleSendRequest(labSession.lab_session)}
+                  onClick={() => handleSendRequest(labSession.id)}
                 >
                   Send Request
                 </Button>
