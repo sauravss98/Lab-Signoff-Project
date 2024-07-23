@@ -40,6 +40,9 @@ const EnrolledCourseGridComponent = React.lazy(() =>
 const CourseDetailPage = React.lazy(() =>
   import("../Student/Course/CourseDetailPage")
 );
+const RequestLandingPage = React.lazy(() =>
+  import("../Staff/Request/RequestLandingPage")
+);
 
 const router = createBrowserRouter([
   {
@@ -87,6 +90,10 @@ const router = createBrowserRouter([
           {
             path: "student/:selectedRowId/details",
             element: <StudentDetailPage />,
+          },
+          {
+            path: "requests",
+            element: <RequestLandingPage />,
           },
         ],
       },
