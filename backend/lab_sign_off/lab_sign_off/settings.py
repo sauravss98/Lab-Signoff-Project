@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'course',
     'labsession',
     'program',
+    'request'
 ]
 
 AUTH_USER_MODEL = 'user.USER'

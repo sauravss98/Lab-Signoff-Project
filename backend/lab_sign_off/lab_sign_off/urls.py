@@ -23,5 +23,6 @@ urlpatterns = [
     path('api/users/',include('user.urls')),
     path('api/programs/',include('program.urls')),
     path('api/courses/',include('course.urls')),
-    path('api/lab-session/',include('labsession.urls'))
+    path('api/lab-session/',include('labsession.urls')),
+    path('api/requests/', include('request.urls')),
 ]
