@@ -114,3 +114,10 @@ class StudentWithCoursesAndLabSessionsSerializer(serializers.ModelSerializer):
         # Use context to pass the student object to the course serializer
         serializer = CourseLabSessionsSerializer(courses, many=True, context={'student': obj})
         return serializer.data
+
+class StudentLabSessionWithDetailsSerializer(serializers.ModelSerializer):
+    lab_session_name = serializers.CharField(source='lab_session.name', read_only=True)
+
+    class Meta:
+        model = StudentLabSession
+        fields = ['id', 'student', 'lab_session', 'lab_session_name', 'completed']

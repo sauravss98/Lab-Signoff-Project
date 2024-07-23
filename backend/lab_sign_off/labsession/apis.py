@@ -9,7 +9,8 @@ from .models import LabSession, StudentEnrollment, StudentLabSession
 from .serializers import (
     LabSessionSerializer, StudentEnrollmentSerializer, 
     StudentLabSessionSerializer, StudentProgressSerializer,
-    StudentWithCoursesSerializer,StudentWithCoursesAndLabSessionsSerializer
+    StudentWithCoursesSerializer,StudentWithCoursesAndLabSessionsSerializer,
+    StudentLabSessionWithDetailsSerializer
 )
 from course.serializers import CoursesSerializer
 from user.permissions import IsAdminOrStaffUser
@@ -122,6 +123,17 @@ class StudentEnrollmentDestroyAPIView(generics.DestroyAPIView):
 # StudentLabSession views
 class StudentLabSessionListAPIView(generics.ListAPIView):
     serializer_class = StudentLabSessionSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get_queryset(self):
+        return StudentLabSession.objects.filter(
+            student=self.request.user,
+            lab_session__course_id=self.kwargs['course_id']
+        )
+        
+class StudentLabSessionListView(generics.ListAPIView):
+    serializer_class = StudentLabSessionWithDetailsSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
