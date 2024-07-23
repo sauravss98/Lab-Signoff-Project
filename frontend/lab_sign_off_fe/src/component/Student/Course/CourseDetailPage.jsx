@@ -10,6 +10,7 @@ import {
   CardContent,
   Typography,
   Container,
+  Chip,
 } from "@mui/material";
 
 const token = tokenLoader();
@@ -75,17 +76,22 @@ const CourseDetailPage = () => {
             <Typography variant="h6" component="h2">
               {labSession.lab_session_name}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Completed: {labSession.completed ? "Yes" : "No"}
-            </Typography>
             <Box mt={2}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleSendRequest(labSession.id)}
-              >
-                Send Request
-              </Button>
+              <Chip
+                label={labSession.completed ? "Completed" : "Not Completed"}
+                color={labSession.completed ? "success" : "warning"}
+              />
+            </Box>
+            <Box mt={2}>
+              {!labSession.completed && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleSendRequest(labSession.id)}
+                >
+                  Send Request
+                </Button>
+              )}
             </Box>
           </CardContent>
         </Card>
