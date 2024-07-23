@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Bounce, toast } from "react-toastify";
 import { IconButton, Menu, MenuItem, Typography, Box } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useNavigate } from "react-router-dom";
 
 const token = tokenLoader();
 
@@ -14,6 +15,8 @@ const EnrolledCourseGridComponent = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedRow, setSelectedRow] = useState(null);
+
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
@@ -66,10 +69,11 @@ const EnrolledCourseGridComponent = () => {
   };
 
   const handleEdit = () => {
-    toast.info(`Edit ${selectedRow.course_name}`, {
+    toast.info(`Edit ${selectedRow.id}`, {
       position: "top-right",
       autoClose: 3000,
     });
+    navigate(`/student/course/${selectedRow.id}/details`);
     handleMenuClose();
   };
 
