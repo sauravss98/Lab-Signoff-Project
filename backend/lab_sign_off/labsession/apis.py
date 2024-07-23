@@ -167,6 +167,14 @@ class StudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
     def get_queryset(self):
         return User.objects.filter(user_type='student')
     
+class CurrentStudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
+    serializer_class = StudentWithCoursesSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get_object(self):
+        return self.request.user
+    
 
 class AvailableCoursesListAPIView(generics.ListAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
