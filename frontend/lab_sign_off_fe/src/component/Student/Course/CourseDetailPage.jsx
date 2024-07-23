@@ -12,11 +12,14 @@ import {
   Container,
   Chip,
 } from "@mui/material";
+import RequestCreateModal from "../Request/RequestCreateModal";
 
 const token = tokenLoader();
 
 const CourseDetailPage = () => {
   const [data, setData] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
+  const [requestCreateModal, setRequestCreateModal] = useState(false);
   const { course_id } = useParams();
 
   const fetchData = useCallback(async () => {
@@ -26,7 +29,7 @@ const CourseDetailPage = () => {
       while (nextPageUrl) {
         const response = await axiosInstance.get(nextPageUrl, {
           headers: {
-            Authorization: "Token " + token,
+            Authorization: `Token ${token}`,
           },
         });
         results = results.concat(response.data.results);
@@ -60,9 +63,15 @@ const CourseDetailPage = () => {
     fetchData();
   }, [fetchData]);
 
+  const handleCreateModalClose = () => {
+    setRequestCreateModal(false);
+    fetchData(); // Refresh data after closing the modal
+  };
+
   const handleSendRequest = (labSessionId) => {
-    // Implement the send request functionality here
-    console.log("Send request for lab session ID:", labSessionId);
+    console.log("Setting sessionId to:", labSessionId); // Debugging
+    setSessionId(labSessionId);
+    setRequestCreateModal(true);
   };
 
   return (
@@ -87,7 +96,7 @@ const CourseDetailPage = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleSendRequest(labSession.id)}
+                  onClick={() => handleSendRequest(labSession.lab_session)}
                 >
                   Send Request
                 </Button>
@@ -96,6 +105,11 @@ const CourseDetailPage = () => {
           </CardContent>
         </Card>
       ))}
+      <RequestCreateModal
+        open={requestCreateModal}
+        handleClose={handleCreateModalClose}
+        sessionId={sessionId}
+      />
     </Container>
   );
 };
