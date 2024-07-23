@@ -14,7 +14,7 @@ class LabRequest(models.Model):
 
     student_lab_session = models.ForeignKey(StudentLabSession, on_delete=models.CASCADE, related_name='requests')
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lab_requests')
-    staff = models.ForeignKey(User, on_delete=models.CASCADE, related_name='lab_requests_to_review', null=True, blank=True)
+    staff = models.ManyToManyField(User, related_name='lab_requests_to_review')
     text = models.TextField()
     file = models.FileField(upload_to='lab_requests/', null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')

@@ -15,8 +15,10 @@ class CreateLabRequestView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         student_lab_session = serializer.validated_data['student_lab_session']
-        staff = student_lab_session.lab_session.course.staff.first()  # Assign to the first staff of the course
-        serializer.save(student=self.request.user, staff=staff)
+        staff_members = student_lab_session.lab_session.course.staff.all()  # Get all staff members of the course
+
+        lab_request = serializer.save(student=self.request.user)
+        lab_request.staff.set(staff_members)
 
 class ListLabRequestsView(generics.ListAPIView):
     serializer_class = LabRequestSerializer

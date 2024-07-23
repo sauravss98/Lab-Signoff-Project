@@ -5,9 +5,11 @@ from rest_framework.generics import (
     UpdateAPIView,
     RetrieveAPIView
 )
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from .models import Courses
-from .serializers import CoursesSerializer,CoursesCreateSerializer,CoursesWithLabSessionsSerializer
+from .serializers import CoursesSerializer,CoursesCreateSerializer,CoursesWithLabSessionsSerializer,UserSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -150,3 +152,19 @@ class CoursesWithLabSessionsListAPIView(ListAPIView):
 
     def get_queryset(self):
         return Courses.objects.all().order_by("id")
+
+class CourseStaffListAPIView(APIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, course_id):
+        try:
+            course = Courses.objects.get(pk=course_id)
+            staff_members = course.staff.all()
+            serializer = UserSerializer(staff_members, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Courses.DoesNotExist:
+            return Response(
+                {"error": "Course not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
