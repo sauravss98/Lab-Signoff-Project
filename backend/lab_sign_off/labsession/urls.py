@@ -33,7 +33,7 @@ urlpatterns = [
     # StudentLabSession URLs
     path('student/<int:pk>/lab-session-details/', StudentWithCoursesAndLabSessionsAPIView.as_view(), name='student-with-courses-and-lab-sessions'),
     path('courses/<int:course_id>/student-lab-sessions/', StudentLabSessionListAPIView.as_view(), name='student-lab-session-list'),
-    path('student-lab-sessions/<int:pk>/update/', StudentLabSessionUpdateAPIView.as_view(), name='student-lab-session-update'),
+    path('student-lab-sessions/<int:student_id>/<int:pk>/update/', StudentLabSessionUpdateAPIView.as_view(), name='student-lab-session-update'),
 
     # StudentProgress URL
     path('courses/<int:course_id>/progress/', StudentProgressRetrieveAPIView.as_view(), name='student-progress'),

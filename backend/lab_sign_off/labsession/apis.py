@@ -137,7 +137,7 @@ class StudentLabSessionUpdateAPIView(generics.UpdateAPIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_queryset(self):
-        return StudentLabSession.objects.filter(student=self.request.user)
+        return StudentLabSession.objects.filter(student=self.kwargs["student_id"])
 
 # StudentProgress view
 class StudentProgressRetrieveAPIView(generics.RetrieveAPIView):
