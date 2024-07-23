@@ -23,6 +23,7 @@ class CreateLabRequestView(generics.CreateAPIView):
 class ListLabRequestsView(generics.ListAPIView):
     serializer_class = LabRequestSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_queryset(self):
         user = self.request.user
@@ -34,6 +35,7 @@ class ListLabRequestsView(generics.ListAPIView):
 class RetrieveUpdateLabRequestView(generics.RetrieveUpdateAPIView):
     serializer_class = LabRequestSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_queryset(self):
         user = self.request.user
@@ -45,6 +47,7 @@ class RetrieveUpdateLabRequestView(generics.RetrieveUpdateAPIView):
 class CreateRequestMessageView(generics.CreateAPIView):
     serializer_class = CreateRequestMessageSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def perform_create(self, serializer):
         lab_request = get_object_or_404(LabRequest, pk=self.kwargs['request_id'])
@@ -53,6 +56,7 @@ class CreateRequestMessageView(generics.CreateAPIView):
 class ListRequestMessagesView(generics.ListAPIView):
     serializer_class = RequestMessageSerializer
     permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_queryset(self):
         lab_request = get_object_or_404(LabRequest, pk=self.kwargs['request_id'])

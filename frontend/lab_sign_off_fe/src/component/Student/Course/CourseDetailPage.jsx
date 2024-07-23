@@ -69,7 +69,6 @@ const CourseDetailPage = () => {
   };
 
   const handleSendRequest = (labSessionId) => {
-    console.log("Setting sessionId to:", labSessionId); // Debugging
     setSessionId(labSessionId);
     setRequestCreateModal(true);
   };

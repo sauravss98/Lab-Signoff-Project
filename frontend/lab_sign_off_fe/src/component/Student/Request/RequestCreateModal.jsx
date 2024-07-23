@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../../utils/Axios";
 import { tokenLoader } from "../../../utils/token";
+import { Bounce, toast } from "react-toastify";
 
 const token = tokenLoader();
 
@@ -13,9 +14,17 @@ const RequestCreateModal = ({ open, handleClose, sessionId }) => {
   const { course_id } = useParams();
   const [formData, setFormData] = useState({
     text: "",
-    student_lab_session: sessionId,
+    student_lab_session: null,
     staff: [],
   });
+
+  const resetForm = () => {
+    setFormData({
+      text: "",
+      student_lab_session: null,
+      staff: [],
+    });
+  };
 
   const onChangeHandler = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,7 +41,6 @@ const RequestCreateModal = ({ open, handleClose, sessionId }) => {
             },
           }
         );
-        console.log("Staff data:", response.data); // Debugging
         const staffIds = response.data.map((staff) => staff.id);
         setFormData((prevFormData) => ({
           ...prevFormData,
@@ -43,35 +51,71 @@ const RequestCreateModal = ({ open, handleClose, sessionId }) => {
       }
     };
 
-    fetchStaffData();
-  }, [course_id]);
+    if (open) {
+      fetchStaffData();
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        student_lab_session: sessionId,
+        text: "", // Reset text when modal opens
+      }));
+    }
+  }, [course_id, open, sessionId]);
 
   const onCreateClick = async (event) => {
     event.preventDefault();
-    console.log("Form data:", formData); // Debugging
-    // Add your form submission logic here
+    try {
+      const response = await axiosInstance.post(`requests/create/`, formData, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      console.log(response);
+      console.log(response.status);
+      if (response.status === 201) {
+        toast.success("New Program Created Successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+        handleClose();
+        setFormData({ text: "", student_lab_session: sessionId, staff: [] });
+      }
+    } catch (error) {
+      toast.error(`Creating new program Failed: ${error}`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+        transition: Bounce,
+      });
+    }
   };
 
-  useEffect(() => {
-    console.log("Modal sessionId:", sessionId); // Debugging
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      student_lab_session: sessionId,
-    }));
-  }, [sessionId]);
+  const onModalClose = () => {
+    resetForm();
+    handleClose();
+  };
 
   return (
     <Modal
       show={open}
-      onHide={handleClose}
+      onHide={onModalClose}
       centered
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
     >
       <Modal.Header closeButton>
-        <Modal.Title>
-          Create New Request for course: {course_id} session: {sessionId}
-        </Modal.Title>
+        <Modal.Title>Create New Request</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={onCreateClick}>
