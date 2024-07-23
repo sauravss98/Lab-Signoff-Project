@@ -148,8 +148,24 @@ class StudentLabSessionUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
-    def get_queryset(self):
-        return StudentLabSession.objects.filter(student=self.kwargs["student_id"])
+    def get_object(self):
+        student_id = self.kwargs['student_id']
+        pk = self.kwargs['pk']
+
+        queryset = StudentLabSession.objects.filter(student_id=student_id, lab_session_id=pk)
+
+        obj = get_object_or_404(queryset)
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
 
 # StudentProgress view
 class StudentProgressRetrieveAPIView(generics.RetrieveAPIView):
