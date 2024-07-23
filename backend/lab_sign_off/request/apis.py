@@ -54,4 +54,8 @@ class ListRequestMessagesView(generics.ListAPIView):
 
     def get_queryset(self):
         lab_request = get_object_or_404(LabRequest, pk=self.kwargs['request_id'])
-        return RequestMessage.objects.filter(lab_request=lab_request)
+        user = self.request.user
+        if lab_request.student == user or lab_request.staff == user:
+            return RequestMessage.objects.filter(lab_request=lab_request)
+        else:
+            return RequestMessage.objects.none()
