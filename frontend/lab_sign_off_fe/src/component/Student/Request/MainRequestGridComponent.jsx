@@ -18,7 +18,7 @@ import {
 
 const token = tokenLoader();
 
-const StaffRequestGridComponent = () => {
+const MainRequestGridComponent = () => {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -113,6 +113,7 @@ const StaffRequestGridComponent = () => {
     },
     { field: "id", headerName: "ID", width: 90 },
     { field: "text", headerName: "Text", width: 250 },
+    { field: "student", headerName: "Student", width: 250 },
     {
       field: "staff",
       headerName: "Staff",
@@ -189,4 +190,4 @@ const StaffRequestGridComponent = () => {
   );
 };
 
-export default StaffRequestGridComponent;
+export default MainRequestGridComponent;

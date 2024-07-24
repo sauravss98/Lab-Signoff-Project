@@ -43,6 +43,9 @@ const CourseDetailPage = React.lazy(() =>
 const RequestLandingPage = React.lazy(() =>
   import("../Staff/Request/RequestLandingPage")
 );
+const RequestMainPageStudent = React.lazy(() =>
+  import("../Student/Request/RequestMainPageStudents")
+);
 
 const router = createBrowserRouter([
   {
@@ -112,6 +115,10 @@ const router = createBrowserRouter([
           {
             path: `course/:course_id/details`,
             element: <CourseDetailPage />,
+          },
+          {
+            path: `requests`,
+            element: <RequestMainPageStudent />,
           },
         ],
       },
