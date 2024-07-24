@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,BasePermission
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from .models import LabRequest, RequestMessage
 from .serializers import LabRequestSerializer, CreateLabRequestSerializer, RequestMessageSerializer, CreateRequestMessageSerializer
@@ -20,17 +20,30 @@ class CreateLabRequestView(generics.CreateAPIView):
         lab_request = serializer.save(student=self.request.user)
         lab_request.staff.set(staff_members)
 
+class IsStudentOrStaff(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        # Check if the user is the student who created the request or a staff member in the request
+        return obj.student == request.user or request.user in obj.staff.all()
+
 class ListLabRequestsView(generics.ListAPIView):
     serializer_class = LabRequestSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_queryset(self):
         user = self.request.user
         if user.user_type in ['admin', 'staff']:
+            # For admin or staff, return requests where the user is a staff member
             return LabRequest.objects.filter(staff=user)
         else:
+            # For students, return requests created by the user
             return LabRequest.objects.filter(student=user)
+
+class RetrieveLabRequestView(generics.RetrieveAPIView):
+    queryset = LabRequest.objects.all()
+    serializer_class = LabRequestSerializer
+    permission_classes = [IsAuthenticated, IsStudentOrStaff]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 class RetrieveUpdateLabRequestView(generics.RetrieveUpdateAPIView):
     serializer_class = LabRequestSerializer
