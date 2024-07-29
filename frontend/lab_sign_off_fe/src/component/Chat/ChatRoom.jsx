@@ -1,6 +1,6 @@
+// src/components/ChatRoom.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -11,7 +11,12 @@ import {
   Typography,
   Paper,
   Container,
+  Divider,
+  Grid,
+  Chip,
+  IconButton,
 } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 import { tokenLoader } from "../../utils/token";
 import axiosInstance from "../../utils/Axios";
 
@@ -28,18 +33,12 @@ const ChatRoom = ({ user, currentUser }) => {
           user.id,
           currentUser.id
         )}_${Math.max(user.id, currentUser.id)}`;
-        console.log(roomName);
         const response = await axiosInstance.get(
-          `/chat/messages/room/${roomName}/`
-          // {
-          //   headers: {
-          //     Authorization: "Token " + token,
-          //   },
-          // }
+          `/chat/messages/room/${roomName}/`,
+          {
+            headers: { Authorization: `Token ${token}` },
+          }
         );
-        // const response = await axios.get(
-        //   `http://localhost:8000/chat/messages/room/?room_name=${roomName}`
-        // );
         setMessages(response.data);
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -47,150 +46,152 @@ const ChatRoom = ({ user, currentUser }) => {
     }
   }, [user, currentUser]);
 
-  const connect = useCallback(() => {
+  const connectWebSocket = useCallback(() => {
     if (user && currentUser) {
       const token = tokenLoader();
       const wsUrl = `ws://localhost:8000/ws/chat/user/${user.id}/?token=${token}`;
-      console.log("Connecting to WebSocket URL:", wsUrl);
+      const socketInstance = new WebSocket(wsUrl);
 
-      const chatSocket = new WebSocket(wsUrl);
-
-      chatSocket.onopen = () => {
-        console.log("WebSocket connection established");
-        fetchMessages();
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { type: "system", content: "Connected to chat" },
-        ]);
-      };
-
-      chatSocket.onmessage = (e) => {
-        console.log("Received message:", e.data);
-        try {
-          const data = JSON.parse(e.data);
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            { type: "message", content: data.message },
-          ]);
-        } catch (error) {
-          console.error("Error parsing message:", error);
-        }
-      };
-
-      chatSocket.onclose = (e) => {
-        console.error("WebSocket closed unexpectedly:", e.code, e.reason);
+      socketInstance.onmessage = (event) => {
+        const data = JSON.parse(event.data);
         setMessages((prevMessages) => [
           ...prevMessages,
           {
-            type: "error",
-            content: `Connection closed: ${e.reason || "No reason"}`,
+            content: data.message,
+            user: data.sender,
+            timestamp: new Date().toISOString(),
           },
         ]);
-        setTimeout(() => connect(), 3000);
       };
 
-      chatSocket.onerror = (error) => {
-        console.error("WebSocket error:", error.message);
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { type: "error", content: `WebSocket error: ${error.message}` },
-        ]);
+      socketInstance.onclose = () => {
+        console.log("WebSocket closed");
       };
 
-      setSocket(chatSocket);
-
-      return () => {
-        if (chatSocket) {
-          chatSocket.close();
-        }
-      };
+      setSocket(socketInstance);
     }
-  }, [fetchMessages, user, currentUser]);
+  }, [user, currentUser]);
 
   useEffect(() => {
-    connect();
+    fetchMessages();
+    connectWebSocket();
 
     return () => {
       if (socket) {
         socket.close();
       }
     };
-  }, [connect]);
+  }, [fetchMessages, connectWebSocket]);
 
-  const sendMessage = () => {
-    if (socket && socket.readyState === WebSocket.OPEN && newMessage.trim()) {
-      console.log("Sending message:", newMessage);
-      socket.send(JSON.stringify({ message: newMessage }));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (socket && newMessage.trim()) {
+      socket.send(
+        JSON.stringify({
+          message: newMessage,
+          sender: currentUser.username,
+        })
+      );
       setNewMessage("");
-    } else {
-      console.error("WebSocket is not open. ReadyState:", socket?.readyState);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { type: "error", content: "Unable to send message. Please try again." },
-      ]);
     }
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Paper
-        elevation={3}
-        sx={{
-          padding: 2,
-          display: "flex",
-          flexDirection: "column",
-          height: "80vh",
-        }}
-      >
-        <Typography variant="h6" gutterBottom>
-          {user ? `Chat with ${user.username}` : "Chat"}
+    <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Paper elevation={3} sx={{ p: 2 }}>
+        <Typography variant="h5" gutterBottom align="center">
+          Chat Room
         </Typography>
-        <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
+        <Divider sx={{ mb: 2 }} />
+        <Box
+          sx={{
+            maxHeight: "500px",
+            overflowY: "auto",
+            mb: 2,
+            p: 1,
+            borderRadius: 1,
+            border: "1px solid #ddd",
+            bgcolor: "#f5f5f5",
+          }}
+        >
           <List>
             {messages.map((msg, index) => (
-              <ListItem key={index}>
-                <ListItemText
-                  primary={msg.content}
+              <ListItem
+                key={index}
+                sx={{
+                  mb: 1,
+                  justifyContent:
+                    msg.user === currentUser.username
+                      ? "flex-end"
+                      : "flex-start",
+                }}
+              >
+                <Box
                   sx={{
-                    color:
-                      msg.type === "error"
-                        ? "red"
-                        : msg.type === "system"
-                        ? "blue"
-                        : "inherit",
+                    maxWidth: "60%",
+                    p: 1,
+                    borderRadius: 1,
+                    bgcolor:
+                      msg.user === currentUser.username ? "#d0f0c0" : "#b3e5fc",
+                    color: "#000",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems:
+                      msg.user === currentUser.username
+                        ? "flex-end"
+                        : "flex-start",
                   }}
-                />
+                >
+                  <Typography variant="body1" sx={{ wordBreak: "break-word" }}>
+                    {msg.content}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="textSecondary"
+                    align={msg.user === currentUser.username ? "right" : "left"}
+                  >
+                    {msg.timestamp
+                      ? new Date(msg.timestamp).toLocaleString()
+                      : ""}
+                  </Typography>
+                </Box>
               </ListItem>
             ))}
           </List>
         </Box>
-        <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-          <TextField
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type a message"
-            fullWidth
-            variant="outlined"
-            sx={{ mr: 1 }}
-          />
-          <Button onClick={sendMessage} variant="contained" color="primary">
-            Send
-          </Button>
-        </Box>
+        <Divider sx={{ mb: 2 }} />
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={1} alignItems="center">
+            <Grid item xs>
+              <TextField
+                fullWidth
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                variant="outlined"
+                size="small"
+              />
+            </Grid>
+            <Grid item>
+              <IconButton
+                type="submit"
+                color="primary"
+                aria-label="send"
+                size="large"
+              >
+                <SendIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </form>
       </Paper>
     </Container>
   );
 };
 
 ChatRoom.propTypes = {
-  user: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    username: PropTypes.string.isRequired,
-  }).isRequired,
-  currentUser: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    username: PropTypes.string.isRequired,
-  }).isRequired,
+  user: PropTypes.object.isRequired,
+  currentUser: PropTypes.object.isRequired,
 };
 
 export default ChatRoom;
