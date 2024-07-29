@@ -114,6 +114,10 @@ const router = createBrowserRouter([
             element: <StudentHomePage />,
           },
           {
+            path: "chat",
+            element: <ChatPage />,
+          },
+          {
             path: "student-courses",
             element: <EnrolledCourseGridComponent />,
           },
@@ -134,6 +138,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AdminHomePage />,
+          },
+          {
+            path: "chat",
+            element: <ChatPage />,
           },
         ],
       },
