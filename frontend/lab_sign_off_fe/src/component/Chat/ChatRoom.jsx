@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -10,69 +12,100 @@ import {
   Paper,
   Container,
 } from "@mui/material";
-import { tokenLoader } from "../../utils/token"; // Ensure this function is defined
+import { tokenLoader } from "../../utils/token";
+import axiosInstance from "../../utils/Axios";
 
-const ChatRoom = ({ user }) => {
+const ChatRoom = ({ user, currentUser }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
 
-  const connect = useCallback(() => {
-    const token = tokenLoader();
-    const wsUrl = `ws://localhost:8000/ws/chat/user/${user.id}/?token=${token}`;
-    console.log("Connecting to WebSocket URL:", wsUrl);
-
-    const chatSocket = new WebSocket(wsUrl);
-
-    chatSocket.onopen = () => {
-      console.log("WebSocket connection established");
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { type: "system", content: "Connected to chat" },
-      ]);
-    };
-
-    chatSocket.onmessage = (e) => {
-      console.log("Received message:", e.data);
+  const fetchMessages = useCallback(async () => {
+    if (user && currentUser) {
       try {
-        const data = JSON.parse(e.data);
+        const token = tokenLoader();
+        const roomName = `chat_user_${Math.min(
+          user.id,
+          currentUser.id
+        )}_${Math.max(user.id, currentUser.id)}`;
+        console.log(roomName);
+        const response = await axiosInstance.get(
+          `/chat/messages/room/${roomName}/`
+          // {
+          //   headers: {
+          //     Authorization: "Token " + token,
+          //   },
+          // }
+        );
+        // const response = await axios.get(
+        //   `http://localhost:8000/chat/messages/room/?room_name=${roomName}`
+        // );
+        setMessages(response.data);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    }
+  }, [user, currentUser]);
+
+  const connect = useCallback(() => {
+    if (user && currentUser) {
+      const token = tokenLoader();
+      const wsUrl = `ws://localhost:8000/ws/chat/user/${user.id}/?token=${token}`;
+      console.log("Connecting to WebSocket URL:", wsUrl);
+
+      const chatSocket = new WebSocket(wsUrl);
+
+      chatSocket.onopen = () => {
+        console.log("WebSocket connection established");
+        fetchMessages();
         setMessages((prevMessages) => [
           ...prevMessages,
-          { type: "message", content: data.message },
+          { type: "system", content: "Connected to chat" },
         ]);
-      } catch (error) {
-        console.error("Error parsing message:", error);
-      }
-    };
+      };
 
-    chatSocket.onclose = (e) => {
-      console.error("WebSocket closed unexpectedly:", e.code, e.reason);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          type: "error",
-          content: `Connection closed: ${e.reason || "No reason"}`,
-        },
-      ]);
-      setTimeout(() => connect(), 3000);
-    };
+      chatSocket.onmessage = (e) => {
+        console.log("Received message:", e.data);
+        try {
+          const data = JSON.parse(e.data);
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            { type: "message", content: data.message },
+          ]);
+        } catch (error) {
+          console.error("Error parsing message:", error);
+        }
+      };
 
-    chatSocket.onerror = (error) => {
-      console.error("WebSocket error:", error.message);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { type: "error", content: `WebSocket error: ${error.message}` },
-      ]);
-    };
+      chatSocket.onclose = (e) => {
+        console.error("WebSocket closed unexpectedly:", e.code, e.reason);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          {
+            type: "error",
+            content: `Connection closed: ${e.reason || "No reason"}`,
+          },
+        ]);
+        setTimeout(() => connect(), 3000);
+      };
 
-    setSocket(chatSocket);
+      chatSocket.onerror = (error) => {
+        console.error("WebSocket error:", error.message);
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { type: "error", content: `WebSocket error: ${error.message}` },
+        ]);
+      };
 
-    return () => {
-      if (chatSocket) {
-        chatSocket.close();
-      }
-    };
-  }, [user.id]);
+      setSocket(chatSocket);
+
+      return () => {
+        if (chatSocket) {
+          chatSocket.close();
+        }
+      };
+    }
+  }, [fetchMessages, user, currentUser]);
 
   useEffect(() => {
     connect();
@@ -110,7 +143,7 @@ const ChatRoom = ({ user }) => {
         }}
       >
         <Typography variant="h6" gutterBottom>
-          Chat with {user.username}
+          {user ? `Chat with ${user.username}` : "Chat"}
         </Typography>
         <Box sx={{ flexGrow: 1, overflowY: "auto" }}>
           <List>
@@ -147,6 +180,17 @@ const ChatRoom = ({ user }) => {
       </Paper>
     </Container>
   );
+};
+
+ChatRoom.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    username: PropTypes.string.isRequired,
+  }).isRequired,
+  currentUser: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    username: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default ChatRoom;
