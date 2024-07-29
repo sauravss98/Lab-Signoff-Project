@@ -13,23 +13,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         token = self.scope['query_string'].decode().split('=')[-1]
         self.user = await self.authenticate_token(token)
-        logger.info(f"Authenticated user: {self.user}")
 
         if self.user is None:
-            logger.warning("Invalid token")
             await self.close()
             return
 
         self.user_id = int(self.scope['url_route']['kwargs']['user_id'])
         self.room_group_name = self.get_room_group_name(self.user_id, self.user.id)
-        logger.info(f"User {self.user} connected to {self.room_group_name}")
 
         if self.channel_layer is None:
-            logger.error("Channel layer is None")
             await self.close()
             return
-
-        logger.info(f"Channel Layer: {self.channel_layer}")
 
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -45,10 +39,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     async def receive(self, text_data):
-        logger.info("Received message")
-
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
+        sender = text_data_json['sender']
 
         await self.save_message(self.user, self.user_id, message)
 
@@ -56,15 +49,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
-                'message': message
+                'message': message,
+                'sender': sender
             }
         )
 
     async def chat_message(self, event):
         message = event['message']
+        sender = event['sender']
 
         await self.send(text_data=json.dumps({
-            'message': message
+            'message': message,
+            'sender': sender
         }))
 
     @sync_to_async
@@ -84,6 +80,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
         Message.objects.create(room=room, user=user, content=content)
 
     def get_room_group_name(self, user_id_1, user_id_2):
-        user_id_1 = int(user_id_1)
-        user_id_2 = int(user_id_2)
         return f'chat_user_{min(user_id_1, user_id_2)}_{max(user_id_1, user_id_2)}'

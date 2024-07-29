@@ -1,11 +1,10 @@
 import logging
-from rest_framework import viewsets
-from rest_framework import status
-from rest_framework.views import APIView
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Room, Message
+from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound
+from .models import Room, Message
 from .serializers import RoomSerializer, MessageSerializer
 
 logger = logging.getLogger(__name__)
@@ -33,7 +32,6 @@ class MessageViewSet(viewsets.ModelViewSet):
 
 class RoomMessagesAPIView(APIView):
     def get(self, request, room_name):
-        # Validate and process the room_name
         if not room_name:
             return Response({"detail": "Room name not provided."}, status=status.HTTP_400_BAD_REQUEST)
         

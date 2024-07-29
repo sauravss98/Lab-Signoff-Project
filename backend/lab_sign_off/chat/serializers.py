@@ -7,6 +7,7 @@ class RoomSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class MessageSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField()
     class Meta:
         model = Message
         fields = ['id', 'room', 'user', 'content', 'timestamp']
