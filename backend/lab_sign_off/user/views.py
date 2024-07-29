@@ -94,6 +94,7 @@ def get_user_details_from_token(request):
         "first_name":request.user.first_name,
         "last_name":request.user.last_name,
         "user_type":request.user.user_type,
+        "username":request.user.username,
         "id":request.user.id},
         status=status.HTTP_200_OK
         )
