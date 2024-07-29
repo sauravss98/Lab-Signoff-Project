@@ -9,7 +9,8 @@ from .views import (
         UserListView,
         get_user_details_from_token,
         ChangePasswordView,
-        UsersDropDownListView
+        UsersDropDownListView,
+        UserChatListView
 )
 # from .views import ViewUser
 
@@ -23,5 +24,6 @@ urlpatterns = [
         path('users_list',UsersListView.as_view(),name="users_list"),
         path('user/<int:pk>',UserListView.as_view(),name="user list view"),
         path('change-password/',ChangePasswordView.as_view(),name="change-password"),
-        path('dropdown/user',UsersDropDownListView.as_view(),name="users_dropdown_list")
+        path('dropdown/user',UsersDropDownListView.as_view(),name="users_dropdown_list"),
+        path('chat/users/', UserChatListView.as_view(), name='user-list'),
 ]

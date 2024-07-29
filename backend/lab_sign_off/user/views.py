@@ -16,7 +16,7 @@ from rest_framework.generics import (
 )
 from user.permissions import IsAdminOrStaffUser
 
-from .serializers import UserAuthSerializer,UserDetailsSerializer,PasswordChangeSerializer,UserDropDownSerializer
+from .serializers import UserAuthSerializer,UserDetailsSerializer,PasswordChangeSerializer,UserDropDownSerializer,UserSerializer
 from .models import User
 
 from .utils import generate_otp,send_new_user_created_mail
@@ -168,3 +168,7 @@ class ChangePasswordView(APIView):
             return Response({"message": "Password updated successfully"}, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class UserChatListView(ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

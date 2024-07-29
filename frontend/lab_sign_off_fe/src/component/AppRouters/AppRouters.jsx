@@ -46,6 +46,7 @@ const RequestLandingPage = React.lazy(() =>
 const RequestMainPageStudent = React.lazy(() =>
   import("../Student/Request/RequestMainPageStudents")
 );
+const ChatPage = React.lazy(() => import("../../pages/ChatPage/ChatPage"));
 
 const router = createBrowserRouter([
   {
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <StaffHomePage />,
+          },
+          {
+            path: "chat",
+            element: <ChatPage />,
           },
           {
             path: "labs",
@@ -132,6 +137,16 @@ const router = createBrowserRouter([
           },
         ],
       },
+      // {
+      //   path: "chat",
+      //   element: <ChatPage />,
+      //   // children: [
+      //   //   // {
+      //   //   //   index: true,
+      //   //   //   element: < />,
+      //   //   // },
+      //   // ],
+      // },
     ],
   },
 ]);

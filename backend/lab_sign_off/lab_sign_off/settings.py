@@ -38,6 +38,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,7 +53,8 @@ INSTALLED_APPS = [
     'course',
     'labsession',
     'program',
-    'request'
+    'request',
+    'chat',
 ]
 
 AUTH_USER_MODEL = 'user.USER'
@@ -93,7 +96,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'lab_sign_off.wsgi.application'
+# WSGI_APPLICATION = 'lab_sign_off.wsgi.application'
+ASGI_APPLICATION = 'lab_sign_off.asgi.application'
 
 
 # Database
@@ -105,6 +109,31 @@ WSGI_APPLICATION = 'lab_sign_off.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],  # Adjust the host and port if necessary
+        },
+    },
+}
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer"
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('ENGINE'),
@@ -169,15 +198,26 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'vnd.api+json'
 }
 
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',
+#     'http://127.0.0.1:3000',
+#     'https://localhost:3000',
+#     'https://127.0.0.1:3000',
+#     "http://localhost:5173",
+#     "https://localhost:5173",
+#     "http://127.0.0.1:5173",
+#     "https://127.0.0.1:5173",
+# ]
+
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'https://localhost:3000',
     'https://127.0.0.1:3000',
-    "http://localhost:5173",
-    "https://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://127.0.0.1:5173",
+    'http://localhost:5173',
+    'https://localhost:5173',
+    'http://127.0.0.1:5173',
+    'https://127.0.0.1:5173',
 ]
 
 CORS_ALLOW_METHODS = (
@@ -197,3 +237,17 @@ CORS_ALLOW_HEADERS = (
     "x-csrftoken",
     "x-requested-with",
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
