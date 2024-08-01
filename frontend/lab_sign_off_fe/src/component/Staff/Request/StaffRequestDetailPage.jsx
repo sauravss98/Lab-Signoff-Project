@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../../utils/Axios";
 import { Bounce, toast } from "react-toastify";
+import ReactModal from "react-modal";
 import {
   Box,
   Button,
@@ -9,9 +10,12 @@ import {
   CardContent,
   Container,
   Grid,
+  IconButton,
   TextField,
   Typography,
 } from "@mui/material";
+import DownloadIcon from "@mui/icons-material/Download";
+
 import { tokenLoader } from "../../../utils/token";
 
 const token = tokenLoader();
@@ -20,6 +24,8 @@ const StaffRequestDetailPage = () => {
   const [data, setData] = useState(null);
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
   const { requestId } = useParams();
 
   const fetchRequestData = async () => {
@@ -50,7 +56,52 @@ const StaffRequestDetailPage = () => {
   }, [requestId]);
 
   const handleAddMessage = async () => {
-    // Handle the message submission logic here
+    const formData = new FormData();
+    formData.append("message", message);
+    if (file) {
+      formData.append("file", file);
+    }
+
+    try {
+      const response = await axiosInstance.post(
+        `requests/${requestId}/messages/create/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.status === 201) {
+        toast.success("Message sent successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        setMessage("");
+        setFile(null);
+        fetchRequestData();
+      }
+    } catch (error) {
+      toast.error("Error sending message", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
   };
 
   const handleFileChange = (event) => {
@@ -75,18 +126,20 @@ const StaffRequestDetailPage = () => {
           },
         }
       );
-      toast.success("Lab session marked as complete", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      fetchRequestData();
+      if (response.status === 200) {
+        toast.success("Lab session marked as complete", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        fetchRequestData();
+      }
     } catch (error) {
       console.error(
         "Error marking lab session as complete",
@@ -104,6 +157,16 @@ const StaffRequestDetailPage = () => {
         transition: Bounce,
       });
     }
+  };
+
+  const openModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage("");
   };
 
   return (
@@ -163,11 +226,22 @@ const StaffRequestDetailPage = () => {
                         {msg.message}
                       </Typography>
                       {msg.file && (
-                        <img
-                          src={msg.file}
-                          alt="Attachment"
-                          style={{ maxWidth: "100%" }}
-                        />
+                        <Box>
+                          <img
+                            src={msg.file}
+                            alt="Attachment"
+                            style={{ maxWidth: "100%", cursor: "pointer" }}
+                            onClick={() => openModal(msg.file)}
+                          />
+                          <IconButton
+                            href={msg.file}
+                            download
+                            size="small"
+                            style={{ marginTop: "10px" }}
+                          >
+                            <DownloadIcon />
+                          </IconButton>
+                        </Box>
                       )}
                       <Typography variant="caption" color="textSecondary">
                         {new Date(msg.created_at).toLocaleString()}
@@ -218,6 +292,41 @@ const StaffRequestDetailPage = () => {
           </Grid>
         </Box>
       )}
+
+      <ReactModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Image Modal"
+        style={{
+          content: {
+            top: "50%",
+            left: "50%",
+            right: "auto",
+            bottom: "auto",
+            marginRight: "-50%",
+            transform: "translate(-50%, -50%)",
+          },
+        }}
+      >
+        <img
+          src={selectedImage}
+          alt="Modal Attachment"
+          style={{ maxWidth: "100%" }}
+        />
+        <Box mt={2} display="flex" justifyContent="space-between">
+          <IconButton href={selectedImage} download size="small">
+            <DownloadIcon />
+          </IconButton>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={closeModal}
+            size="small"
+          >
+            Close
+          </Button>
+        </Box>
+      </ReactModal>
     </Container>
   );
 };
