@@ -4,9 +4,10 @@ from user.models import User
 from course.models import Courses
 
 class LabSessionSerializer(serializers.ModelSerializer):
+    course_name = serializers.CharField(source='course.course_name')
     class Meta:
         model = LabSession
-        fields = ['id', 'name', 'course']
+        fields = ['id', 'name', 'course','course_name']
         read_only_fields = ['order']
 
     def validate(self, data):
@@ -30,6 +31,7 @@ class StudentEnrollmentSerializer(serializers.ModelSerializer):
         fields = ['id', 'student', 'course', 'enrollment_date']
 
 class StudentLabSessionSerializer(serializers.ModelSerializer):
+    lab_session = LabSessionSerializer()
     class Meta:
         model = StudentLabSession
         fields = ['id', 'student', 'lab_session', 'completed']
