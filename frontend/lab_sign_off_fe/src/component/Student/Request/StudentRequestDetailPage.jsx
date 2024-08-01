@@ -107,57 +107,6 @@ const StudentRequestDetailPage = () => {
     setFile(event.target.files[0]);
   };
 
-  const handleCloseRequest = () => {
-    // Handle closing the request logic here
-  };
-
-  const handleSignOffLab = async () => {
-    try {
-      const studentId = data.student_lab_session.student;
-      const courseId = data.student_lab_session.lab_session.id;
-      const payload = { completed: true };
-      const response = await axiosInstance.patch(
-        `lab-session/student-lab-sessions/${studentId}/${courseId}/update/`,
-        payload,
-        {
-          headers: {
-            Authorization: `Token ${token}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        toast.success("Lab session marked as complete", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        fetchRequestData();
-      }
-    } catch (error) {
-      console.error(
-        "Error marking lab session as complete",
-        error.response ? error.response.data : error.message
-      );
-      toast.error("Error marking lab session as complete", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-    }
-  };
-
   const openModal = (imageUrl) => {
     setSelectedImage(imageUrl);
     setIsModalOpen(true);
@@ -194,23 +143,6 @@ const StudentRequestDetailPage = () => {
                   <Typography>Request Status: {data.status}</Typography>
                   <Typography>Created At: {data.created_at}</Typography>
                   <Typography>Updated At: {data.updated_at}</Typography>
-                  <Box mt={2}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleSignOffLab}
-                    >
-                      Sign Off Lab
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={handleCloseRequest}
-                      style={{ marginLeft: "10px" }}
-                    >
-                      Close Request
-                    </Button>
-                  </Box>
                 </CardContent>
               </Card>
             </Grid>
