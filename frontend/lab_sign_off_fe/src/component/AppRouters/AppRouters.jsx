@@ -51,6 +51,10 @@ const StaffRequestDetailPage = React.lazy(() =>
   import("../Staff/Request/StaffRequestDetailPage")
 );
 
+const StudentRequestDetailPage = React.lazy(() =>
+  import("../Student/Request/StudentRequestDetailPage")
+);
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -135,6 +139,10 @@ const router = createBrowserRouter([
           {
             path: `requests`,
             element: <RequestMainPageStudent />,
+          },
+          {
+            path: "request/:requestId/detail",
+            element: <StudentRequestDetailPage />,
           },
         ],
       },

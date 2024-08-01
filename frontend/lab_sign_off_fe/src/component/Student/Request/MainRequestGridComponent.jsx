@@ -15,6 +15,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const token = tokenLoader();
 
@@ -22,7 +23,9 @@ const MainRequestGridComponent = () => {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedRow, setSelectedRow] = useState(null);
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     try {
@@ -72,12 +75,19 @@ const MainRequestGridComponent = () => {
     }
   }, []);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event, row) => {
     setMenuAnchor(event.currentTarget);
+    setSelectedRow(row);
   };
 
   const handleMenuClose = () => {
     setMenuAnchor(null);
+  };
+  const handleEditClick = async () => {
+    console.log(selectedRow.id);
+    navigate(`/student/request/${selectedRow.id}/detail`);
+    // navigate(`/student/request/${selectedRow.id}/detail`);
+    handleMenuClose();
   };
 
   useEffect(() => {
@@ -183,7 +193,7 @@ const MainRequestGridComponent = () => {
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleMenuClose}>Edit</MenuItem>
+        <MenuItem onClick={handleEditClick}>Edit</MenuItem>
         <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
       </Menu>
     </Box>
