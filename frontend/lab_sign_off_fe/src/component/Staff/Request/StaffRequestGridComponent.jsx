@@ -15,6 +15,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const token = tokenLoader();
 
@@ -22,7 +23,9 @@ const StaffRequestGridComponent = () => {
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedRow, setSelectedRow] = useState(null);
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     try {
@@ -72,12 +75,19 @@ const StaffRequestGridComponent = () => {
     }
   }, []);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event, row) => {
     setMenuAnchor(event.currentTarget);
+    setSelectedRow(row);
   };
 
   const handleMenuClose = () => {
     setMenuAnchor(null);
+    setSelectedRow(null);
+  };
+
+  const handleEdit = () => {
+    navigate(`/staff/request/${selectedRow.id}/detail`);
+    handleMenuClose();
   };
 
   useEffect(() => {
@@ -182,7 +192,7 @@ const StaffRequestGridComponent = () => {
         open={Boolean(menuAnchor)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleMenuClose}>Edit</MenuItem>
+        <MenuItem onClick={handleEdit}>Edit</MenuItem>
         <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
       </Menu>
     </Box>
