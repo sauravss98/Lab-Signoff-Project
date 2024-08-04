@@ -1,20 +1,21 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from user.models import User
+from user.permissions import IsAdminOrStaffUser
 from course.models import Courses
+from course.serializers import CoursesSerializer
 from .models import LabSession, StudentEnrollment, StudentLabSession
 from .serializers import (
-    LabSessionSerializer, StudentEnrollmentSerializer, 
+    LabSessionSerializer, StudentEnrollmentSerializer,
     StudentLabSessionSerializer, StudentProgressSerializer,
     StudentWithCoursesSerializer,StudentWithCoursesAndLabSessionsSerializer,
     StudentLabSessionWithDetailsSerializer
 )
-from course.serializers import CoursesSerializer
-from user.permissions import IsAdminOrStaffUser
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+
 
 # LabSession views
 class LabSessionListAPIView(generics.ListAPIView):
@@ -61,8 +62,7 @@ class LabSessionUpdateAPIView(generics.UpdateAPIView):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        
+        serializer.is_valid(raise_exception=True)        
         try:
             self.perform_update(serializer)
             return Response(serializer.data)
