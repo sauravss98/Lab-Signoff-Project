@@ -1,0 +1,72 @@
+services:
+  app:
+    image: my-app-image
+    container_name: my-app-container
+    command: /app/entrypoint.sh
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: mysql
+    container_name: lab_database
+    restart: always
+    volumes:
+      - data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+      MYSQL_DATABASE: ${NAME}
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 30s
+      timeout: 20s
+      retries: 10
+  
+  redis:
+    image: redis:alpine
+    container_name: my-redis-container
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  celery:
+    image: my-app-image
+    container_name: my-celery-container
+    command: celery -A lab_sign_off worker -E -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+      - app
+
+  flower:
+    image: my-app-image
+    container_name: my-flower-container
+    command: celery -A lab_sign_off flower --basic_auth=admin:password123
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+  
+  beat:
+    image: my-app-image
+    container_name: my-beat-container
+    command: celery -A lab_sign_off beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - app
+
+volumes:
+  data:
+  redis_data:

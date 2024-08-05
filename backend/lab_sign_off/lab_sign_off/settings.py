@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
+    'django_celery_beat',
     'rest_framework',
     'rest_framework.authtoken',
     'user',
@@ -141,9 +143,14 @@ DATABASES = {
         'USER': os.getenv('USER'),
         'PASSWORD': os.getenv('PASSWORD'),
         'HOST':os.getenv('HOST'),
+        # 'HOST':'db',
         'PORT':os.getenv('PORT'),
     }
 }
+
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_RESULt_EXTENDED = True
 
 
 # Password validation
