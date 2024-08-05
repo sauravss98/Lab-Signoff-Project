@@ -37,14 +37,14 @@ class CreateLabRequestView(generics.CreateAPIView):
         logger.info("Users: %s", user_ids)
         logger.info("Message: %s", message)
         logger.info("Extra data: %s", extra_data)
-    
+
         logger.info("Queuing the notification task")
-        result = send_notification.delay(user_ids, message, 'in_app', extra_data)
-        logger.info(f"Task queued with ID: {result.id}")
-    
-        # Optionally, log the task result (useful for debugging)
-        async_result = AsyncResult(result.id)
-        logger.info(f"Task result: {async_result.state}")
+        result = send_notification(user_ids, message, 'in_app', extra_data)
+        # logger.info(f"Task queued with ID: {result.id}")
+
+        # # Optionally, log the task result (useful for debugging)
+        # async_result = AsyncResult(result.id)
+        # logger.info(f"Task result: {async_result.state}")
 
         # Optionally, trigger email notifications
         # send_notification.delay(user_ids, message, 'email', extra_data)
