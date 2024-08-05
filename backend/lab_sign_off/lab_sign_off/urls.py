@@ -26,4 +26,5 @@ urlpatterns = [
     path('api/lab-session/',include('labsession.urls')),
     path('api/requests/', include('request.urls')),
     path('api/chat/', include('chat.urls')),
+    path('api/',include('notifications.urls'))
 ]

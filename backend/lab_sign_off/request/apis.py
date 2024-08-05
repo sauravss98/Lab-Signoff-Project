@@ -1,3 +1,4 @@
+import logging
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,BasePermission
@@ -7,6 +8,10 @@ from .serializers import LabRequestSerializer, CreateLabRequestSerializer, Reque
 from user.permissions import IsAdminOrStaffUser
 from django.shortcuts import get_object_or_404
 from labsession.models import StudentLabSession
+from notifications.tasks import send_notification
+from celery.result import AsyncResult
+
+logger = logging.getLogger(__name__)
 
 class CreateLabRequestView(generics.CreateAPIView):
     serializer_class = CreateLabRequestSerializer
@@ -16,9 +21,33 @@ class CreateLabRequestView(generics.CreateAPIView):
     def perform_create(self, serializer):
         student_lab_session = serializer.validated_data['student_lab_session']
         staff_members = student_lab_session.lab_session.course.staff.all()
-
+    
         lab_request = serializer.save(student=self.request.user)
         lab_request.staff.set(staff_members)
+    
+        # Collect user IDs for notifications
+        user_ids = [self.request.user.id]  # Add student
+        user_ids.extend(staff_members.values_list('id', flat=True))
+
+        # Trigger the in-app notification task
+        message = f"A new lab request has been created by {self.request.user.email}."
+        extra_data = {'lab_request_id': lab_request.id}
+
+        # Corrected logging statements
+        logger.info("Users: %s", user_ids)
+        logger.info("Message: %s", message)
+        logger.info("Extra data: %s", extra_data)
+    
+        logger.info("Queuing the notification task")
+        result = send_notification.delay(user_ids, message, 'in_app', extra_data)
+        logger.info(f"Task queued with ID: {result.id}")
+    
+        # Optionally, log the task result (useful for debugging)
+        async_result = AsyncResult(result.id)
+        logger.info(f"Task result: {async_result.state}")
+
+        # Optionally, trigger email notifications
+        # send_notification.delay(user_ids, message, 'email', extra_data)
 
 class IsStudentOrStaff(BasePermission):
     def has_object_permission(self, request, view, obj):
