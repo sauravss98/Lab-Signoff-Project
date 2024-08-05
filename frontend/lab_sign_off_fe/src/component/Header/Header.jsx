@@ -8,6 +8,7 @@ import { settingsActions } from "../../store/settingsPageState";
 import { authActions } from "../../store/auth";
 import { useNavigate } from "react-router-dom";
 import { tokenLoader } from "../../utils/token";
+import { Button } from "react-bootstrap";
 
 function Header() {
   const navigate = useNavigate();
@@ -21,6 +22,10 @@ function Header() {
   };
   const settingsClick = () => {
     navigate("/settings");
+  };
+
+  const onNotificationClick = () => {
+    navigate("/notifications");
   };
 
   const logoutClick = async () => {
@@ -75,6 +80,7 @@ function Header() {
             className="justify-content-end"
             id={classes.navElement}
           >
+            <Button onClick={onNotificationClick}>Notification</Button>
             <NavDropdown
               title={"Hi, " + userName}
               id="navbarScrollingDropdown"

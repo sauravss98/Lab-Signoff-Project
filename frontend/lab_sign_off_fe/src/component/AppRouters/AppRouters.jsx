@@ -55,6 +55,10 @@ const StudentRequestDetailPage = React.lazy(() =>
   import("../Student/Request/StudentRequestDetailPage")
 );
 
+const NotificationLayout = React.lazy(() =>
+  import("../../pages/NotificationLayout/NotificationLayout")
+);
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -77,6 +81,10 @@ const router = createBrowserRouter([
       {
         path: "settings",
         element: <SettingsPage />,
+      },
+      {
+        path: "notifications",
+        element: <NotificationLayout />,
       },
       {
         path: "staff",
