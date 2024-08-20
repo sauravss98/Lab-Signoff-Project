@@ -8,6 +8,7 @@ User = get_user_model()
 class LabSession(models.Model):
     course = models.ForeignKey('course.Courses', on_delete=models.CASCADE, related_name='lab_sessions')
     name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
     order = models.PositiveIntegerField(editable=False)
 
     class Meta:
@@ -57,3 +58,16 @@ class StudentLabSession(models.Model):
 
     def __str__(self):
         return f"{self.student.username} - {self.lab_session.name} - {'Completed' if self.completed else 'Not Completed'}"
+
+
+class StudentLabSessionFeedback(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
+    lab_session = models.ForeignKey(LabSession, on_delete=models.CASCADE, related_name='feedbacks')
+    feedback = models.TextField()
+    rating = models.PositiveIntegerField(null=True, blank=True)  # Rating can be optional
+
+    class Meta:
+        unique_together = ['student', 'lab_session']  # Ensure one feedback per student per lab session
+
+    def __str__(self):
+        return f"Feedback by {self.student.username} for {self.lab_session.name}"

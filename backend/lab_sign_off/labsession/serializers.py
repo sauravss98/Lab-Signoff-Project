@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import LabSession, StudentEnrollment, StudentLabSession
+from .models import LabSession, StudentEnrollment, StudentLabSession, StudentLabSessionFeedback
 from user.models import User
 from course.models import Courses
 
@@ -7,7 +7,7 @@ class LabSessionSerializer(serializers.ModelSerializer):
     course_name = serializers.CharField(source='course.course_name')
     class Meta:
         model = LabSession
-        fields = ['id', 'name', 'course','course_name']
+        fields = ['id', 'name', 'course','course_name', 'description']
         read_only_fields = ['order']
 
     def validate(self, data):
@@ -119,7 +119,15 @@ class StudentWithCoursesAndLabSessionsSerializer(serializers.ModelSerializer):
 
 class StudentLabSessionWithDetailsSerializer(serializers.ModelSerializer):
     lab_session_name = serializers.CharField(source='lab_session.name', read_only=True)
+    lab_session_description = serializers.CharField(source='lab_session.description', read_only=True)
 
     class Meta:
         model = StudentLabSession
-        fields = ['id', 'student', 'lab_session', 'lab_session_name', 'completed']
+        fields = ['id', 'student', 'lab_session', 'lab_session_name', 'completed','lab_session_description']
+        
+
+class StudentLabSessionFeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentLabSessionFeedback
+        fields = ['id', 'student', 'lab_session', 'feedback', 'rating']  # New serializer for feedback
+        read_only_fields = ['student', 'lab_session']

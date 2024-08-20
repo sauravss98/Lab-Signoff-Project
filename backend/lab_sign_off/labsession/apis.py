@@ -8,12 +8,16 @@ from user.models import User
 from user.permissions import IsAdminOrStaffUser
 from course.models import Courses
 from course.serializers import CoursesSerializer
-from .models import LabSession, StudentEnrollment, StudentLabSession
+from .models import (
+    LabSession, StudentEnrollment, 
+    StudentLabSession, StudentLabSessionFeedback
+)
 from .serializers import (
     LabSessionSerializer, StudentEnrollmentSerializer,
     StudentLabSessionSerializer, StudentProgressSerializer,
     StudentWithCoursesSerializer,StudentWithCoursesAndLabSessionsSerializer,
-    StudentLabSessionWithDetailsSerializer
+    StudentLabSessionWithDetailsSerializer,LabSessionSerializer, 
+    StudentLabSessionFeedbackSerializer
 )
 
 
@@ -232,3 +236,36 @@ class StudentWithCoursesAndLabSessionsAPIView(generics.RetrieveAPIView):
 
     def get_object(self):
         return get_object_or_404(User, pk=self.kwargs['pk'], user_type='student')
+
+
+# Feedback Views
+class StudentLabSessionFeedbackCreateAPIView(generics.CreateAPIView):
+    serializer_class = StudentLabSessionFeedbackSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def perform_create(self, serializer):
+        student = self.request.user
+        lab_session_id = self.kwargs['lab_session_id']
+        lab_session = get_object_or_404(LabSession, id=lab_session_id)
+        serializer.save(student=student, lab_session=lab_session)
+
+class StudentLabSessionFeedbackRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = StudentLabSessionFeedbackSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get_object(self):
+        student = self.request.user
+        lab_session_id = self.kwargs['lab_session_id']
+        return get_object_or_404(StudentLabSessionFeedback, student=student, lab_session_id=lab_session_id)
+
+class StudentLabSessionFeedbackUpdateAPIView(generics.UpdateAPIView):
+    serializer_class = StudentLabSessionFeedbackSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get_object(self):
+        student = self.request.user
+        lab_session_id = self.kwargs['lab_session_id']
+        return get_object_or_404(StudentLabSessionFeedback, student=student, lab_session_id=lab_session_id)
