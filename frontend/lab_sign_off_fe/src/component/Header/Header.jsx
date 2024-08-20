@@ -7,8 +7,9 @@ import axiosInstance from "../../utils/Axios";
 import { settingsActions } from "../../store/settingsPageState";
 import { authActions } from "../../store/auth";
 import { useNavigate } from "react-router-dom";
-import { tokenLoader } from "../../utils/token";
 import { Button } from "react-bootstrap";
+import { FaBell } from "react-icons/fa"; // Import the icon library
+import { tokenLoader } from "../../utils/token";
 
 function Header() {
   const navigate = useNavigate();
@@ -80,7 +81,14 @@ function Header() {
             className="justify-content-end"
             id={classes.navElement}
           >
-            <Button onClick={onNotificationClick}>Notification</Button>
+            <Button
+              onClick={onNotificationClick}
+              variant="outline-light"
+              className={`${classes.notificationButton} me-2`}
+            >
+              <FaBell className="me-2" /> {/* Icon with margin */}
+              Notification
+            </Button>
             <NavDropdown
               title={"Hi, " + userName}
               id="navbarScrollingDropdown"
