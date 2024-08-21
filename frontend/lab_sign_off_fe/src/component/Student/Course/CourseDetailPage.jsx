@@ -85,6 +85,12 @@ const CourseDetailPage = () => {
               {labSession.lab_session_name}
             </Typography>
             <Box mt={2}>
+              <Typography variant="body2" color="textSecondary">
+                {labSession.lab_session_description ||
+                  "No description available"}
+              </Typography>
+            </Box>
+            <Box mt={2}>
               <Chip
                 label={labSession.completed ? "Completed" : "Not Completed"}
                 color={labSession.completed ? "success" : "warning"}
