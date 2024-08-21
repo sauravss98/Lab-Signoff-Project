@@ -15,6 +15,7 @@ import { Bounce, toast } from "react-toastify";
 import { tokenLoader } from "../../../utils/token";
 import PropTypes from "prop-types";
 import LabSessionCreateModal from "./LabSessionCreateModal";
+import LabSessionEditModal from "./LabSessionEditModal";
 
 const token = tokenLoader();
 
@@ -23,6 +24,8 @@ const CoursesLabsGrid = ({ course_id }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -67,8 +70,16 @@ const CoursesLabsGrid = ({ course_id }) => {
     fetchData();
   }, [fetchData]);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event, rowData) => {
     setMenuAnchor(event.currentTarget);
+    setSessionId(rowData.id); // Store the session ID
+  };
+
+  const handleEditClick = () => {
+    // Open the edit modal
+    console.log(sessionId);
+    setOpenEditModal(true);
+    handleMenuClose();
   };
 
   const handleMenuClose = () => {
@@ -77,6 +88,10 @@ const CoursesLabsGrid = ({ course_id }) => {
 
   const handleCreateModalClose = () => {
     setOpenCreateModal(false);
+    fetchData();
+  };
+  const handleEditModalClose = () => {
+    setOpenEditModal(false);
     fetchData();
   };
   const handleCreateSessionClick = () => {
@@ -93,7 +108,7 @@ const CoursesLabsGrid = ({ course_id }) => {
           size="small"
           onClick={(e) => {
             e.stopPropagation();
-            handleMenuOpen(e, params.row);
+            handleMenuOpen(e, params.row); // Pass the row data here
           }}
         >
           <MoreVertIcon />
@@ -104,7 +119,13 @@ const CoursesLabsGrid = ({ course_id }) => {
     {
       field: "name",
       headerName: "Lab Name",
-      width: 300,
+      width: 250,
+      editable: false,
+    },
+    {
+      field: "description",
+      headerName: "Description",
+      width: 750,
       editable: false,
     },
   ];
@@ -180,7 +201,7 @@ const CoursesLabsGrid = ({ course_id }) => {
           open={Boolean(menuAnchor)}
           onClose={handleMenuClose}
         >
-          <MenuItem onClick={handleMenuClose}>Edit</MenuItem>
+          <MenuItem onClick={handleEditClick}>Edit</MenuItem>
           <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
         </Menu>
       </Box>
@@ -188,6 +209,11 @@ const CoursesLabsGrid = ({ course_id }) => {
         open={openCreateModal}
         handleClose={handleCreateModalClose}
         course_id={course_id}
+      />
+      <LabSessionEditModal
+        show={openEditModal}
+        onHide={handleEditModalClose}
+        sessionId={sessionId}
       />
     </>
   );

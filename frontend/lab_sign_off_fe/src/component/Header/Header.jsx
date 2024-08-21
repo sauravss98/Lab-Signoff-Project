@@ -74,11 +74,7 @@ function Header() {
 
   return (
     <>
-      <Navbar
-        className="bg-body-tertiary fixed-top"
-        bg="dark"
-        data-bs-theme="dark"
-      >
+      <Navbar className="bg-body-tertiary" bg="dark" data-bs-theme="dark">
         <Navbar.Brand onClick={homeClick}>Lab App</Navbar.Brand>
         {tokenAvailable && (
           <Navbar.Collapse
