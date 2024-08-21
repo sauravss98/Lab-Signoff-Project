@@ -46,9 +46,13 @@ class LabSessionCreateAPIView(generics.CreateAPIView):
             return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
-        course_id = self.kwargs['course_id']
-        course = Courses.objects.get(id=course_id)
-        serializer.save(course=course)
+        course = get_object_or_404(Courses, id=self.kwargs['course_id'])
+        lab_session = serializer.save(course=course)
+
+        # Create StudentLabSession instances for each enrolled student
+        enrollments = StudentEnrollment.objects.filter(course=course)
+        for enrollment in enrollments:
+            StudentLabSession.objects.create(student=enrollment.student, lab_session=lab_session)
 
 class LabSessionRetrieveAPIView(generics.RetrieveAPIView):
     queryset = LabSession.objects.all()

@@ -3,12 +3,13 @@ from .models import LabSession, StudentEnrollment, StudentLabSession, StudentLab
 from user.models import User
 from course.models import Courses
 
+# serializers.py
 class LabSessionSerializer(serializers.ModelSerializer):
-    course_name = serializers.CharField(source='course.course_name')
+    course_name = serializers.CharField(source='course.course_name', read_only=True)  # Ensure read-only
     class Meta:
         model = LabSession
-        fields = ['id', 'name', 'course','course_name', 'description']
-        read_only_fields = ['order']
+        fields = ['id', 'name', 'course', 'course_name', 'description']
+        read_only_fields = ['course_name']  # Ensure course_name is read-only
 
     def validate(self, data):
         course = data.get('course')
@@ -24,6 +25,7 @@ class LabSessionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'name': 'A session with this name already exists for this course.'})
 
         return data
+
 
 class StudentEnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
