@@ -13,6 +13,7 @@ import {
   Chip,
 } from "@mui/material";
 import RequestCreateModal from "../Request/RequestCreateModal";
+import CreateFeedbackModal from "../FeedBack/CreateFeedbackModal";
 
 const token = tokenLoader();
 
@@ -20,6 +21,8 @@ const CourseDetailPage = () => {
   const [data, setData] = useState([]);
   const [sessionId, setSessionId] = useState(null);
   const [requestCreateModal, setRequestCreateModal] = useState(false);
+  const [feedbackModal, setFeedbackModal] = useState(false);
+  const [labsession, setLabsession] = useState({});
   const { course_id } = useParams();
 
   const fetchData = useCallback(async () => {
@@ -73,6 +76,17 @@ const CourseDetailPage = () => {
     setRequestCreateModal(true);
   };
 
+  const handleFeedbackClick = (labSession) => {
+    setFeedbackModal(true);
+    setLabsession(labSession);
+    console.log(labSession);
+  };
+
+  const handleFeedbackModalClose = () => {
+    setFeedbackModal(false);
+    fetchData();
+  };
+
   return (
     <Container>
       <Typography variant="h4" component="h1" gutterBottom>
@@ -107,6 +121,17 @@ const CourseDetailPage = () => {
                 </Button>
               )}
             </Box>
+            <Box mt={2}>
+              <Button
+                variant="contained"
+                color="inherit"
+                onClick={() => {
+                  handleFeedbackClick(labSession);
+                }}
+              >
+                Add FeedBack
+              </Button>
+            </Box>
           </CardContent>
         </Card>
       ))}
@@ -114,6 +139,11 @@ const CourseDetailPage = () => {
         open={requestCreateModal}
         handleClose={handleCreateModalClose}
         sessionId={sessionId}
+      />
+      <CreateFeedbackModal
+        open={feedbackModal}
+        handleClose={handleFeedbackModalClose}
+        labsession={labsession}
       />
     </Container>
   );

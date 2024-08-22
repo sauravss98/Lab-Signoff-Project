@@ -47,4 +47,5 @@ urlpatterns = [
     path('lab-sessions/<int:lab_session_id>/feedback/view/', StudentLabSessionFeedbackRetrieveAPIView.as_view(), name='lab-session-feedback-retrieve'),
     path('lab-sessions/<int:lab_session_id>/feedback/update/', StudentLabSessionFeedbackUpdateAPIView.as_view(), name='lab-session-feedback-update'),
     
+    
 ]
