@@ -17,7 +17,7 @@ from .serializers import (
     StudentLabSessionSerializer, StudentProgressSerializer,
     StudentWithCoursesSerializer,StudentWithCoursesAndLabSessionsSerializer,
     StudentLabSessionWithDetailsSerializer,LabSessionSerializer, 
-    StudentLabSessionFeedbackSerializer
+    StudentLabSessionFeedbackSerializer,FeedbackSerializer
 )
 
 
@@ -273,3 +273,12 @@ class StudentLabSessionFeedbackUpdateAPIView(generics.UpdateAPIView):
         student = self.request.user
         lab_session_id = self.kwargs['lab_session_id']
         return get_object_or_404(StudentLabSessionFeedback, student=student, lab_session_id=lab_session_id)
+
+
+class FeedbackListAPIView(generics.ListAPIView):
+    serializer_class = FeedbackSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    
+    def get_queryset(self):
+        return StudentLabSessionFeedback.objects.all()

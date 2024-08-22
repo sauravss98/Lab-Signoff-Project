@@ -10,7 +10,7 @@ from .apis import (
     StudentWithCoursesDetailAPIView,AvailableCoursesListAPIView,
     StudentWithCoursesAndLabSessionsAPIView,CurrentStudentWithCoursesDetailAPIView,
     StudentLabSessionListView, StudentLabSessionFeedbackCreateAPIView, StudentLabSessionFeedbackRetrieveAPIView,
-    StudentLabSessionFeedbackUpdateAPIView
+    StudentLabSessionFeedbackUpdateAPIView,FeedbackListAPIView
 )
 
 urlpatterns = [
@@ -46,6 +46,7 @@ urlpatterns = [
     path('lab-sessions/<int:lab_session_id>/feedback/', StudentLabSessionFeedbackCreateAPIView.as_view(), name='lab-session-feedback-create'),
     path('lab-sessions/<int:lab_session_id>/feedback/view/', StudentLabSessionFeedbackRetrieveAPIView.as_view(), name='lab-session-feedback-retrieve'),
     path('lab-sessions/<int:lab_session_id>/feedback/update/', StudentLabSessionFeedbackUpdateAPIView.as_view(), name='lab-session-feedback-update'),
+    path('feedbacks/list/',FeedbackListAPIView.as_view(),name='feedback-list'),
     
     
 ]
