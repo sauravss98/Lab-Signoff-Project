@@ -138,7 +138,8 @@ class StudentLabSessionFeedbackSerializer(serializers.ModelSerializer):
 class FeedbackSerializer(serializers.ModelSerializer):
     course_name = serializers.CharField(source="lab_session.course.course_name", read_only=True)
     course_id = serializers.IntegerField(source="lab_session.course.id", read_only=True)
+    lab_session_name = serializers.CharField(source="lab_session.name", read_only=True)
     class Meta:
         model = StudentLabSessionFeedback
-        fields = ['id', 'lab_session', 'feedback', 'rating', 'course_name', 'course_id']
+        fields = ['id', 'lab_session', 'feedback', 'rating', 'course_name', 'course_id', 'lab_session_name']
         read_only_fields = ['student', 'lab_session']
