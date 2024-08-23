@@ -59,6 +59,10 @@ const NotificationLayout = React.lazy(() =>
   import("../../pages/NotificationLayout/NotificationLayout")
 );
 
+const FeedbackMainPage = React.lazy(() =>
+  import("../Staff/Feedback/FeedbackMainPage")
+);
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -121,6 +125,10 @@ const router = createBrowserRouter([
           {
             path: "request/:requestId/detail",
             element: <StaffRequestDetailPage />,
+          },
+          {
+            path: "feedbacks/",
+            element: <FeedbackMainPage />,
           },
         ],
       },

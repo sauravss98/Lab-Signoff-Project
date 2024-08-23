@@ -12,6 +12,7 @@ const StaffSideNav = ({ isOpen, toggleSidebar }) => {
         <NavLink to="/staff/labs">Labs</NavLink>
         <NavLink to="/staff/students">Students</NavLink>
         <NavLink to="/staff/requests">Requests</NavLink>
+        <NavLink to="/staff/feedbacks">Feedback</NavLink>
       </div>
     </>
   );
