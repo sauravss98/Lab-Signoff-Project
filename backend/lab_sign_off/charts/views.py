@@ -144,10 +144,11 @@ class EnrollmentVsParticipationViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'])
     def enrollment_vs_participation(self, request):
         enrollment_vs_participation = Courses.objects.annotate(
-            enrollments=models.Count('enrollments'),
-            participation=models.Count('lab_sessions__student_sessions')
-        ).values('course_name', 'enrollments', 'participation').order_by('course_name')
+            enrollment_count=models.Count('enrollments'),  # Renamed annotation
+            participation_count=models.Count('lab_sessions__student_sessions')  # Renamed annotation
+        ).values('course_name', 'enrollment_count', 'participation_count').order_by('course_name')
         return Response(enrollment_vs_participation)
+
     
 
 class LabRequestResponseTimeViewSet(viewsets.ViewSet):
