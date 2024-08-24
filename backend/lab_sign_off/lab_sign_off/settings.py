@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'request',
     'chat',
     'notifications',
+    'charts',
 ]
 
 AUTH_USER_MODEL = 'user.USER'
