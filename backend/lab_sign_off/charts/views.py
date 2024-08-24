@@ -44,7 +44,7 @@ class EnrollmentViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'])
     def course_count(self, request):
-        course_enrollments = Courses.objects.annotate(enrollments=models.Count('enrollments')).values('course_name', 'enrollments').order_by('course_name')
+        course_enrollments = Courses.objects.annotate(total_course_enrollments=models.Count('programs')).values('course_name', 'total_course_enrollments').order_by('course_name')
         return Response(course_enrollments)
 
     @action(detail=False, methods=['get'])
