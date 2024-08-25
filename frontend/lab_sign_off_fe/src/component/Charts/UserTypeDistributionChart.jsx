@@ -10,12 +10,11 @@ import {
   Legend,
 } from "chart.js";
 
-// Register necessary Chart.js components
 ChartJS.register(ArcElement, CategoryScale, Title, Tooltip, Legend);
 
 const UserTypeDistributionChart = () => {
   const [chartData, setChartData] = useState({
-    labels: [], // Initialize with empty arrays
+    labels: [],
     datasets: [
       {
         label: "User Type Distribution",
@@ -34,7 +33,6 @@ const UserTypeDistributionChart = () => {
     axiosInstance
       .get("/charts/users/type_distribution/")
       .then((response) => {
-        // Ensure the data is an array
         if (Array.isArray(response.data)) {
           const userTypes = response.data.map(
             (item) => item.user_type || "Unknown Type"
@@ -62,7 +60,6 @@ const UserTypeDistributionChart = () => {
       })
       .catch((error) => {
         console.error("Error fetching user type distribution:", error);
-        // Optionally handle the error state here
         setChartData({
           labels: [],
           datasets: [

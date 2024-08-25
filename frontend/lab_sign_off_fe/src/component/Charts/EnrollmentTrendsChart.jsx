@@ -12,7 +12,6 @@ import {
 } from "chart.js";
 import axiosInstance from "../../utils/Axios";
 
-// Register Chart.js components
 ChartJS.register(
   Title,
   Tooltip,
@@ -86,8 +85,8 @@ const EnrollmentTrendsChart = () => {
             x: {
               beginAtZero: true,
               ticks: {
-                autoSkip: true, // Skips some labels to avoid overlap
-                maxRotation: 45, // Rotates x-axis labels to fit
+                autoSkip: true,
+                maxRotation: 45,
                 minRotation: 30,
               },
             },

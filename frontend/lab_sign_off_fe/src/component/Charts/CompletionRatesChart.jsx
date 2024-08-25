@@ -23,7 +23,6 @@ const CompletionRatesChart = () => {
     axiosInstance
       .get("/charts/lab-sessions/completion_rates/")
       .then((response) => {
-        // Ensure response.data is an array
         const data = Array.isArray(response.data) ? response.data : [];
 
         const sessions = data.map((item) => item.session || "");
@@ -48,7 +47,6 @@ const CompletionRatesChart = () => {
       })
       .catch((error) => {
         console.error("Error fetching completion rates:", error);
-        // Handle errors appropriately here
       });
   }, []);
 

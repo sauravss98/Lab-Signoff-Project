@@ -11,7 +11,6 @@ import {
   Legend,
 } from "chart.js";
 
-// Register Chart.js components
 ChartJS.register(
   LineElement,
   CategoryScale,
@@ -39,7 +38,6 @@ const LabRequestTrendsChart = () => {
     axiosInstance
       .get("/charts/lab-requests/trends/")
       .then((response) => {
-        // Validate and process the response data
         if (Array.isArray(response.data)) {
           const dates = response.data.map(
             (item) => item.created_at__date || "Unknown Date"
@@ -64,7 +62,6 @@ const LabRequestTrendsChart = () => {
       })
       .catch((error) => {
         console.error("Error fetching lab request trends:", error);
-        // Optionally handle the error state here
         setChartData({
           labels: [],
           datasets: [

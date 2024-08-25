@@ -85,7 +85,6 @@ const CourseEnrollmentChart = () => {
             y: {
               beginAtZero: true,
               ticks: {
-                // Ensure that y-axis ticks are whole numbers
                 callback: function (value) {
                   return Number.isInteger(value) ? value : "";
                 },

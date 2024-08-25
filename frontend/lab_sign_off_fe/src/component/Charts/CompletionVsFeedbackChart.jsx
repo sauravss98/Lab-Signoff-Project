@@ -11,7 +11,6 @@ import {
   Legend,
 } from "chart.js";
 
-// Register necessary Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -36,9 +35,6 @@ const CompletionVsFeedbackChart = () => {
     axiosInstance
       .get("/charts/completion-vs-feedback/correlation/")
       .then((response) => {
-        console.log("API response:", response.data); // Log the response data
-
-        // Ensure the response data is an array
         if (Array.isArray(response.data)) {
           const dataPoints = response.data.map((item) => ({
             x: item.completion_rate,
@@ -60,7 +56,6 @@ const CompletionVsFeedbackChart = () => {
       })
       .catch((error) => {
         console.error("Error fetching completion vs. feedback data:", error);
-        // Optionally set default state on error
         setChartData({
           datasets: [
             {

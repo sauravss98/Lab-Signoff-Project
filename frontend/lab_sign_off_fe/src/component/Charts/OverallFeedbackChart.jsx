@@ -12,7 +12,6 @@ import {
 } from "chart.js";
 import { Container, Typography, Paper } from "@mui/material";
 
-// Register the required components for Chart.js
 ChartJS.register(
   Title,
   Tooltip,
@@ -88,7 +87,7 @@ const OverallFeedbackChart = () => {
               },
             },
           }}
-          style={{ height: "400px" }} // Adjust the height here
+          style={{ height: "400px" }}
         />
       </Paper>
     </Container>

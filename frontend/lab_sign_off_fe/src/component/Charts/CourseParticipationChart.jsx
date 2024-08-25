@@ -11,7 +11,6 @@ import {
   Legend,
 } from "chart.js";
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -37,7 +36,6 @@ const CourseParticipationChart = () => {
     axiosInstance
       .get("/charts/lab-sessions/course_participation/")
       .then((response) => {
-        // Validate if response.data is an array
         if (Array.isArray(response.data)) {
           const courses = response.data.map(
             (item) => item.course__course_name || "Unknown Course"
@@ -62,7 +60,6 @@ const CourseParticipationChart = () => {
       })
       .catch((error) => {
         console.error("Error fetching course participation:", error);
-        // Optionally set an empty chartData or handle error state
         setChartData({
           labels: [],
           datasets: [
