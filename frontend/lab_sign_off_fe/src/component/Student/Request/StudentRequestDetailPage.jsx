@@ -117,6 +117,53 @@ const StudentRequestDetailPage = () => {
     setSelectedImage("");
   };
 
+  const onDownloadClick = async (messageId) => {
+    try {
+      const response = await axiosInstance.get(
+        `requests/request_messages/${messageId}/download/`,
+        {
+          headers: {
+            Authorization: "Token " + token,
+          },
+          responseType: "blob",
+        }
+      );
+
+      const contentDisposition = response.headers["content-disposition"];
+      console.log(contentDisposition);
+      let filename = "download_" + messageId;
+
+      if (contentDisposition && contentDisposition.includes("filename=")) {
+        const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (fileNameMatch.length > 1) {
+          filename = fileNameMatch[1];
+        }
+      }
+
+      const blob = new Blob([response.data], { type: response.data.type });
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading file", error);
+      toast.error("Error downloading file", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  };
+
   return (
     <Container>
       {data && (
@@ -165,10 +212,11 @@ const StudentRequestDetailPage = () => {
                             onClick={() => openModal(msg.file)}
                           />
                           <IconButton
-                            href={msg.file}
+                            // href={msg.file}
                             download
                             size="small"
                             style={{ marginTop: "10px" }}
+                            onClick={() => onDownloadClick(msg.id)}
                           >
                             <DownloadIcon />
                           </IconButton>
