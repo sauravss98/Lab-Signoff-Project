@@ -1,4 +1,5 @@
 import logging
+import os
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,BasePermission
@@ -6,6 +7,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from .models import LabRequest, RequestMessage
 from .serializers import LabRequestSerializer, CreateLabRequestSerializer, RequestMessageSerializer, CreateRequestMessageSerializer
 from user.permissions import IsAdminOrStaffUser
+from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
 from labsession.models import StudentLabSession
 from notifications.tasks import send_notification
@@ -97,7 +99,7 @@ class CreateRequestMessageView(generics.CreateAPIView):
 
 class ListRequestMessagesView(generics.ListAPIView):
     serializer_class = RequestMessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsStudentOrStaff]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
     def get_queryset(self):
@@ -107,3 +109,52 @@ class ListRequestMessagesView(generics.ListAPIView):
             return RequestMessage.objects.filter(lab_request=lab_request)
         else:
             return RequestMessage.objects.none()
+
+
+class DownloadLabRequestFileView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get(self, request, pk, *args, **kwargs):
+        lab_request = get_object_or_404(LabRequest, pk=pk)
+
+        if lab_request.file:
+            file_path = lab_request.file.path
+            return self._serve_file(file_path)
+        else:
+            raise Http404("File not found")
+
+    def _serve_file(self, file_path):
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as file:
+                response = HttpResponse(file.read(), content_type="application/octet-stream")
+                # Correctly set the Content-Disposition header with the file's original name and extension
+                response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+                return response
+        else:
+            raise Http404("File not found")
+
+
+class DownloadRequestMessageFileView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get(self, request, pk, *args, **kwargs):
+        message = get_object_or_404(RequestMessage, pk=pk)
+
+        if message.file:
+            file_path = message.file.path
+            return self._serve_file(file_path)
+        else:
+            raise Http404("File not found")
+
+    def _serve_file(self, file_path):
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as file:
+                response = HttpResponse(file.read(), content_type="application/octet-stream")
+                filename = os.path.basename(file_path)
+                response['Content-Disposition'] = f'attachment; filename="{filename}"'
+                response['file-name'] = filename  # Add file name to the response headers
+                return response
+        else:
+            raise Http404("File not found")

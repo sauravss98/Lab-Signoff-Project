@@ -251,6 +251,10 @@ CORS_ALLOW_HEADERS = (
     "x-requested-with",
 )
 
+CORS_EXPOSE_HEADERS = (
+    'Content-Disposition',
+)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
