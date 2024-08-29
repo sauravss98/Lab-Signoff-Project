@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
-
+import FileUploadInfo from "../../FileUploadInfo/FileUploadInfo";
 import { tokenLoader } from "../../../utils/token";
 
 const token = tokenLoader();
@@ -26,6 +26,7 @@ const StaffRequestDetailPage = () => {
   const [file, setFile] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  const [currentUserId, setCurrentUserId] = useState(null); // State for current user's ID
   const { requestId } = useParams();
 
   const fetchRequestData = async () => {
@@ -51,8 +52,23 @@ const StaffRequestDetailPage = () => {
     }
   };
 
+  // Fetch the current user's data to identify the message sender
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await axiosInstance.get("users/user_details", {
+        headers: {
+          Authorization: "Token " + token,
+        },
+      });
+      setCurrentUserId(response.data.id);
+    } catch (error) {
+      console.error("Error fetching current user data", error);
+    }
+  };
+
   useEffect(() => {
     fetchRequestData();
+    fetchCurrentUser(); // Fetch current user ID on component mount
   }, [requestId]);
 
   const handleAddMessage = async () => {
@@ -169,6 +185,52 @@ const StaffRequestDetailPage = () => {
     setSelectedImage("");
   };
 
+  const onDownloadClick = async (messageId) => {
+    try {
+      const response = await axiosInstance.get(
+        `requests/request_messages/${messageId}/download/`,
+        {
+          headers: {
+            Authorization: "Token " + token,
+          },
+          responseType: "blob",
+        }
+      );
+
+      const contentDisposition = response.headers["content-disposition"];
+      let filename = "download_" + messageId;
+
+      if (contentDisposition && contentDisposition.includes("filename=")) {
+        const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (fileNameMatch.length > 1) {
+          filename = fileNameMatch[1];
+        }
+      }
+
+      const blob = new Blob([response.data], { type: response.data.type });
+
+      const link = document.createElement("a");
+      link.href = window.URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error downloading file", error);
+      toast.error("Error downloading file", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    }
+  };
+
   return (
     <Container>
       {data && (
@@ -220,32 +282,58 @@ const StaffRequestDetailPage = () => {
                 <CardContent>
                   <Typography variant="h6">Messages</Typography>
                   {data.messages.map((msg) => (
-                    <Box key={msg.id} my={2}>
-                      <Typography variant="body2">
-                        {msg.sender.first_name} {msg.sender.last_name}:{" "}
-                        {msg.message}
-                      </Typography>
-                      {msg.file && (
-                        <Box>
-                          <img
-                            src={msg.file}
-                            alt="Attachment"
-                            style={{ maxWidth: "100%", cursor: "pointer" }}
-                            onClick={() => openModal(msg.file)}
-                          />
-                          <IconButton
-                            href={msg.file}
-                            download
-                            size="small"
-                            style={{ marginTop: "10px" }}
-                          >
-                            <DownloadIcon />
-                          </IconButton>
-                        </Box>
-                      )}
-                      <Typography variant="caption" color="textSecondary">
-                        {new Date(msg.created_at).toLocaleString()}
-                      </Typography>
+                    <Box
+                      key={msg.id}
+                      my={2}
+                      display="flex"
+                      flexDirection="column"
+                      alignItems={
+                        msg.sender.id === currentUserId
+                          ? "flex-end"
+                          : "flex-start"
+                      }
+                    >
+                      <Box
+                        bgcolor={
+                          msg.sender.id === currentUserId
+                            ? "#e1f5fe"
+                            : "#fff3e0"
+                        }
+                        color={
+                          msg.sender.id === currentUserId
+                            ? "text.primary"
+                            : "text.primary"
+                        }
+                        p={2}
+                        borderRadius={2}
+                        maxWidth="80%"
+                      >
+                        <Typography variant="body2">
+                          {msg.sender.first_name} {msg.sender.last_name}:{" "}
+                          {msg.message}
+                        </Typography>
+                        {msg.file && (
+                          <Box mt={1}>
+                            <img
+                              src={msg.file}
+                              alt="Attachment"
+                              style={{ maxWidth: "100%", cursor: "pointer" }}
+                              onClick={() => openModal(msg.file)}
+                            />
+                            <IconButton
+                              onClick={() => onDownloadClick(msg.id)}
+                              download
+                              size="small"
+                              style={{ marginTop: "10px" }}
+                            >
+                              <DownloadIcon />
+                            </IconButton>
+                          </Box>
+                        )}
+                        <Typography variant="caption" color="textSecondary">
+                          {new Date(msg.created_at).toLocaleString()}
+                        </Typography>
+                      </Box>
                     </Box>
                   ))}
                   <Box mt={4}>
@@ -260,22 +348,25 @@ const StaffRequestDetailPage = () => {
                       fullWidth
                       margin="normal"
                     />
-                    <input
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      id="file-upload"
-                      type="file"
-                      onChange={handleFileChange}
-                    />
-                    <label htmlFor="file-upload">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        component="span"
-                      >
-                        Upload File
-                      </Button>
-                    </label>
+                    <Box display="flex" alignItems="center">
+                      <input
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        id="file-upload"
+                        type="file"
+                        onChange={handleFileChange}
+                      />
+                      <label htmlFor="file-upload">
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          component="span"
+                        >
+                          Upload File
+                        </Button>
+                      </label>
+                      <FileUploadInfo file={file} />
+                    </Box>
                     <Box mt={2}>
                       <Button
                         variant="contained"

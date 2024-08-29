@@ -16,11 +16,13 @@ import {
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import { tokenLoader } from "../../../utils/token";
+import FileUploadInfo from "../../FileUploadInfo/FileUploadInfo";
 
 const token = tokenLoader();
 
 const StudentRequestDetailPage = () => {
   const [data, setData] = useState(null);
+  const [activeUser, setActiveUser] = useState(null);
   const [message, setMessage] = useState("");
   const [file, setFile] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +31,13 @@ const StudentRequestDetailPage = () => {
 
   const fetchRequestData = async () => {
     try {
+      const userDataResponse = await axiosInstance.get(`users/user_details`, {
+        headers: {
+          Authorization: "Token " + token,
+        },
+      });
+      setActiveUser(userDataResponse.data);
+
       const response = await axiosInstance.get(`requests/${requestId}/`, {
         headers: {
           Authorization: "Token " + token,
@@ -130,7 +139,6 @@ const StudentRequestDetailPage = () => {
       );
 
       const contentDisposition = response.headers["content-disposition"];
-      console.log(contentDisposition);
       let filename = "download_" + messageId;
 
       if (contentDisposition && contentDisposition.includes("filename=")) {
@@ -197,36 +205,53 @@ const StudentRequestDetailPage = () => {
               <Card>
                 <CardContent>
                   <Typography variant="h6">Messages</Typography>
-                  {data.messages.map((msg) => (
-                    <Box key={msg.id} my={2}>
-                      <Typography variant="body2">
-                        {msg.sender.first_name} {msg.sender.last_name}:{" "}
-                        {msg.message}
-                      </Typography>
-                      {msg.file && (
-                        <Box>
-                          <img
-                            src={msg.file}
-                            alt="Attachment"
-                            style={{ maxWidth: "100%", cursor: "pointer" }}
-                            onClick={() => openModal(msg.file)}
-                          />
-                          <IconButton
-                            // href={msg.file}
-                            download
-                            size="small"
-                            style={{ marginTop: "10px" }}
-                            onClick={() => onDownloadClick(msg.id)}
-                          >
-                            <DownloadIcon />
-                          </IconButton>
+                  {data.messages.map((msg) => {
+                    const isUserMessage = msg.sender.id === activeUser?.id;
+                    return (
+                      <Box
+                        key={msg.id}
+                        my={2}
+                        display="flex"
+                        flexDirection={isUserMessage ? "row-reverse" : "row"}
+                      >
+                        <Box
+                          p={2}
+                          borderRadius={8}
+                          maxWidth="70%"
+                          bgcolor={isUserMessage ? "#e1f5fe" : "#fff3e0"}
+                          boxShadow={2}
+                          ml={isUserMessage ? 0 : 2}
+                          mr={isUserMessage ? 2 : 0}
+                        >
+                          <Typography variant="body2">
+                            {msg.sender.first_name} {msg.sender.last_name}:{" "}
+                            {msg.message}
+                          </Typography>
+                          {msg.file && (
+                            <Box mt={1}>
+                              <img
+                                src={msg.file}
+                                alt="Attachment"
+                                style={{ maxWidth: "100%", cursor: "pointer" }}
+                                onClick={() => openModal(msg.file)}
+                              />
+                              <IconButton
+                                download
+                                size="small"
+                                style={{ marginTop: "10px" }}
+                                onClick={() => onDownloadClick(msg.id)}
+                              >
+                                <DownloadIcon />
+                              </IconButton>
+                            </Box>
+                          )}
+                          <Typography variant="caption" color="textSecondary">
+                            {new Date(msg.created_at).toLocaleString()}
+                          </Typography>
                         </Box>
-                      )}
-                      <Typography variant="caption" color="textSecondary">
-                        {new Date(msg.created_at).toLocaleString()}
-                      </Typography>
-                    </Box>
-                  ))}
+                      </Box>
+                    );
+                  })}
                   <Box mt={4}>
                     <Typography variant="h6">Add New Message</Typography>
                     <TextField
@@ -239,22 +264,25 @@ const StudentRequestDetailPage = () => {
                       fullWidth
                       margin="normal"
                     />
-                    <input
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      id="file-upload"
-                      type="file"
-                      onChange={handleFileChange}
-                    />
-                    <label htmlFor="file-upload">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        component="span"
-                      >
-                        Upload File
-                      </Button>
-                    </label>
+                    <Box display="flex" alignItems="center">
+                      <input
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        id="file-upload"
+                        type="file"
+                        onChange={handleFileChange}
+                      />
+                      <label htmlFor="file-upload">
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          component="span"
+                        >
+                          Upload File
+                        </Button>
+                      </label>
+                      <FileUploadInfo file={file} />
+                    </Box>
                     <Box mt={2}>
                       <Button
                         variant="contained"
@@ -289,22 +317,9 @@ const StudentRequestDetailPage = () => {
       >
         <img
           src={selectedImage}
-          alt="Modal Attachment"
-          style={{ maxWidth: "100%" }}
+          alt="Full Size"
+          style={{ maxWidth: "100%", maxHeight: "100%" }}
         />
-        <Box mt={2} display="flex" justifyContent="space-between">
-          <IconButton href={selectedImage} download size="small">
-            <DownloadIcon />
-          </IconButton>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={closeModal}
-            size="small"
-          >
-            Close
-          </Button>
-        </Box>
       </ReactModal>
     </Container>
   );
