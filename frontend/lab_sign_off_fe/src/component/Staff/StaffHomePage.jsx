@@ -12,6 +12,7 @@ import UserTypeDistributionChart from "../Charts/UserTypeDistributionChart";
 import ProgramStudentCountChart from "../Charts/ProgramStudentCountChart";
 import CompletionVsFeedbackChart from "../Charts/CompletionVsFeedbackChart";
 import EnrollmentVsParticipationChart from "../Charts/EnrollmentVsParticipationChart";
+import CompletionRatesByCourseChart from "../Charts/CompletionRatesByCourseChart";
 
 const StaffHomePage = () => {
   return (
@@ -56,6 +57,9 @@ const StaffHomePage = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <EnrollmentVsParticipationChart />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <CompletionRatesByCourseChart courseName="Introduction to Python" />
         </Grid>
       </Grid>
     </Container>
