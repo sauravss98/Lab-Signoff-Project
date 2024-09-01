@@ -73,6 +73,24 @@ class LabSessionViewSet(viewsets.ViewSet):
     def course_participation(self, request):
         course_participation = LabSession.objects.values('course__course_name').annotate(participation=models.Count('student_sessions')).order_by('course__course_name')
         return Response(course_participation)
+    
+    @action(detail=False, methods=['get'])
+    def completion_rates_by_course(self, request):
+        course_name = request.query_params.get('course_name')
+        if not course_name:
+            return Response({"error": "Course name is required"}, status=400)
+
+        lab_sessions = LabSession.objects.filter(course__course_name=course_name)
+        completion_data = []
+        for session in lab_sessions:
+            completed = session.student_sessions.filter(completed=True).count()
+            not_completed = session.student_sessions.filter(completed=False).count()
+            completion_data.append({
+                'session': session.name,
+                'completed': completed,
+                'not_completed': not_completed
+            })
+        return Response(completion_data)
 
 
 class LabRequestViewSet(viewsets.ViewSet):
