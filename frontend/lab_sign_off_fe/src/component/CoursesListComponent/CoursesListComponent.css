@@ -1,0 +1,21 @@
+/* Container styles */
+.chart-wrapper {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.courses-grid-wrapper {
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .chart-wrapper {
+    padding: 10px;
+  }
+
+  .courses-grid-wrapper {
+    padding: 10px;
+  }
+}

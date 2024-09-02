@@ -9,7 +9,7 @@ import OverallFeedbackChart from "../Charts/OverallFeedbackChart";
 import RatingDistribution from "../Charts/RatingDistribution";
 import { Container, Grid } from "@mui/material";
 import UserTypeDistributionChart from "../Charts/UserTypeDistributionChart";
-import ProgramStudentCountChart from "../Charts/ProgramStudentCountChart";
+// import ProgramStudentCountChart from "../Charts/ProgramStudentCountChart";
 import CompletionVsFeedbackChart from "../Charts/CompletionVsFeedbackChart";
 import EnrollmentVsParticipationChart from "../Charts/EnrollmentVsParticipationChart";
 import CompletionRatesByCourseChart from "../Charts/CompletionRatesByCourseChart";
@@ -46,7 +46,7 @@ const StaffHomePage = () => {
           <LabRequestTrendsChart />
         </Grid>
         <Grid item xs={12} md={6}>
-          <UserTypeDistributionChart />
+          <UserTypeDistributionChart selectedType={"all"} />
         </Grid>
         {/* not working backend issue */}
         {/* <Grid item xs={12} md={6}>

@@ -1,12 +1,32 @@
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import axiosInstance from "../../utils/Axios";
 import "./styles.css";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const CourseEnrollmentChart = () => {
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
 
   useEffect(() => {
+    let chartInstance;
+
     axiosInstance
       .get("/charts/enrollment/course_count/")
       .then((response) => {
@@ -56,6 +76,12 @@ const CourseEnrollmentChart = () => {
           ],
         });
       });
+
+    return () => {
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+    };
   }, []);
 
   return (
@@ -91,6 +117,12 @@ const CourseEnrollmentChart = () => {
               },
             },
           },
+        }}
+        ref={(ref) => {
+          if (ref && ref.chartInstance) {
+            // eslint-disable-next-line no-undef
+            chartInstance = ref.chartInstance;
+          }
         }}
       />
     </div>

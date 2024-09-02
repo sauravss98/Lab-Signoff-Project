@@ -11,8 +11,8 @@ import {
 } from "chart.js";
 
 ChartJS.register(ArcElement, CategoryScale, Title, Tooltip, Legend);
-
-const UserTypeDistributionChart = () => {
+// eslint-disable-next-line react/prop-types
+const UserTypeDistributionChart = ({ selectedType }) => {
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -34,10 +34,16 @@ const UserTypeDistributionChart = () => {
       .get("/charts/users/type_distribution/")
       .then((response) => {
         if (Array.isArray(response.data)) {
-          const userTypes = response.data.map(
+          const filteredData = response.data.filter((item) => {
+            if (selectedType === "all") return true;
+            // eslint-disable-next-line react/prop-types
+            return item.user_type.toLowerCase() === selectedType.toLowerCase();
+          });
+
+          const userTypes = filteredData.map(
             (item) => item.user_type || "Unknown Type"
           );
-          const counts = response.data.map((item) => item.count || 0);
+          const counts = filteredData.map((item) => item.count || 0);
 
           setChartData({
             labels: userTypes,
@@ -76,11 +82,10 @@ const UserTypeDistributionChart = () => {
           ],
         });
       });
-  }, []);
+  }, [selectedType]);
 
   return (
     <div>
-      <h2>User Type Distribution</h2>
       <Pie data={chartData} />
     </div>
   );
