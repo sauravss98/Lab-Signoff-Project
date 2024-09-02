@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'chat',
     'notifications',
     'charts',
+    'django_extensions',
 ]
 
 AUTH_USER_MODEL = 'user.USER'
