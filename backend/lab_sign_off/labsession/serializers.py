@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import LabSession, StudentEnrollment, StudentLabSession, StudentLabSessionFeedback
 from user.models import User
 from course.models import Courses
@@ -31,6 +32,15 @@ class StudentEnrollmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = StudentEnrollment
         fields = ['id', 'student', 'course', 'enrollment_date']
+
+    def validate(self, data):
+        course = data.get('course')
+
+        # Check if the course has assigned staff
+        if not course.staff.exists():
+            raise ValidationError({"course": "This course does not have any staff assigned. Enrollment is not allowed."})
+
+        return data
 
 class StudentLabSessionSerializer(serializers.ModelSerializer):
     lab_session = LabSessionSerializer()
