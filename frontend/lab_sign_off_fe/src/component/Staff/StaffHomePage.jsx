@@ -23,7 +23,7 @@ import UserTypeDistributionChart from "../Charts/UserTypeDistributionChart";
 // import ProgramStudentCountChart from "../Charts/ProgramStudentCountChart";
 import CompletionVsFeedbackChart from "../Charts/CompletionVsFeedbackChart";
 import EnrollmentVsParticipationChart from "../Charts/EnrollmentVsParticipationChart";
-import CompletionRatesByCourseChart from "../Charts/CompletionRatesByCourseChart";
+// import CompletionRatesByCourseChart from "../Charts/CompletionRatesByCourseChart";
 
 const StaffHomePage = () => {
   // Refs for each chart
@@ -36,7 +36,7 @@ const StaffHomePage = () => {
   const completionRatesRef = useRef(null);
   const courseParticipationRef = useRef(null);
   const enrollmentVsParticipationRef = useRef(null);
-  const completionRatesByCourseRef = useRef(null);
+  // const completionRatesByCourseRef = useRef(null);
   const labRequestStatusRef = useRef(null);
   const labRequestTrendsRef = useRef(null);
   const userTypeDistributionRef = useRef(null);
@@ -158,15 +158,15 @@ const StaffHomePage = () => {
                   <EnrollmentVsParticipationChart />
                 </Paper>
               </Grid>
-              <Grid item xs={12}>
+              {/* <Grid item xs={12}>
                 <Paper
                   elevation={3}
                   ref={completionRatesByCourseRef}
                   sx={{ p: 2, ...getScrollStyle(completionRatesByCourseRef) }}
                 >
                   <CompletionRatesByCourseChart courseName="Introduction to Python" />
-                </Paper>
-              </Grid>
+                </Paper> */}
+              {/* </Grid> */}
             </Grid>
           </AccordionDetails>
         </Accordion>

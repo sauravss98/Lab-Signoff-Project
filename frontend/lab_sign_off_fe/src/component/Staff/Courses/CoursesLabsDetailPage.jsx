@@ -1,3 +1,5 @@
+import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   Box,
   Card,
@@ -6,19 +8,21 @@ import {
   Divider,
   Grid,
   Typography,
+  Tabs,
+  Tab,
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Bounce, toast } from "react-toastify";
 import axiosInstance from "../../../utils/Axios";
 import { tokenLoader } from "../../../utils/token";
-import { Bounce, toast } from "react-toastify";
 import CoursesLabsGrid from "./CoursesLabsGrid";
+import CompletionRatesByCourseChart from "../../Charts/CompletionRatesByCourseChart";
 
 const token = tokenLoader();
 
 const CoursesLabsDetailPage = () => {
   const { selectedRowId } = useParams();
   const [courseDetails, setCourseDetails] = useState({});
+  const [tabValue, setTabValue] = useState(0); // State for managing selected tab
 
   const fetchData = useCallback(async () => {
     try {
@@ -27,7 +31,7 @@ const CoursesLabsDetailPage = () => {
           Authorization: "Token " + token,
         },
       });
-      setCourseDetails(response.data); // Assign response data to courseDetails
+      setCourseDetails(response.data);
     } catch (error) {
       let errorMessage = "Error loading data";
       const errorData = error.response;
@@ -55,7 +59,10 @@ const CoursesLabsDetailPage = () => {
     fetchData();
   }, [fetchData]);
 
-  console.log(courseDetails);
+  // Handler for tab change
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
 
   return (
     <Box sx={{ padding: 1 }}>
@@ -108,7 +115,25 @@ const CoursesLabsDetailPage = () => {
           </Grid>
         </CardContent>
       </Card>
-      <CoursesLabsGrid course_id={selectedRowId} />
+
+      {/* Tabs for switching between Chart and Grid */}
+      <Tabs
+        value={tabValue}
+        onChange={handleTabChange}
+        indicatorColor="primary"
+        textColor="primary"
+        centered
+        sx={{ marginTop: 2 }}
+      >
+        <Tab label="Chart" />
+        <Tab label="Grid" />
+      </Tabs>
+
+      {/* Conditional rendering based on selected tab */}
+      {tabValue === 0 && courseDetails.course_name && (
+        <CompletionRatesByCourseChart courseName={courseDetails.course_name} />
+      )}
+      {tabValue === 1 && <CoursesLabsGrid course_id={Number(selectedRowId)} />}
     </Box>
   );
 };

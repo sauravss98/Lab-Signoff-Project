@@ -1,6 +1,25 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import axiosInstance from "../../utils/Axios";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const CompletionRatesByCourseChart = ({ courseName }) => {
   const [chartData, setChartData] = useState({
@@ -20,11 +39,13 @@ const CompletionRatesByCourseChart = ({ courseName }) => {
   });
 
   useEffect(() => {
-    if (!courseName) return; // Exit if no course name is provided
+    if (!courseName) return;
 
     axiosInstance
       .get(
-        `/charts/lab-sessions/completion_rates_by_course/?course_name=${courseName}`
+        `/charts/lab-sessions/completion_rates_by_course/?course_name=${encodeURIComponent(
+          courseName
+        )}`
       )
       .then((response) => {
         const data = Array.isArray(response.data) ? response.data : [];
@@ -54,10 +75,22 @@ const CompletionRatesByCourseChart = ({ courseName }) => {
       });
   }, [courseName]);
 
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: `Lab Completion Rates for ${courseName}`,
+      },
+    },
+  };
+
   return (
     <div>
-      <h2>Lab Completion Rates for {courseName}</h2>
-      <Bar data={chartData} />
+      <Bar data={chartData} options={options} />
     </div>
   );
 };
