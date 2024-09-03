@@ -44,8 +44,17 @@ class EnrollmentViewSet(viewsets.ViewSet):
 
     @action(detail=False, methods=['get'])
     def course_count(self, request):
-        course_enrollments = Courses.objects.annotate(total_course_enrollments=models.Count('programs')).values('course_name', 'total_course_enrollments').order_by('course_name')
-        return Response(course_enrollments)
+        course_enrollments = (
+            StudentEnrollment.objects
+            .values('course__id', 'course__course_name')
+            .annotate(total_course_enrollments=models.Count('id'))
+            .order_by('course__course_name')
+        )
+        formatted_data = [
+            {"course_name": enrollment['course__course_name'], "total_course_enrollments": enrollment['total_course_enrollments']}
+            for enrollment in course_enrollments
+        ]
+        return Response(formatted_data)
 
     @action(detail=False, methods=['get'])
     def program_count(self, request):
