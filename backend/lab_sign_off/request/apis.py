@@ -33,7 +33,7 @@ class CreateLabRequestView(generics.CreateAPIView):
 
         # Trigger the in-app notification task
         message = f"A new lab request has been created by {self.request.user.email}."
-        extra_data = {'lab_request_id': lab_request.id}
+        extra_data = {'lab_request_id': lab_request.id,'text':lab_request.text}
 
         # Corrected logging statements
         logger.info("Users: %s", user_ids)
