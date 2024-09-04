@@ -15,14 +15,37 @@ from user.models import User
 
 
 class FeedbackViewSet(viewsets.ViewSet):
+    """ Viewset for the feedback charts
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: Json
+    """
     @action(detail=False, methods=['get'])
     def overall_ratings(self, request):
+        """ Chart for overall rating 
+
+        Args:
+            request (_type_): self, request
+
+        Returns:
+            _type_: Json data
+        """
         feedback_data = StudentLabSessionFeedback.objects.values('rating').annotate(count=models.Count('id')).order_by('rating')
         return Response(feedback_data)
 
     @action(detail=False, methods=['get'])
     def course_ratings(self, request):
+        """ Chart for course rating
+
+        Args:
+            request (_type_): self, request
+
+        Returns:
+            _type_: Json data
+        """
         course_feedback = LabSession.objects.values('course__course_name').annotate(average_rating=models.Avg('feedbacks__rating')).order_by('course__course_name')
         return Response(course_feedback)
     
@@ -36,7 +59,14 @@ class FeedbackViewSet(viewsets.ViewSet):
     
 
 class EnrollmentViewSet(viewsets.ViewSet):
+    """ Viewset with chart data regarding enrollment
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: Json data
+    """
     @action(detail=False, methods=['get'])
     def trends(self, request):
         enrollment_data = StudentEnrollment.objects.values('enrollment_date__date').annotate(enrollments=models.Count('id')).order_by('enrollment_date__date')
@@ -63,7 +93,14 @@ class EnrollmentViewSet(viewsets.ViewSet):
 
 
 class LabSessionViewSet(viewsets.ViewSet):
+    """Viewset with chart data regarding lab session
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: Json data
+    """
     @action(detail=False, methods=['get'])
     def completion_rates(self, request):
         lab_sessions = LabSession.objects.all()
@@ -103,7 +140,14 @@ class LabSessionViewSet(viewsets.ViewSet):
 
 
 class LabRequestViewSet(viewsets.ViewSet):
+    """Viewset with chart data regarding lab session
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: Json data
+    """
     @action(detail=False, methods=['get'])
     def status_distribution(self, request):
         status_data = LabRequest.objects.values('status').annotate(count=models.Count('id')).order_by('status')
@@ -121,7 +165,14 @@ class LabRequestViewSet(viewsets.ViewSet):
     
 
 class UserViewSet(viewsets.ViewSet):
-    
+    """Viewset with chart data regarding user data
+
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: Json data
+    """
     @action(detail=False, methods=['get'])
     def type_distribution(self, request):
         user_type_data = User.objects.values('user_type').annotate(count=models.Count('id')).order_by('user_type')
@@ -129,7 +180,14 @@ class UserViewSet(viewsets.ViewSet):
 
 
 class ProgramViewSet(viewsets.ViewSet):
+    """Viewset with chart data regarding program data
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: Json Data
+    """
     @action(detail=False, methods=['get'])
     def student_count(self, request):
         program_data = Programs.objects.annotate(students=models.Count('students')).values('program_name', 'students').order_by('program_name')
@@ -142,7 +200,14 @@ class ProgramViewSet(viewsets.ViewSet):
     
 
 class LabSessionOrderViewSet(viewsets.ViewSet):
+    """Viewset with chart data regarding lab session
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: Json Data
+    """
     @action(detail=False, methods=['get'])
     def order(self, request):
         session_order = LabSession.objects.values('course__course_name', 'order', 'name').order_by('course__course_name', 'order')
@@ -156,7 +221,14 @@ class LabSessionOrderViewSet(viewsets.ViewSet):
 
 
 class CompletionVsFeedbackViewSet(viewsets.ViewSet):
+    """Viewset with chart data for lab completion against feedback
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: JSON data
+    """
     @action(detail=False, methods=['get'])
     def correlation(self, request):
         correlation_data = LabSession.objects.annotate(
@@ -167,7 +239,14 @@ class CompletionVsFeedbackViewSet(viewsets.ViewSet):
 
 
 class EnrollmentVsParticipationViewSet(viewsets.ViewSet):
+    """Viewset with chart data for enrollment vs participation
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: JSON data
+    """
     @action(detail=False, methods=['get'])
     def enrollment_vs_participation(self, request):
         enrollment_vs_participation = Courses.objects.annotate(
@@ -179,7 +258,14 @@ class EnrollmentVsParticipationViewSet(viewsets.ViewSet):
     
 
 class LabRequestResponseTimeViewSet(viewsets.ViewSet):
+    """Viewset with chart data about lab 
 
+    Args:
+        viewsets (_type_): ViewSet
+
+    Returns:
+        _type_: JSON data
+    """
     @action(detail=False, methods=['get'])
     def response_time(self, request):
         response_time_data = LabRequest.objects.annotate(
