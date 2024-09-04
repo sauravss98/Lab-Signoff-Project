@@ -16,6 +16,11 @@ from celery.result import AsyncResult
 logger = logging.getLogger(__name__)
 
 class CreateLabRequestView(generics.CreateAPIView):
+    """ Api view for creating lab request
+
+    Args:
+        generics (_type_): Inherits Rest framework CreateAPIView
+    """
     serializer_class = CreateLabRequestSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -27,15 +32,12 @@ class CreateLabRequestView(generics.CreateAPIView):
         lab_request = serializer.save(student=self.request.user)
         lab_request.staff.set(staff_members)
     
-        # Collect user IDs for notifications
-        user_ids = [self.request.user.id]  # Add student
+        user_ids = [self.request.user.id]
         user_ids.extend(staff_members.values_list('id', flat=True))
 
-        # Trigger the in-app notification task
         message = f"A new lab request has been created by {self.request.user.email}."
         extra_data = {'lab_request_id': lab_request.id,'text':lab_request.text}
 
-        # Corrected logging statements
         logger.info("Users: %s", user_ids)
         logger.info("Message: %s", message)
         logger.info("Extra data: %s", extra_data)
@@ -52,11 +54,23 @@ class CreateLabRequestView(generics.CreateAPIView):
         # send_notification.delay(user_ids, message, 'email', extra_data)
 
 class IsStudentOrStaff(BasePermission):
+    """ Class to check permission of user. Whether it is student or staff
+
+    Args:
+        BasePermission (_type_): Inherits BasePermission class
+    """
     def has_object_permission(self, request, view, obj):
-        # Check if the user is the student who created the request or a staff member in the request
         return obj.student == request.user or request.user in obj.staff.all()
 
 class ListLabRequestsView(generics.ListAPIView):
+    """ Class for request list api view
+
+    Args:
+        generics (_type_): ListAPIView
+
+    Returns:
+        _type_: queryset
+    """
     serializer_class = LabRequestSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -64,19 +78,30 @@ class ListLabRequestsView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if user.user_type in ['admin', 'staff']:
-            # For admin or staff, return requests where the user is a staff member
             return LabRequest.objects.filter(staff=user)
         else:
-            # For students, return requests created by the user
             return LabRequest.objects.filter(student=user)
 
 class RetrieveLabRequestView(generics.RetrieveAPIView):
+    """ Class for request single api view
+
+    Args:
+        generics (_type_): RetrieveAPIView
+    """
     queryset = LabRequest.objects.all()
     serializer_class = LabRequestSerializer
     permission_classes = [IsAuthenticated, IsStudentOrStaff]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 class RetrieveUpdateLabRequestView(generics.RetrieveUpdateAPIView):
+    """ Class for request update api view
+
+    Args:
+        generics (_type_): RetrieveUpdateAPIView
+
+    Returns:
+        _type_: queryset
+    """
     serializer_class = LabRequestSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -89,6 +114,11 @@ class RetrieveUpdateLabRequestView(generics.RetrieveUpdateAPIView):
             return LabRequest.objects.filter(student=user)
 
 class CreateRequestMessageView(generics.CreateAPIView):
+    """ API view to create message in request
+
+    Args:
+        generics (_type_): CreateAPIView
+    """
     serializer_class = CreateRequestMessageSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -98,6 +128,14 @@ class CreateRequestMessageView(generics.CreateAPIView):
         serializer.save(sender=self.request.user, lab_request=lab_request)
 
 class ListRequestMessagesView(generics.ListAPIView):
+    """ View to list messages in a request
+
+    Args:
+        generics (_type_): ListAPIView
+
+    Returns:
+        _type_: queryset
+    """
     serializer_class = RequestMessageSerializer
     permission_classes = [permissions.IsAuthenticated, IsStudentOrStaff]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -112,6 +150,18 @@ class ListRequestMessagesView(generics.ListAPIView):
 
 
 class DownloadLabRequestFileView(generics.GenericAPIView):
+    """ View to download the file in request
+
+    Args:
+        generics (_type_): GenericAPIView
+
+    Raises:
+        Http404: File missing
+        Http404: File does not exist
+
+    Returns:
+        _type_: File
+    """
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
@@ -128,7 +178,6 @@ class DownloadLabRequestFileView(generics.GenericAPIView):
         if os.path.exists(file_path):
             with open(file_path, 'rb') as file:
                 response = HttpResponse(file.read(), content_type="application/octet-stream")
-                # Correctly set the Content-Disposition header with the file's original name and extension
                 response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
                 return response
         else:
@@ -136,6 +185,18 @@ class DownloadLabRequestFileView(generics.GenericAPIView):
 
 
 class DownloadRequestMessageFileView(generics.GenericAPIView):
+    """ View to download the file in request message
+
+    Args:
+        generics (_type_): GenericAPIView
+
+    Raises:
+        Http404: File missing
+        Http404: File does not exist
+
+    Returns:
+        _type_: File
+    """
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
@@ -154,7 +215,7 @@ class DownloadRequestMessageFileView(generics.GenericAPIView):
                 response = HttpResponse(file.read(), content_type="application/octet-stream")
                 filename = os.path.basename(file_path)
                 response['Content-Disposition'] = f'attachment; filename="{filename}"'
-                response['file-name'] = filename  # Add file name to the response headers
+                response['file-name'] = filename
                 return response
         else:
             raise Http404("File not found")
