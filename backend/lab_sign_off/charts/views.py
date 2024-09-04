@@ -250,8 +250,8 @@ class EnrollmentVsParticipationViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['get'])
     def enrollment_vs_participation(self, request):
         enrollment_vs_participation = Courses.objects.annotate(
-            enrollment_count=models.Count('enrollments'),  # Renamed annotation
-            participation_count=models.Count('lab_sessions__student_sessions')  # Renamed annotation
+            enrollment_count=models.Count('enrollments'),
+            participation_count=models.Count('lab_sessions__student_sessions')
         ).values('course_name', 'enrollment_count', 'participation_count').order_by('course_name')
         return Response(enrollment_vs_participation)
 
