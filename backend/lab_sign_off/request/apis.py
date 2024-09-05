@@ -9,6 +9,8 @@ from .serializers import LabRequestSerializer, CreateLabRequestSerializer, Reque
 from user.permissions import IsAdminOrStaffUser
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from labsession.models import StudentLabSession
 from notifications.tasks import send_notification
 from celery.result import AsyncResult
@@ -62,15 +64,31 @@ class IsStudentOrStaff(BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.student == request.user or request.user in obj.staff.all()
 
+# no cache
+# class ListLabRequestsView(generics.ListAPIView):
+#     """ Class for request list api view
+
+#     Args:
+#         generics (_type_): ListAPIView
+
+#     Returns:
+#         _type_: queryset
+#     """
+#     serializer_class = LabRequestSerializer
+#     permission_classes = [IsAuthenticated]
+#     authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+#     def get_queryset(self):
+#         user = self.request.user
+#         if user.user_type in ['admin', 'staff']:
+#             return LabRequest.objects.filter(staff=user)
+#         else:
+#             return LabRequest.objects.filter(student=user)
+
+
+# Cached
+@method_decorator(cache_page(60 * 15), name='dispatch')  # Cache for 15 minutes
 class ListLabRequestsView(generics.ListAPIView):
-    """ Class for request list api view
-
-    Args:
-        generics (_type_): ListAPIView
-
-    Returns:
-        _type_: queryset
-    """
     serializer_class = LabRequestSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
