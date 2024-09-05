@@ -1,5 +1,13 @@
+import CourseStatusDetails from "./HomePageComponents/CourseStatusDetails";
+import PendingRequestCount from "./HomePageComponents/PendingRequestCount";
+
 const StudentHomePage = () => {
-  return <div>StudentHomePage</div>;
+  return (
+    <>
+      <CourseStatusDetails />
+      <PendingRequestCount />
+    </>
+  );
 };
 
 export default StudentHomePage;
