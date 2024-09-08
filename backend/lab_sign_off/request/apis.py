@@ -107,6 +107,25 @@ class ListLabRequestsView(generics.ListAPIView):
             return LabRequest.objects.filter(staff=user)
         else:
             return LabRequest.objects.filter(student=user)
+        
+
+@method_decorator(cache_page(60 * 15), name='dispatch')  # Cache for 15 minutes
+class AdminLabRequestsView(generics.ListAPIView):
+    """Class for request list api view for admin. Cached api
+
+    Args:
+        generics (_type_): ListAPIView
+
+    Returns:
+        _type_: queryset
+    """
+    serializer_class = LabRequestSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get_queryset(self):
+        queryset = LabRequest.objects.all()
+        return queryset
 
 class RetrieveLabRequestView(generics.RetrieveAPIView):
     """ Class for request single api view
