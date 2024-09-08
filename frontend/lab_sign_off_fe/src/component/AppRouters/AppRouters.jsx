@@ -62,6 +62,9 @@ const NotificationLayout = React.lazy(() =>
 const FeedbackMainPage = React.lazy(() =>
   import("../Staff/Feedback/FeedbackMainPage")
 );
+const AdminReqestComponent = React.lazy(() =>
+  import("../AdminPages/Requests/AdminReqestComponent")
+);
 
 const router = createBrowserRouter([
   {
@@ -169,6 +172,10 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AdminHomePage />,
+          },
+          {
+            path: "requests",
+            element: <AdminReqestComponent />,
           },
           {
             path: "chat",
