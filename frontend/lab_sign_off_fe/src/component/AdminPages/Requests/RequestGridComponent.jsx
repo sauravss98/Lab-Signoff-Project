@@ -3,7 +3,6 @@ import { useCallback, useState, useEffect } from "react";
 import { tokenLoader } from "../../../utils/token";
 import axiosInstance from "../../../utils/Axios";
 import { Bounce, toast } from "react-toastify";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
   Box,
   Paper,
@@ -11,21 +10,14 @@ import {
   CircularProgress,
   Chip,
   useTheme,
-  IconButton,
-  Menu,
-  MenuItem,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 const token = tokenLoader();
 
 const RequestGridComponent = () => {
-  const [menuAnchor, setMenuAnchor] = useState(null);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRow, setSelectedRow] = useState(null);
   const theme = useTheme();
-  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     try {
@@ -40,7 +32,6 @@ const RequestGridComponent = () => {
         results = results.concat(response.data.results);
         nextPageUrl = response.data.next;
       }
-      // Format the data
       const formattedData = results.map((item) => ({
         id: item.id,
         text: item.text,
@@ -75,21 +66,6 @@ const RequestGridComponent = () => {
     }
   }, []);
 
-  const handleMenuOpen = (event, row) => {
-    setMenuAnchor(event.currentTarget);
-    setSelectedRow(row);
-  };
-
-  const handleMenuClose = () => {
-    setMenuAnchor(null);
-    setSelectedRow(null);
-  };
-
-  const handleEdit = () => {
-    navigate(`/staff/request/${selectedRow.id}/detail`);
-    handleMenuClose();
-  };
-
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -102,25 +78,14 @@ const RequestGridComponent = () => {
       ))}
     </Box>
   );
+  // Custom cell renderer for student field
+  const renderStudentCell = (params) => (
+    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+      <Chip label={params.value} color="secondary" size="small" />
+    </Box>
+  );
 
-  // Define columns for DataGrid
   const columns = [
-    {
-      field: "actions",
-      headerName: "",
-      width: 50,
-      renderCell: (params) => (
-        <IconButton
-          size="small"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleMenuOpen(e, params.row);
-          }}
-        >
-          <MoreVertIcon />
-        </IconButton>
-      ),
-    },
     { field: "id", headerName: "ID", width: 90 },
     { field: "text", headerName: "Text", width: 250 },
     {
@@ -128,6 +93,12 @@ const RequestGridComponent = () => {
       headerName: "Staff",
       width: 350,
       renderCell: renderStaffCell,
+    },
+    {
+      field: "student",
+      headerName: "Student",
+      width: 350,
+      renderCell: renderStudentCell,
     },
     { field: "status", headerName: "Status", width: 150 },
     { field: "fileExists", headerName: "File Exists", width: 150 },
@@ -187,14 +158,6 @@ const RequestGridComponent = () => {
           />
         )}
       </Paper>
-      <Menu
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem onClick={handleEdit}>Edit</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
-      </Menu>
     </Box>
   );
 };
