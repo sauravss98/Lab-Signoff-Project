@@ -193,7 +193,6 @@ const StaffRequestGridComponent = () => {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
       </Menu>
     </Box>
   );

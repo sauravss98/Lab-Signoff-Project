@@ -162,11 +162,6 @@ const StudentsListMainGridComponent = () => {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleEditClick}>Edit</MenuItem>
-        <MenuItem
-        // Add your delete function here
-        >
-          Delete
-        </MenuItem>
       </Menu>
     </Box>
   );
