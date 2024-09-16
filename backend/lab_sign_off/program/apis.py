@@ -66,3 +66,15 @@ class UpdateProgramDetailsView(UpdateAPIView):
     def get_queryset(self):
         queryset = Programs.objects.all()
         return queryset
+
+class DeleteProgramView(DestroyAPIView):
+    """
+    Api view to delete a program
+    """
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAdminOrStaffUser]
+    serializer_class = ProgramsSerializer
+
+    def get_queryset(self):
+        queryset = Programs.objects.all()
+        return queryset
