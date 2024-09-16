@@ -86,7 +86,6 @@ const MainRequestGridComponent = () => {
   const handleEditClick = async () => {
     console.log(selectedRow.id);
     navigate(`/student/request/${selectedRow.id}/detail`);
-    // navigate(`/student/request/${selectedRow.id}/detail`);
     handleMenuClose();
   };
 
@@ -194,7 +193,6 @@ const MainRequestGridComponent = () => {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleEditClick}>Edit</MenuItem>
-        <MenuItem onClick={handleMenuClose}>Delete</MenuItem>
       </Menu>
     </Box>
   );

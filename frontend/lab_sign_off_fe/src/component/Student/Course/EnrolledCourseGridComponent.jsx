@@ -69,19 +69,7 @@ const EnrolledCourseGridComponent = () => {
   };
 
   const handleEdit = () => {
-    toast.info(`Edit ${selectedRow.id}`, {
-      position: "top-right",
-      autoClose: 3000,
-    });
     navigate(`/student/course/${selectedRow.id}/details`);
-    handleMenuClose();
-  };
-
-  const handleDelete = () => {
-    toast.info(`Delete ${selectedRow.course_name}`, {
-      position: "top-right",
-      autoClose: 3000,
-    });
     handleMenuClose();
   };
 
@@ -147,7 +135,6 @@ const EnrolledCourseGridComponent = () => {
         onClose={handleMenuClose}
       >
         <MenuItem onClick={handleEdit}>Edit</MenuItem>
-        <MenuItem onClick={handleDelete}>Delete</MenuItem>
       </Menu>
     </Container>
   );
