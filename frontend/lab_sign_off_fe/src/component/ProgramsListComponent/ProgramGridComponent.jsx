@@ -152,7 +152,7 @@ const ProgramGridComponent = () => {
     },
     {
       field: "program_lenght",
-      headerName: "Program lenght (Years)",
+      headerName: "Program Lenght (Years)",
       width: 300,
       editable: false,
     },
