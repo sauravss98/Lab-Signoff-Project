@@ -12,6 +12,7 @@ import Badge from "react-bootstrap/Badge";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Button from "react-bootstrap/Button";
 import CourseCreateComponent from "./CourseCreateComponent";
+import CoursesEditComponent from "./CoursesEditComponent";
 
 const token = tokenLoader();
 
@@ -19,7 +20,8 @@ const CoursesGridComponent = () => {
   const [rows, setRows] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
-  // const [selectedRow, setSelectedRow] = useState(null);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -62,14 +64,13 @@ const CoursesGridComponent = () => {
     fetchData();
   }, [fetchData]);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event, row) => {
     setMenuAnchor(event.currentTarget);
-    // setSelectedRow(row);
+    setSelectedRow(row);
   };
 
   const handleMenuClose = () => {
     setMenuAnchor(null);
-    // setSelectedRow(null);
   };
 
   const renderPrograms = (programs = []) => {
@@ -89,14 +90,13 @@ const CoursesGridComponent = () => {
   };
 
   const getRowHeight = (params) => {
-    if (!params.row) return 52; // Return default height if row is undefined
+    if (!params.row) return 52;
 
     const staffCount = params.row.staff ? params.row.staff.length : 0;
     const programsCount = params.row.programs ? params.row.programs.length : 0;
-    const baseHeight = 52; // Default row height
-    const extraHeight = 25; // Extra height per additional row of items
+    const baseHeight = 52;
+    const extraHeight = 25;
 
-    // Calculate the required number of lines
     const numLines = Math.max(staffCount, programsCount);
     return baseHeight + (numLines > 1 ? (numLines - 1) * extraHeight : 0);
   };
@@ -108,6 +108,75 @@ const CoursesGridComponent = () => {
 
   const handleCreateCoursemClick = () => {
     setOpenCreateModal(true);
+  };
+
+  const handleDeleteClick = async () => {
+    if (!selectedRow) {
+      toast.error("No course selected for deletion.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.delete(
+        `/courses/delete/${selectedRow.id}/`,
+        {
+          headers: {
+            Authorization: "Token " + token,
+          },
+        }
+      );
+      handleMenuClose();
+      if (response.status === 204) {
+        toast.success("Course deleted successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    fetchData();
+  };
+
+  const handleEditClick = () => {
+    if (!selectedRow) {
+      toast.error("No course selected for editing.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+    setOpenEditModal(true);
+    handleMenuClose();
+  };
+
+  const handleEditModalClose = () => {
+    setOpenEditModal(false);
+    fetchData();
   };
 
   const columns = [
@@ -130,7 +199,7 @@ const CoursesGridComponent = () => {
     { field: "id", headerName: "ID", width: 90 },
     {
       field: "course_name",
-      headerName: "Course name",
+      headerName: "Course Name",
       width: 300,
       editable: false,
     },
@@ -176,16 +245,8 @@ const CoursesGridComponent = () => {
           open={Boolean(menuAnchor)}
           onClose={handleMenuClose}
         >
-          <MenuItem
-          // Add your edit function here
-          >
-            Edit
-          </MenuItem>
-          <MenuItem
-          // Add your delete function here
-          >
-            Delete
-          </MenuItem>
+          <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+          <MenuItem onClick={handleDeleteClick}>Delete</MenuItem>
         </Menu>
       </Box>
       <CourseCreateComponent
@@ -195,6 +256,13 @@ const CoursesGridComponent = () => {
       <Button onClick={handleCreateCoursemClick} variant="dark">
         Create new Course
       </Button>
+      {openEditModal && (
+        <CoursesEditComponent
+          open={openEditModal}
+          handleClose={handleEditModalClose}
+          courseId={selectedRow?.id}
+        />
+      )}
     </>
   );
 };
