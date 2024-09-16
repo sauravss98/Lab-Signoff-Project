@@ -95,8 +95,35 @@ const ProgramGridComponent = () => {
     handleMenuClose();
   };
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = async () => {
     console.log("Selected item = ", selectedRow.id);
+    try {
+      const response = await axiosInstance.delete(
+        `programs/delete/${selectedRow.id}/`,
+        {
+          headers: {
+            Authorization: "Token " + token,
+          },
+        }
+      );
+      handleMenuClose();
+      if (response.status === 204) {
+        toast.success("Program deleted successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    fetchData();
   };
 
   const columns = [
@@ -119,7 +146,7 @@ const ProgramGridComponent = () => {
     { field: "id", headerName: "ID", width: 90 },
     {
       field: "program_name",
-      headerName: "Program name",
+      headerName: "Program Name",
       width: 300,
       editable: false,
     },
