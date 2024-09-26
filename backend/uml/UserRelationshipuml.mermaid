@@ -1,0 +1,31 @@
+```mermaid
+classDiagram
+    AbstractUser <|-- User
+    User <|-- Student
+    User <|-- Staff
+    User <|-- Admin
+
+    class AbstractUser {
+        <<abstract>>
+    }
+
+    class User {
+        +EmailField email
+        +CharField user_type
+        +DateTimeField updated_on
+        +PositiveIntegerField otp
+        +BooleanField email_verified
+        +__str__()
+    }
+
+    class Student {
+        +ForeignKey program
+        +ManyToManyField courses
+    }
+
+    class Staff {
+        +ManyToManyField courses
+    }
+    class Admin {
+    }
+```

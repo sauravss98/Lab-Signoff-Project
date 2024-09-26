@@ -1,0 +1,105 @@
+```mermaid
+classDiagram
+    AbstractUser <|-- User
+    User <|-- Student
+    User <|-- Staff
+    User "1" -- "*" StudentEnrollment
+    User "1" -- "*" StudentLabSession
+    User "1" -- "*" StudentLabSessionFeedback
+    User "1" -- "*" LabRequest
+    User "*" -- "*" LabRequest
+    User "1" -- "*" RequestMessage
+    
+    Programs "1" -- "*" Student
+    Programs "*" -- "*" Courses
+    
+    Courses "1" -- "*" LabSession
+    Courses "1" -- "*" StudentEnrollment
+    Courses "*" -- "*" Staff
+    
+    LabSession "1" -- "*" StudentLabSession
+    LabSession "1" -- "*" StudentLabSessionFeedback
+    
+    StudentLabSession "1" -- "*" LabRequest
+    
+    LabRequest "1" -- "*" RequestMessage
+
+    class AbstractUser {
+        <<abstract>>
+    }
+    
+    class User {
+        +EmailField email
+        +CharField user_type
+        +DateTimeField updated_on
+        +PositiveIntegerField otp
+        +BooleanField email_verified
+    }
+    
+    class Student {
+        +ForeignKey program
+        +ManyToManyField courses
+    }
+    
+    class Staff {
+        +ManyToManyField courses
+    }
+    
+    class Programs {
+        +AutoField id
+        +CharField program_name
+        +PositiveIntegerField program_lenght
+    }
+    
+    class Courses {
+        +AutoField id
+        +CharField course_name
+        +ManyToManyField staff
+        +ManyToManyField programs
+    }
+    
+    class LabSession {
+        +ForeignKey course
+        +CharField name
+        +TextField description
+        +PositiveIntegerField order
+    }
+    
+    class StudentEnrollment {
+        +ForeignKey student
+        +ForeignKey course
+        +DateTimeField enrollment_date
+    }
+    
+    class StudentLabSession {
+        +ForeignKey student
+        +ForeignKey lab_session
+        +BooleanField completed
+    }
+    
+    class StudentLabSessionFeedback {
+        +ForeignKey student
+        +ForeignKey lab_session
+        +TextField feedback
+        +PositiveIntegerField rating
+    }
+    
+    class LabRequest {
+        +ForeignKey student_lab_session
+        +ForeignKey student
+        +ManyToManyField staff
+        +TextField text
+        +FileField file
+        +CharField status
+        +DateTimeField created_at
+        +DateTimeField updated_at
+    }
+    
+    class RequestMessage {
+        +ForeignKey lab_request
+        +ForeignKey sender
+        +TextField message
+        +FileField file
+        +DateTimeField created_at
+    }
+```
