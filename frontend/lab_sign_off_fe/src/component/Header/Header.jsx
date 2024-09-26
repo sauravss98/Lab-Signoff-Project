@@ -8,7 +8,8 @@ import { settingsActions } from "../../store/settingsPageState";
 import { authActions } from "../../store/auth";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { FaBell } from "react-icons/fa"; // Import the icon library
+import { FaBell } from "react-icons/fa";
+import { BsFillChatTextFill } from "react-icons/bs";
 import { tokenLoader } from "../../utils/token";
 
 function Header() {
@@ -16,6 +17,7 @@ function Header() {
   const dispatch = useDispatch();
   const [userName, setUserName] = useState("");
   const [tokenAvailable, setTokenAvailable] = useState(false);
+  const [userType, setUserType] = useState("");
   const token = tokenLoader();
 
   const homeClick = () => {
@@ -25,6 +27,9 @@ function Header() {
     navigate("/settings");
   };
 
+  const onChatClick = () => {
+    navigate(`${userType}/chat`);
+  };
   const onNotificationClick = () => {
     navigate("/notifications");
   };
@@ -58,6 +63,7 @@ function Header() {
           const first_name = response.data.first_name;
           const second_name = response.data.last_name;
           const name = first_name + " " + second_name;
+          setUserType(response.data.user_type);
           setUserName(name);
           setTokenAvailable(true);
         } catch (error) {
@@ -81,12 +87,15 @@ function Header() {
             className="justify-content-end"
             id={classes.navElement}
           >
+            <Button onClick={onChatClick} variant="outline-light">
+              <BsFillChatTextFill />
+            </Button>
             <Button
               onClick={onNotificationClick}
               variant="outline-light"
               className={`${classes.notificationButton} me-2`}
             >
-              <FaBell className="me-2" /> {/* Icon with margin */}
+              <FaBell className="me-2" />
               Notification
             </Button>
             <NavDropdown
