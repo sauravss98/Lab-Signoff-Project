@@ -124,12 +124,18 @@ const StaffRequestDetailPage = () => {
     setFile(event.target.files[0]);
   };
 
-  const handleCloseRequest = () => {
-    // Handle closing the request logic here
-  };
-
   const handleSignOffLab = async () => {
     try {
+      const request_payload = { status: "approved" };
+      const request_update_response = await axiosInstance.patch(
+        `requests/${requestId}/`,
+        request_payload,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
       const studentId = data.student_lab_session.student;
       const courseId = data.student_lab_session.lab_session.id;
       const payload = { completed: true };
@@ -142,7 +148,7 @@ const StaffRequestDetailPage = () => {
           },
         }
       );
-      if (response.status === 200) {
+      if (response.status === 200 || request_update_response.status == 200) {
         toast.success("Lab session marked as complete", {
           position: "top-right",
           autoClose: 5000,
@@ -264,14 +270,6 @@ const StaffRequestDetailPage = () => {
                       onClick={handleSignOffLab}
                     >
                       Sign Off Lab
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={handleCloseRequest}
-                      style={{ marginLeft: "10px" }}
-                    >
-                      Close Request
                     </Button>
                   </Box>
                 </CardContent>
