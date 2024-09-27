@@ -264,3 +264,39 @@ class DownloadRequestMessageFileView(generics.GenericAPIView):
                 return response
         else:
             raise Http404("File not found")
+
+class DownloadRequestFileView(generics.GenericAPIView):
+    """ View to download the file in request message
+
+    Args:
+        generics (_type_): GenericAPIView
+
+    Raises:
+        Http404: File missing
+        Http404: File does not exist
+
+    Returns:
+        _type_: File
+    """
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get(self, request, pk, *args, **kwargs):
+        message = get_object_or_404(LabRequest, pk=pk)
+
+        if message.file:
+            file_path = message.file.path
+            return self._serve_file(file_path)
+        else:
+            raise Http404("File not found")
+
+    def _serve_file(self, file_path):
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as file:
+                response = HttpResponse(file.read(), content_type="application/octet-stream")
+                filename = os.path.basename(file_path)
+                response['Content-Disposition'] = f'attachment; filename="{filename}"'
+                response['file-name'] = filename
+                return response
+        else:
+            raise Http404("File not found")
