@@ -16,6 +16,7 @@ const RequestCreateModal = ({ open, handleClose, sessionId }) => {
     text: "",
     student_lab_session: null,
     staff: [],
+    file: null,
   });
 
   const resetForm = () => {
@@ -23,11 +24,23 @@ const RequestCreateModal = ({ open, handleClose, sessionId }) => {
       text: "",
       student_lab_session: null,
       staff: [],
+      file: null,
     });
   };
 
   const onChangeHandler = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const onFileChangeHandler = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      file: e.target.files[0],
+    }));
   };
 
   useEffect(() => {
@@ -56,23 +69,36 @@ const RequestCreateModal = ({ open, handleClose, sessionId }) => {
       setFormData((prevFormData) => ({
         ...prevFormData,
         student_lab_session: sessionId,
-        text: "", // Reset text when modal opens
+        text: "",
       }));
     }
   }, [course_id, open, sessionId]);
 
   const onCreateClick = async (event) => {
     event.preventDefault();
+    const formDataToSend = new FormData();
+    formDataToSend.append("text", formData.text);
+    formDataToSend.append("student_lab_session", formData.student_lab_session);
+    formDataToSend.append("staff", JSON.stringify(formData.staff));
+
+    if (formData.file) {
+      formDataToSend.append("file", formData.file);
+    }
+
     try {
-      const response = await axiosInstance.post(`requests/create/`, formData, {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
-      });
-      console.log(response);
-      console.log(response.status);
+      const response = await axiosInstance.post(
+        `requests/create/`,
+        formDataToSend,
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       if (response.status === 201) {
-        toast.success("New Program Created Successfully", {
+        toast.success("New Request Created Successfully", {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -84,7 +110,7 @@ const RequestCreateModal = ({ open, handleClose, sessionId }) => {
           transition: Bounce,
         });
         handleClose();
-        setFormData({ text: "", student_lab_session: sessionId, staff: [] });
+        resetForm();
       }
     } catch (error) {
       toast.error(`Creating new program Failed: ${error}`, {
@@ -129,6 +155,16 @@ const RequestCreateModal = ({ open, handleClose, sessionId }) => {
               required
             />
           </Form.Group>
+
+          <Form.Group className="mb-3" controlId="formFileUpload">
+            <Form.Label>Optional File Upload</Form.Label>
+            <Form.Control
+              type="file"
+              name="file"
+              onChange={onFileChangeHandler}
+            />
+          </Form.Group>
+
           <Button variant="dark" type="submit">
             Submit
           </Button>
