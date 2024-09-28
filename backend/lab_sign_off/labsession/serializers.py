@@ -6,18 +6,17 @@ from course.models import Courses
 
 # serializers.py
 class LabSessionSerializer(serializers.ModelSerializer):
-    course_name = serializers.CharField(source='course.course_name', read_only=True)  # Ensure read-only
+    course_name = serializers.CharField(source='course.course_name', read_only=True)
     class Meta:
         model = LabSession
         fields = ['id', 'name', 'course', 'course_name', 'description']
-        read_only_fields = ['course_name']  # Ensure course_name is read-only
+        read_only_fields = ['course_name']
 
     def validate(self, data):
         course = data.get('course')
         name = data.get('name')
-        instance = self.instance  # This will be None for create operations
+        instance = self.instance
 
-        # Check if a session with this name already exists for the course
         existing = LabSession.objects.filter(course=course, name=name)
         if instance:
             existing = existing.exclude(pk=instance.pk)
@@ -36,7 +35,6 @@ class StudentEnrollmentSerializer(serializers.ModelSerializer):
     def validate(self, data):
         course = data.get('course')
 
-        # Check if the course has assigned staff
         if not course.staff.exists():
             raise ValidationError({"course": "This course does not have any staff assigned. Enrollment is not allowed."})
 
@@ -69,7 +67,6 @@ class StudentProgressSerializer(serializers.ModelSerializer):
         return "0%"
 
 
-#Serializer for student list with enrollement serializer
 class StudentCourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Courses
@@ -95,20 +92,14 @@ class CourseLabSessionsSerializer(serializers.ModelSerializer):
         fields = ['id', 'course_name', 'lab_sessions']
 
     def get_lab_sessions(self, obj):
-        # Filter lab sessions related to the current course
         lab_sessions = LabSession.objects.filter(course=obj)
-        # Get lab sessions for the specific student
         student_lab_sessions = StudentLabSession.objects.filter(
             student=self.context['student'],
             lab_session__in=lab_sessions
         )
-        # Serialize the lab sessions
         lab_sessions_data = LabSessionSerializer(lab_sessions, many=True).data
-
-        # Add completed status to each lab session
         for lab_session in lab_sessions_data:
             lab_session_id = lab_session['id']
-            # Check if the lab session is completed for the student
             lab_session['completed'] = any(
                 sls.completed for sls in student_lab_sessions if sls.lab_session.id == lab_session_id
             )
@@ -125,7 +116,6 @@ class StudentWithCoursesAndLabSessionsSerializer(serializers.ModelSerializer):
     def get_enrolled_courses(self, obj):
         enrollments = StudentEnrollment.objects.filter(student=obj)
         courses = Courses.objects.filter(id__in=enrollments.values_list('course', flat=True))
-        # Use context to pass the student object to the course serializer
         serializer = CourseLabSessionsSerializer(courses, many=True, context={'student': obj})
         return serializer.data
 

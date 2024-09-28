@@ -23,6 +23,8 @@ from .serializers import (
 
 # LabSession views
 class LabSessionListAPIView(generics.ListAPIView):
+    """API for lab session list
+    """
     serializer_class = LabSessionSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -31,6 +33,8 @@ class LabSessionListAPIView(generics.ListAPIView):
         return LabSession.objects.filter(course_id=self.kwargs['course_id'])
 
 class LabSessionCreateAPIView(generics.CreateAPIView):
+    """API view to create the lab session
+    """
     serializer_class = LabSessionSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -55,12 +59,16 @@ class LabSessionCreateAPIView(generics.CreateAPIView):
             StudentLabSession.objects.create(student=enrollment.student, lab_session=lab_session)
 
 class LabSessionRetrieveAPIView(generics.RetrieveAPIView):
+    """API view to get a single lab session
+    """
     queryset = LabSession.objects.all()
     serializer_class = LabSessionSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 class LabSessionUpdateAPIView(generics.UpdateAPIView):
+    """API view to update the lab session
+    """
     queryset = LabSession.objects.all()
     serializer_class = LabSessionSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
@@ -81,13 +89,17 @@ class LabSessionUpdateAPIView(generics.UpdateAPIView):
         serializer.save()
 
 class LabSessionDestroyAPIView(generics.DestroyAPIView):
+    """API view to delete a lab session
+    """
     queryset = LabSession.objects.all()
     serializer_class = LabSessionSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
-# StudentEnrollment views
+
 class StudentEnrollmentListAPIView(generics.ListAPIView):
+    """API view to see the student enrollment list
+    """
     serializer_class = StudentEnrollmentSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -96,6 +108,8 @@ class StudentEnrollmentListAPIView(generics.ListAPIView):
         return StudentEnrollment.objects.filter(course_id=self.kwargs['course_id'])
 
 class StudentEnrollmentCreateAPIView(generics.CreateAPIView):
+    """API view to enrol the student into course
+    """
     serializer_class = StudentEnrollmentSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -105,31 +119,38 @@ class StudentEnrollmentCreateAPIView(generics.CreateAPIView):
         course = enrollment.course
         student = enrollment.student
 
-        # Create StudentLabSession instances for each LabSession in the course
         lab_sessions = LabSession.objects.filter(course=course)
         for lab_session in lab_sessions:
             StudentLabSession.objects.get_or_create(student=student, lab_session=lab_session)
 
 class StudentEnrollmentRetrieveAPIView(generics.RetrieveAPIView):
+    """API view to see a student enrollment in detail
+    """
     queryset = StudentEnrollment.objects.all()
     serializer_class = StudentEnrollmentSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 class StudentEnrollmentUpdateAPIView(generics.UpdateAPIView):
+    """API view to update the student enrolment
+    """
     queryset = StudentEnrollment.objects.all()
     serializer_class = StudentEnrollmentSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 class StudentEnrollmentDestroyAPIView(generics.DestroyAPIView):
+    """API view to delete a student enrollment
+    """
     queryset = StudentEnrollment.objects.all()
     serializer_class = StudentEnrollmentSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
 
-# StudentLabSession views
+
 class StudentLabSessionListAPIView(generics.ListAPIView):
+    """API view to list the labsession of student
+    """
     serializer_class = StudentLabSessionSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -141,6 +162,8 @@ class StudentLabSessionListAPIView(generics.ListAPIView):
         )
         
 class StudentLabSessionListView(generics.ListAPIView):
+    """API view to list the labsession of student
+    """
     serializer_class = StudentLabSessionWithDetailsSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -152,6 +175,8 @@ class StudentLabSessionListView(generics.ListAPIView):
         )
 
 class StudentLabSessionUpdateAPIView(generics.UpdateAPIView):
+    """API view to update the labsession of student
+    """
     serializer_class = StudentLabSessionSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -175,8 +200,9 @@ class StudentLabSessionUpdateAPIView(generics.UpdateAPIView):
         return Response(serializer.data)
 
 
-# StudentProgress view
 class StudentProgressRetrieveAPIView(generics.RetrieveAPIView):
+    """API view to track student progress in a course
+    """
     serializer_class = StudentProgressSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -185,8 +211,9 @@ class StudentProgressRetrieveAPIView(generics.RetrieveAPIView):
         return get_object_or_404(StudentEnrollment, student=self.request.user, course_id=self.kwargs['course_id'])
 
 
-#Api for for student list with enrollement serializer
 class StudentWithCoursesListAPIView(generics.ListAPIView):
+    """API view for student list with enrollment
+    """
     serializer_class = StudentWithCoursesSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -196,6 +223,8 @@ class StudentWithCoursesListAPIView(generics.ListAPIView):
     
 
 class StudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
+    """API view to get student and course details
+    """
     serializer_class = StudentWithCoursesSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -204,6 +233,8 @@ class StudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
         return User.objects.filter(user_type='student')
     
 class CurrentStudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
+    """API view to get student and course details
+    """
     serializer_class = StudentWithCoursesSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -213,6 +244,8 @@ class CurrentStudentWithCoursesDetailAPIView(generics.RetrieveAPIView):
     
 
 class AvailableCoursesListAPIView(generics.ListAPIView):
+    """API view to filter the courses based on what the student is already enrolled to
+    """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = CoursesSerializer
@@ -223,17 +256,16 @@ class AvailableCoursesListAPIView(generics.ListAPIView):
         except User.DoesNotExist:
             return Response({"error": "Student not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Get the courses the student is already enrolled in
         enrolled_courses = StudentEnrollment.objects.filter(student=student).values_list('course_id', flat=True)
 
-        # Exclude the enrolled courses from the available courses
         queryset = Courses.objects.exclude(id__in=enrolled_courses).order_by("id")
         
-        # Serialize the queryset
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class StudentWithCoursesAndLabSessionsAPIView(generics.RetrieveAPIView):
+    """API view for student data on course and all lab sessions
+    """
     serializer_class = StudentWithCoursesAndLabSessionsSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -242,8 +274,9 @@ class StudentWithCoursesAndLabSessionsAPIView(generics.RetrieveAPIView):
         return get_object_or_404(User, pk=self.kwargs['pk'], user_type='student')
 
 
-# Feedback Views
 class StudentLabSessionFeedbackCreateAPIView(generics.CreateAPIView):
+    """API view to create feedback
+    """
     serializer_class = StudentLabSessionFeedbackSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -255,6 +288,8 @@ class StudentLabSessionFeedbackCreateAPIView(generics.CreateAPIView):
         serializer.save(student=student, lab_session=lab_session)
 
 class StudentLabSessionFeedbackRetrieveAPIView(generics.RetrieveAPIView):
+    """API to view feedback
+    """
     serializer_class = StudentLabSessionFeedbackSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -265,6 +300,8 @@ class StudentLabSessionFeedbackRetrieveAPIView(generics.RetrieveAPIView):
         return get_object_or_404(StudentLabSessionFeedback, student=student, lab_session_id=lab_session_id)
 
 class StudentLabSessionFeedbackUpdateAPIView(generics.UpdateAPIView):
+    """API view to update feedback
+    """
     serializer_class = StudentLabSessionFeedbackSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -276,6 +313,8 @@ class StudentLabSessionFeedbackUpdateAPIView(generics.UpdateAPIView):
 
 
 class FeedbackListAPIView(generics.ListAPIView):
+    """API view to list all feedback
+    """
     serializer_class = FeedbackSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
     authentication_classes = [SessionAuthentication, TokenAuthentication]

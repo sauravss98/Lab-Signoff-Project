@@ -19,6 +19,8 @@ from user.models import Staff,User
 from program.models import Programs
 
 class CourseCreateAPIView(CreateAPIView):
+    """Api view for creating course
+    """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAdminOrStaffUser]
     
@@ -55,7 +57,7 @@ class CourseCreateAPIView(CreateAPIView):
     
 class CoursesListView(ListAPIView):
     """
-    Api view to create the book list
+    Api view for the course list
     """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAdminOrStaffUser]
@@ -66,12 +68,16 @@ class CoursesListView(ListAPIView):
         return queryset
 
 class CourseView(RetrieveAPIView):
+    """Api view to see single course
+    """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAdminOrStaffUser]
     queryset = Courses.objects.all()
     serializer_class = CoursesSerializer
 
 class CourseUpdateAPIView(UpdateAPIView):
+    """API view to update course
+    """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAdminOrStaffUser]
     queryset = Courses.objects.all()
@@ -81,20 +87,16 @@ class CourseUpdateAPIView(UpdateAPIView):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
 
-        # Extract and process staff_ids
         staff_ids = request.data.get('staff_ids', '[]').strip('[]')
         staff_ids_array = list(map(int, staff_ids.split(','))) if staff_ids else []
 
-        # Extract and process programs_ids
         programs_ids = request.data.get('programs_ids', '[]').strip('[]')
         programs_ids_array = list(map(int, programs_ids.split(','))) if programs_ids else []
 
-        # Update course name if provided
         course_name = request.data.get('course_name')
         if course_name:
             instance.course_name = course_name
 
-        # Clear existing staff and programs if provided
         if staff_ids:
             instance.staff.clear()
             for staff_id in staff_ids_array:
@@ -131,6 +133,8 @@ class CourseUpdateAPIView(UpdateAPIView):
 
 
 class CourseDestroyAPIView(DestroyAPIView):
+    """API view to delete course
+    """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAdminOrStaffUser]
     queryset = Courses.objects.all()
@@ -139,12 +143,6 @@ class CourseDestroyAPIView(DestroyAPIView):
 
 class CoursesWithLabSessionsListAPIView(ListAPIView):
     """List Api for courses and lab sessions
-
-    Args:
-        ListAPIView (_type_): _description_
-
-    Returns:
-        _type_: _description_
     """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAdminOrStaffUser]
@@ -154,6 +152,8 @@ class CoursesWithLabSessionsListAPIView(ListAPIView):
         return Courses.objects.all().order_by("id")
 
 class CourseStaffListAPIView(APIView):
+    """API view to see the staff in each course
+    """
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 

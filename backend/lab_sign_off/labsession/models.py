@@ -15,14 +15,14 @@ class LabSession(models.Model):
         ordering = ['order']
         unique_together = [
             ['course', 'order'],
-            ['course', 'name']  # This ensures name uniqueness within a course
+            ['course', 'name']
         ]
 
     def save(self, *args, **kwargs):
-        if not self.pk:  # Only set order for new objects
+        if not self.pk:
             max_order = LabSession.objects.filter(course=self.course).aggregate(Max('order'))['order__max']
             self.order = (max_order or 0) + 1
-        self.full_clean()  # This will check for uniqueness constraints
+        self.full_clean()
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -64,10 +64,10 @@ class StudentLabSessionFeedback(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='feedbacks')
     lab_session = models.ForeignKey(LabSession, on_delete=models.CASCADE, related_name='feedbacks')
     feedback = models.TextField()
-    rating = models.PositiveIntegerField(null=True, blank=True)  # Rating can be optional
+    rating = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
-        unique_together = ['student', 'lab_session']  # Ensure one feedback per student per lab session
+        unique_together = ['student', 'lab_session']
 
     def __str__(self):
         return f"Feedback by {self.student.username} for {self.lab_session.name}"

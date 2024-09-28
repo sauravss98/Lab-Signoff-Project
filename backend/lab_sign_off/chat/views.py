@@ -10,10 +10,16 @@ from .serializers import RoomSerializer, MessageSerializer
 logger = logging.getLogger(__name__)
 
 class RoomViewSet(viewsets.ModelViewSet):
+    """
+        View set for Room
+    """
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
 
 class MessageViewSet(viewsets.ModelViewSet):
+    """
+        View set for message
+    """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
 
@@ -31,6 +37,8 @@ class MessageViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class RoomMessagesAPIView(APIView):
+    """View for getting message from each room
+    """
     def get(self, request, room_name):
         if not room_name:
             return Response({"detail": "Room name not provided."}, status=status.HTTP_400_BAD_REQUEST)

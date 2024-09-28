@@ -10,6 +10,8 @@ from .models import Room, Message
 logger = logging.getLogger(__name__)
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    """ This is the consumer that is used for connecting the websocket for chat
+    """
     async def connect(self):
         token = self.scope['query_string'].decode().split('=')[-1]
         self.user = await self.authenticate_token(token)
