@@ -4,7 +4,6 @@ from .models import LabSession, StudentEnrollment, StudentLabSession, StudentLab
 from user.models import User
 from course.models import Courses
 
-# serializers.py
 class LabSessionSerializer(serializers.ModelSerializer):
     course_name = serializers.CharField(source='course.course_name', read_only=True)
     class Meta:

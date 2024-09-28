@@ -13,7 +13,6 @@ from .views import (
     LabRequestResponseTimeViewSet,
 )
 
-# Create a router and register the viewset
 router = DefaultRouter()
 router.register(r'feedback', FeedbackViewSet, basename='feedback')
 router.register(r'enrollment', EnrollmentViewSet, basename='enrollment')
@@ -26,7 +25,6 @@ router.register(r'completion-vs-feedback', CompletionVsFeedbackViewSet, basename
 router.register(r'enrollment-vs-participation', EnrollmentVsParticipationViewSet, basename='enrollment-vs-participation')
 router.register(r'lab-request-response-time', LabRequestResponseTimeViewSet, basename='lab-request-response-time')
 
-# Use the router to automatically generate URLs
 urlpatterns = [
     path('', include(router.urls)),
 ]

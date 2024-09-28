@@ -53,7 +53,6 @@ class LabSessionCreateAPIView(generics.CreateAPIView):
         course = get_object_or_404(Courses, id=self.kwargs['course_id'])
         lab_session = serializer.save(course=course)
 
-        # Create StudentLabSession instances for each enrolled student
         enrollments = StudentEnrollment.objects.filter(course=course)
         for enrollment in enrollments:
             StudentLabSession.objects.create(student=enrollment.student, lab_session=lab_session)
