@@ -40,7 +40,6 @@ const MainRequestGridComponent = () => {
         results = results.concat(response.data.results);
         nextPageUrl = response.data.next;
       }
-      // Format the data
       const formattedData = results.map((item) => ({
         id: item.id,
         text: item.text,
@@ -93,7 +92,6 @@ const MainRequestGridComponent = () => {
     fetchData();
   }, [fetchData]);
 
-  // Custom cell renderer for staff field
   const renderStaffCell = (params) => (
     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
       {params.value.map((staff, index) => (
@@ -102,7 +100,6 @@ const MainRequestGridComponent = () => {
     </Box>
   );
 
-  // Define columns for DataGrid
   const columns = [
     {
       field: "actions",

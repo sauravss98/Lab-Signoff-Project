@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useState } from "react";
-import "./CreateFeedbackModal.css"; // Import the CSS file for custom styling
+import "./CreateFeedbackModal.css";
 import { tokenLoader } from "../../../utils/token";
 import axiosInstance from "../../../utils/Axios";
 import { Bounce, toast } from "react-toastify";

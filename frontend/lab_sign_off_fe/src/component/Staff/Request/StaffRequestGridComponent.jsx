@@ -94,7 +94,6 @@ const StaffRequestGridComponent = () => {
     fetchData();
   }, [fetchData]);
 
-  // Custom cell renderer for staff field
   const renderStaffCell = (params) => (
     <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
       {params.value.map((staff, index) => (
@@ -103,7 +102,6 @@ const StaffRequestGridComponent = () => {
     </Box>
   );
 
-  // Define columns for DataGrid
   const columns = [
     {
       field: "actions",

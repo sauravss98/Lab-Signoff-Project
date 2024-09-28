@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import axiosInstance from "../../utils/Axios";
-import "./EnrollmentVsParticipationChart.css"; // Import your CSS file
+import "./EnrollmentVsParticipationChart.css";
 
 const EnrollmentVsParticipationChart = () => {
-  // Initialize chartData with default values to prevent errors
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -25,11 +24,9 @@ const EnrollmentVsParticipationChart = () => {
     axiosInstance
       .get("/charts/enrollment-vs-participation/enrollment_vs_participation/")
       .then((response) => {
-        // Check the structure of the response data
         console.log(response.data);
 
         if (!response.data || response.data.length === 0) {
-          // Handle empty response
           setChartData({
             labels: [],
             datasets: [
@@ -48,14 +45,12 @@ const EnrollmentVsParticipationChart = () => {
           return;
         }
 
-        // Extract data from response
         const courses = response.data.map((item) => item.course_name);
         const enrollments = response.data.map((item) => item.enrollment_count);
         const participation = response.data.map(
           (item) => item.participation_count
         );
 
-        // Update chartData state
         setChartData({
           labels: courses,
           datasets: [
@@ -93,8 +88,8 @@ const EnrollmentVsParticipationChart = () => {
                 text: "Courses",
               },
               ticks: {
-                autoSkip: false, // Prevents skipping of x-axis labels
-                maxRotation: 90, // Rotates x-axis labels for better fit
+                autoSkip: false,
+                maxRotation: 90,
                 minRotation: 45,
               },
             },

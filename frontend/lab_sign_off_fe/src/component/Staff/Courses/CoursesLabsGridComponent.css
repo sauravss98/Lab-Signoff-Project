@@ -1,20 +1,19 @@
 .container {
-    width: 100%;
-    margin-top: 16px; /* Adjust this value as needed */
-  }
-  
-  .dataGrid {
-    background-color: #fff;
-  }
-  
-  .iconButton {
-    padding: 4px; /* Adjust this value as needed */
-  }
-  
-  .loadingContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-  
+  width: 100%;
+  margin-top: 16px;
+}
+
+.dataGrid {
+  background-color: #fff;
+}
+
+.iconButton {
+  padding: 4px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

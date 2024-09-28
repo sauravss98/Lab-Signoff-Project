@@ -7,14 +7,14 @@
   height: 100%;
   overflow: auto;
   transition: transform 0.3s ease;
-  top: 56px; /* height of fixed header */
+  top: 56px;
   left: 0;
 }
 
 @media screen and (max-width: 700px) {
   .sidebar {
     transform: translateX(-200px);
-    top: 56px; /* height of fixed header */
+    top: 56px;
   }
   .sidebar.open {
     transform: translateX(0);
@@ -38,12 +38,10 @@
   color: white;
 }
 
-/* Hamburger button styles */
 .hamburger {
-  display: none; /* Initially hide the hamburger button on larger screens */
+  display: none;
 }
 
-/* Show hamburger button on small screens */
 @media screen and (max-width: 700px) {
   .hamburger {
     display: block;

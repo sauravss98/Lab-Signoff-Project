@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import { tokenLoader } from "../../../utils/token";
 import axiosInstance from "../../../utils/Axios";
-import Button from "react-bootstrap/Button"; // Fixed import path
+import Button from "react-bootstrap/Button";
 import { Bounce, toast } from "react-toastify";
 
 const token = tokenLoader();
@@ -40,7 +40,6 @@ const LabSessionEditModal = ({ show, onHide, sessionId }) => {
     };
 
     if (show && sessionId) {
-      // Added sessionId check
       fetchData();
     }
   }, [show, sessionId]);
@@ -106,14 +105,14 @@ const LabSessionEditModal = ({ show, onHide, sessionId }) => {
   };
 
   const handleHide = () => {
-    setFormData({ name: "", description: "" }); // Reset form data
-    onHide(); // Call the parent onHide function
+    setFormData({ name: "", description: "" });
+    onHide();
   };
 
   return (
     <Modal
       show={show}
-      onHide={handleHide} // Use the new hide handler
+      onHide={handleHide}
       centered
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"

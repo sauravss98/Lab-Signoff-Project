@@ -67,7 +67,7 @@ const ProgramGridComponent = () => {
   const handleMenuOpen = (event, row) => {
     setMenuAnchor(event.currentTarget);
     setSelectedRow(row);
-    setSelectedRowId(null); // Reset the selectedRowId when opening the menu
+    setSelectedRowId(null);
   };
 
   const handleCreateProgramClick = () => {
@@ -81,7 +81,7 @@ const ProgramGridComponent = () => {
 
   const handleEditModalClose = () => {
     setOpenUserEditModal(false);
-    fetchData(); // Refresh data after closing the edit modal
+    fetchData();
   };
 
   const handleCreateModalClose = () => {
@@ -90,7 +90,7 @@ const ProgramGridComponent = () => {
   };
 
   const handleEditClick = () => {
-    setSelectedRowId(selectedRow.id); // Set the selectedRowId only when edit is clicked
+    setSelectedRowId(selectedRow.id);
     setOpenUserEditModal(true);
     handleMenuClose();
   };

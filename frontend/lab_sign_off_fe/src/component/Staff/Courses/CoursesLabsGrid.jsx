@@ -72,11 +72,10 @@ const CoursesLabsGrid = ({ course_id }) => {
 
   const handleMenuOpen = (event, rowData) => {
     setMenuAnchor(event.currentTarget);
-    setSessionId(rowData.id); // Store the session ID
+    setSessionId(rowData.id);
   };
 
   const handleEditClick = () => {
-    // Open the edit modal
     console.log(sessionId);
     setOpenEditModal(true);
     handleMenuClose();
@@ -108,7 +107,7 @@ const CoursesLabsGrid = ({ course_id }) => {
           size="small"
           onClick={(e) => {
             e.stopPropagation();
-            handleMenuOpen(e, params.row); // Pass the row data here
+            handleMenuOpen(e, params.row);
           }}
         >
           <MoreVertIcon />

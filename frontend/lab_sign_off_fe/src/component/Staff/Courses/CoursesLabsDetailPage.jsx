@@ -22,7 +22,7 @@ const token = tokenLoader();
 const CoursesLabsDetailPage = () => {
   const { selectedRowId } = useParams();
   const [courseDetails, setCourseDetails] = useState({});
-  const [tabValue, setTabValue] = useState(0); // State for managing selected tab
+  const [tabValue, setTabValue] = useState(0);
 
   const fetchData = useCallback(async () => {
     try {
@@ -116,7 +116,6 @@ const CoursesLabsDetailPage = () => {
         </CardContent>
       </Card>
 
-      {/* Tabs for switching between Chart and Grid */}
       <Tabs
         value={tabValue}
         onChange={handleTabChange}
@@ -129,7 +128,6 @@ const CoursesLabsDetailPage = () => {
         <Tab label="Grid" />
       </Tabs>
 
-      {/* Conditional rendering based on selected tab */}
       {tabValue === 0 && courseDetails.course_name && (
         <CompletionRatesByCourseChart courseName={courseDetails.course_name} />
       )}
