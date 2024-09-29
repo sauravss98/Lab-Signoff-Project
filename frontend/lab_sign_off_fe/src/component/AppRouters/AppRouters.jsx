@@ -198,6 +198,7 @@ const router = createBrowserRouter([
 ]);
 
 const AppRouters = () => {
+  // This is the Router of the application and it controls all the pages
   return (
     <ErrorBoundary>
       <Suspense fallback={<div>Loading...</div>}>
