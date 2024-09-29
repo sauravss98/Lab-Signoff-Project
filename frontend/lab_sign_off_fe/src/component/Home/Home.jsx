@@ -4,6 +4,9 @@ import { tokenLoader } from "../../utils/token";
 import axiosInstance from "../../utils/Axios";
 
 const Home = () => {
+  /**
+   * Main Home page component. Based on the user type loads correct page also checks for token validity
+   */
   const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
   const [userType, setUserType] = useState("");

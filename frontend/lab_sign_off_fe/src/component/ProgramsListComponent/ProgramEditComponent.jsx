@@ -10,6 +10,9 @@ import { Bounce, toast } from "react-toastify";
 const token = tokenLoader();
 
 const ProgramEditComponent = ({ open, handleClose, itemId }) => {
+  /**
+   * Component for program edit modal
+   */
   const [formData, setFormData] = useState({
     program_name: "",
     program_lenght: 0,

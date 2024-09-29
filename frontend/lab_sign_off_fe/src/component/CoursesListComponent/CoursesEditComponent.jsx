@@ -11,6 +11,9 @@ import Select from "react-select";
 const token = tokenLoader();
 
 const CoursesEditComponent = ({ open, handleClose, courseId }) => {
+  /**
+   * Course Edit modal
+   */
   const [programs, setPrograms] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedPrograms, setSelectedPrograms] = useState([]);

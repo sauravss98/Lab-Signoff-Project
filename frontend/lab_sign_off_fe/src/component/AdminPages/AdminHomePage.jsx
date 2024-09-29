@@ -26,6 +26,9 @@ import EnrollmentVsParticipationChart from "../Charts/EnrollmentVsParticipationC
 // import CompletionRatesByCourseChart from "../Charts/CompletionRatesByCourseChart";
 
 const AdminHomePage = () => {
+  /**
+   * Admin Home Page Component
+   */
   // Refs for each chart
   const overallFeedbackRef = useRef(null);
   const ratingDistributionRef = useRef(null);

@@ -6,6 +6,9 @@ import { settingsActions } from "../../store/settingsPageState";
 import { useState } from "react";
 
 const SettingsItems = () => {
+  /**
+   * Component to select and highlight the settings page sidebar
+   */
   const [selectedTab, setSelectedTab] = useState("user_profile");
   const dispatch = useDispatch();
 

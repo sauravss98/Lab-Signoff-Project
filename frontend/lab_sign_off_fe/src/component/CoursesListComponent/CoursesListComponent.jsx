@@ -4,6 +4,9 @@ import CourseEnrollmentChart from "../Charts/CourseEnrollmentChart";
 import "./CoursesListComponent.css";
 
 const CoursesListComponent = () => {
+  /**
+   * Courses List Component
+   */
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Box

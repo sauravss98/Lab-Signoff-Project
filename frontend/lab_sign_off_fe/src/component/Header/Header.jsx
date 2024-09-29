@@ -13,6 +13,9 @@ import { BsFillChatTextFill } from "react-icons/bs";
 import { tokenLoader } from "../../utils/token";
 
 function Header() {
+  /**
+   * Application Header Component
+   */
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [userName, setUserName] = useState("");

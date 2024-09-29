@@ -17,6 +17,9 @@ import { Info as InfoIcon } from "@mui/icons-material";
 const token = tokenLoader();
 
 const NotificationComponent = () => {
+  /**
+   * Component to show all notifications
+   */
   const [notifications, setNotifications] = useState([]);
 
   const fetchNotifications = async () => {
@@ -26,16 +29,15 @@ const NotificationComponent = () => {
           Authorization: `Token ${token}`,
         },
       });
-      // Extract the `results` array from the response data
       if (Array.isArray(response.data.results)) {
         setNotifications(response.data.results);
       } else {
         console.error("Unexpected data format", response.data);
-        setNotifications([]); // Set to empty array to avoid map error
+        setNotifications([]);
       }
     } catch (error) {
       console.error("Error fetching notifications", error);
-      setNotifications([]); // Optionally set to empty array on error
+      setNotifications([]);
     }
   };
 

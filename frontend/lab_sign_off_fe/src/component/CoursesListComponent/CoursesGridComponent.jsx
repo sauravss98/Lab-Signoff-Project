@@ -17,6 +17,9 @@ import CoursesEditComponent from "./CoursesEditComponent";
 const token = tokenLoader();
 
 const CoursesGridComponent = () => {
+  /**
+   * Courses Grid component
+   */
   const [rows, setRows] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);

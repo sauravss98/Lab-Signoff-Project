@@ -2,6 +2,9 @@ import PropTypes from "prop-types";
 import Modal from "react-bootstrap/Modal";
 
 const UserItemModal = ({ open, handleClose, selectedRow }) => {
+  /**
+   * User Detail component
+   */
   return (
     <Modal
       show={open}

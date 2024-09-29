@@ -2,6 +2,9 @@ import classes from "./SideNav.module.css";
 import { NavLink } from "react-router-dom";
 // eslint-disable-next-line react/prop-types
 const AdminSideNav = ({ isOpen, toggleSidebar }) => {
+  /**
+   * Sidenav component-Admin
+   */
   return (
     <>
       <div className={classes.hamburger} onClick={toggleSidebar}>

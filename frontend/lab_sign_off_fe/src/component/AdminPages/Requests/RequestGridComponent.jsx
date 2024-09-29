@@ -15,6 +15,9 @@ import {
 const token = tokenLoader();
 
 const RequestGridComponent = () => {
+  /**
+   * Component for request grid
+   */
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();

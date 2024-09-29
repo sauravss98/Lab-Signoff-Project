@@ -15,6 +15,9 @@ import ProgramCreateComponent from "./ProgramCreateComponent";
 const token = tokenLoader();
 
 const ProgramGridComponent = () => {
+  /**
+   * Program grid component
+   */
   const [rows, setRows] = useState([]);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);

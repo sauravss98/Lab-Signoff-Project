@@ -5,6 +5,9 @@ import AdminSideNav from "./AdminSideNav";
 import PropTypes from "prop-types";
 
 const SideNavComponent = ({ isOpen, toggleSidebar }) => {
+  /**
+   * Sidenav component-main-It routes to different user types based on the token
+   */
   const userType = useSelector((state) => state.auth.user_type);
   return (
     <>

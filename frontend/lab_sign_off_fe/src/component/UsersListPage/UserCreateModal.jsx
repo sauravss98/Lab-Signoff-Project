@@ -7,6 +7,9 @@ import axiosInstance from "../../utils/Axios";
 import { Bounce, toast } from "react-toastify";
 
 const UserCreateModal = ({ open, handleClose }) => {
+  /**
+   * User Create Modal Component
+   */
   const [formData, setFormData] = useState({
     email: "",
     password: "default",

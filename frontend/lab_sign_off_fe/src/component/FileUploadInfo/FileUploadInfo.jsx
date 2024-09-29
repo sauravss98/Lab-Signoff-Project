@@ -2,6 +2,9 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 
 const FileUploadInfo = ({ file }) => {
+  /**
+   * Component to display uploaded file info
+   */
   if (!file) return null;
 
   return (

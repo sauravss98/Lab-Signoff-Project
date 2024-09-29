@@ -10,6 +10,9 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 const UserListComponent = () => {
+  /**
+   * User Settings page component
+   */
   const [tabState, setTabState] = useState("all");
   const [openUserCreateModal, setOpenUserCreateModal] = useState(false);
 

@@ -10,6 +10,9 @@ import { Bounce, toast } from "react-toastify";
 const token = tokenLoader();
 
 const ProgramCreateComponent = ({ open, handleClose }) => {
+  /**
+   * Component for program create modal
+   */
   const [formData, setFormData] = useState({
     program_name: "",
     program_lenght: "",

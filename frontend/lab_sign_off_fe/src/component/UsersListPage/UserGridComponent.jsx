@@ -35,6 +35,9 @@ const columns = [
 ];
 // eslint-disable-next-line react/prop-types
 const UserGridComponent = ({ tabState }) => {
+  /**
+   * User Grid Component
+   */
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);

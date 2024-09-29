@@ -11,6 +11,9 @@ import Select from "react-select";
 const token = tokenLoader();
 
 const CourseCreateComponent = ({ open, handleClose }) => {
+  /**
+   * Course Create Modal
+   */
   const [programs, setPrograms] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedPrograms, setSelectedPrograms] = useState([]);
