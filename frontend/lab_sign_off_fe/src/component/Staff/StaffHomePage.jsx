@@ -113,16 +113,16 @@ const StaffHomePage = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Paper
+              {/* <Grid item xs={12}> */}
+              {/* <Paper
                   elevation={3}
                   ref={enrollmentTrendsRef}
                   sx={{ p: 2, ...getScrollStyle(enrollmentTrendsRef) }}
                 >
                   <EnrollmentTrendsChart />
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
+                </Paper> */}
+              {/* </Grid> */}
+              {/* <Grid item xs={12}>
                 <Paper
                   elevation={3}
                   ref={courseEnrollmentRef}
@@ -130,7 +130,7 @@ const StaffHomePage = () => {
                 >
                   <CourseEnrollmentChart />
                 </Paper>
-              </Grid>
+              </Grid> */}
               <Grid item xs={12}>
                 <Paper
                   elevation={3}
@@ -199,7 +199,7 @@ const StaffHomePage = () => {
           </AccordionDetails>
         </Accordion>
 
-        <Accordion sx={{ mb: 2 }}>
+        {/* <Accordion sx={{ mb: 2 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="h6">User Distribution Charts</Typography>
           </AccordionSummary>
@@ -213,16 +213,16 @@ const StaffHomePage = () => {
                 >
                   <UserTypeDistributionChart selectedType={"all"} />
                 </Paper>
-              </Grid>
-              {/* Backend issue with the chart */}
-              {/* <Grid item xs={12}>
+              </Grid> */}
+        {/* Backend issue with the chart */}
+        {/* <Grid item xs={12}>
                 <Paper elevation={3} sx={{ p: 2, maxHeight: 400, overflowY: "auto" }}>
                   <ProgramStudentCountChart />
                 </Paper>
               </Grid> */}
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
+        {/* </Grid> */}
+        {/* </AccordionDetails> */}
+        {/* </Accordion> */}
       </Container>
     </>
   );
