@@ -39,6 +39,7 @@ const CompletionVsFeedbackChart = () => {
           const dataPoints = response.data.map((item) => ({
             x: item.completion_rate,
             y: item.average_feedback,
+            name: item.name,
           }));
 
           setChartData({
@@ -68,10 +69,40 @@ const CompletionVsFeedbackChart = () => {
       });
   }, []);
 
+  const options = {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const { x, y } = context.raw;
+            const name = context.raw.name;
+            return `${name}: Completion Rate = ${x}%, Feedback = ${y}`;
+          },
+        },
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: "Completion Rate (%)",
+        },
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Average Feedback",
+        },
+        suggestedMin: 0,
+        suggestedMax: 5,
+      },
+    },
+  };
+
   return (
     <div>
       <h2>Completion vs. Feedback Correlation</h2>
-      <Scatter data={chartData} />
+      <Scatter data={chartData} options={options} />
     </div>
   );
 };
