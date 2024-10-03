@@ -122,15 +122,17 @@ const CourseDetailPage = () => {
               )}
             </Box>
             <Box mt={2}>
-              <Button
-                variant="contained"
-                color="inherit"
-                onClick={() => {
-                  handleFeedbackClick(labSession);
-                }}
-              >
-                Add FeedBack
-              </Button>
+              {labSession.completed && (
+                <Button
+                  variant="contained"
+                  color="inherit"
+                  onClick={() => {
+                    handleFeedbackClick(labSession);
+                  }}
+                >
+                  Add FeedBack
+                </Button>
+              )}
             </Box>
           </CardContent>
         </Card>
