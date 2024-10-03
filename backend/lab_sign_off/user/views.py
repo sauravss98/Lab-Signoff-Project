@@ -44,11 +44,12 @@ def login(request):
     )
 
 @api_view(['POST'])
-@permission_classes([IsAdminOrStaffUser])
+# @permission_classes([IsAdminOrStaffUser])
 def create_user(request):
     """"
     Api for signing up the new user
     """
+    print(f"Headers: {request.headers}")
     serializer = UserAuthSerializer(data=request.data)
     # otp = generate_otp()
     if serializer.is_valid():

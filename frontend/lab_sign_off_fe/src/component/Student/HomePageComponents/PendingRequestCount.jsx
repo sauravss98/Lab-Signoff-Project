@@ -12,17 +12,16 @@ const PendingRequestCount = () => {
   useEffect(() => {
     const fetchPendingRequests = async () => {
       try {
-        const response = await axiosInstance.get("/requests/list/", {
-          headers: {
-            Authorization: "Token " + token,
-          },
-        });
-
-        const pendingRequests = response.data.results.filter(
-          (request) => request.status === "pending"
+        const response = await axiosInstance.get(
+          "requests/request/pending-count/",
+          {
+            headers: {
+              Authorization: "Token " + token,
+            },
+          }
         );
 
-        setPendingCount(pendingRequests.length);
+        setPendingCount(response.data.pending_count);
       } catch (error) {
         console.error("Error fetching pending requests", error);
       } finally {

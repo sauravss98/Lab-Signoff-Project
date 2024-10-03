@@ -251,7 +251,7 @@ class EnrollmentVsParticipationViewSet(viewsets.ViewSet):
     def enrollment_vs_participation(self, request):
         enrollment_vs_participation = Courses.objects.annotate(
             enrollment_count=models.Count('enrollments'),
-            participation_count=models.Count('lab_sessions__student_sessions')
+            participation_count=models.Count('lab_sessions__student_sessions', distinct=True)
         ).values('course_name', 'enrollment_count', 'participation_count').order_by('course_name')
         return Response(enrollment_vs_participation)
 

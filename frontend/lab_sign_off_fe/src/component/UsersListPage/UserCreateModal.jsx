@@ -5,7 +5,9 @@ import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import axiosInstance from "../../utils/Axios";
 import { Bounce, toast } from "react-toastify";
+import { tokenLoader } from "../../utils/token";
 
+const token = tokenLoader();
 const UserCreateModal = ({ open, handleClose }) => {
   /**
    * User Create Modal Component
@@ -46,7 +48,11 @@ const UserCreateModal = ({ open, handleClose }) => {
       user_type: user_type,
     };
     try {
-      const response = await axiosInstance.post("/users/create_user", newUser);
+      const response = await axiosInstance.post("/users/create_user", newUser, {
+        headers: {
+          Authorization: "Token " + token,
+        },
+      });
       if (response.status === 201) {
         toast.success("User Created Successfully", {
           position: "top-right",

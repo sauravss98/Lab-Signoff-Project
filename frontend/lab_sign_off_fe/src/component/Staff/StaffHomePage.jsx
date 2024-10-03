@@ -171,7 +171,7 @@ const StaffHomePage = () => {
           </AccordionDetails>
         </Accordion>
 
-        <Accordion sx={{ mb: 2 }}>
+        {/* <Accordion sx={{ mb: 2 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="h6">Lab Request Charts</Typography>
           </AccordionSummary>
@@ -197,7 +197,7 @@ const StaffHomePage = () => {
               </Grid>
             </Grid>
           </AccordionDetails>
-        </Accordion>
+        </Accordion> */}
 
         {/* <Accordion sx={{ mb: 2 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>

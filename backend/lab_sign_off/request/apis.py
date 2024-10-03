@@ -1,6 +1,7 @@
 import logging
 import os
 from rest_framework import generics, permissions, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated,BasePermission
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -59,32 +60,28 @@ class IsStudentOrStaff(BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.student == request.user or request.user in obj.staff.all()
 
+class PendingLabRequestsCountView(APIView):
+    """ Class for getting count of pending lab requests for a student
+
+    Args:
+        APIView (_type_): APIView
+
+    Returns:
+        _type_: Json
+    """
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        if user.user_type not in ['admin', 'staff']:
+            pending_count = LabRequest.objects.filter(student=user, status='pending').count()
+            return Response({"pending_count": pending_count})
+        return Response({"error": "Only students can access this endpoint."}, status=403)
+
 # no cache
-# class ListLabRequestsView(generics.ListAPIView):
-#     """ Class for request list api view
-
-#     Args:
-#         generics (_type_): ListAPIView
-
-#     Returns:
-#         _type_: queryset
-#     """
-#     serializer_class = LabRequestSerializer
-#     permission_classes = [IsAuthenticated]
-#     authentication_classes = [SessionAuthentication, TokenAuthentication]
-
-#     def get_queryset(self):
-#         user = self.request.user
-#         if user.user_type in ['admin', 'staff']:
-#             return LabRequest.objects.filter(staff=user)
-#         else:
-#             return LabRequest.objects.filter(student=user)
-
-
-# Cached
-@method_decorator(cache_page(60 * 15), name='dispatch')  # Cache for 15 minutes
 class ListLabRequestsView(generics.ListAPIView):
-    """Class for request list api view. Cached api
+    """ Class for request list api view
 
     Args:
         generics (_type_): ListAPIView
@@ -102,6 +99,29 @@ class ListLabRequestsView(generics.ListAPIView):
             return LabRequest.objects.filter(staff=user)
         else:
             return LabRequest.objects.filter(student=user)
+
+
+# Cached
+# @method_decorator(cache_page(60 * 15), name='dispatch')  # Cache for 15 minutes
+# class ListLabRequestsView(generics.ListAPIView):
+#     """Class for request list api view. Cached api
+
+#     Args:
+#         generics (_type_): ListAPIView
+
+#     Returns:
+#         _type_: queryset
+#     """
+#     serializer_class = LabRequestSerializer
+#     permission_classes = [IsAuthenticated]
+#     authentication_classes = [SessionAuthentication, TokenAuthentication]
+
+#     def get_queryset(self):
+#         user = self.request.user
+#         if user.user_type in ['admin', 'staff']:
+#             return LabRequest.objects.filter(staff=user)
+#         else:
+#             return LabRequest.objects.filter(student=user)
         
 
 @method_decorator(cache_page(60 * 15), name='dispatch')  # Cache for 15 minutes
