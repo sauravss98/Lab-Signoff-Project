@@ -26,7 +26,7 @@ const CompletionVsFeedbackChart = () => {
       {
         label: "Completion vs. Feedback",
         data: [],
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        backgroundColor: "rgba(21, 21, 191, 0.99)",
       },
     ],
   });
@@ -47,7 +47,7 @@ const CompletionVsFeedbackChart = () => {
               {
                 label: "Completion vs. Feedback",
                 data: dataPoints,
-                backgroundColor: "rgba(75, 192, 192, 0.6)",
+                backgroundColor: "rgba(21, 21, 191, 0.99)",
               },
             ],
           });
