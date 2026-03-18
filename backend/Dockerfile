@@ -12,6 +12,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     postgresql-client \
+    pkg-config \
+    default-libmysqlclient-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -29,4 +31,4 @@ WORKDIR /app/lab_sign_off
 RUN python manage.py collectstatic --noinput || true
 
 # Run migrations and start server
-CMD ["sh", "-c", "python manage.py migrate && gunicorn lab_sign_off.wsgi:application --bind 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate && daphne -b 0.0.0.0 -p 8000 lab_sign_off.asgi:application"]

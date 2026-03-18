@@ -1,24 +1,6 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:15
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=lab_signoff_db
-      - POSTGRES_USER=lab_user
-      - POSTGRES_PASSWORD=your_secure_password
-    ports:
-      - "5432:5432"
-    networks:
-      - lab_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U lab_user -d lab_signoff_db"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
   backend:
     build:
       context: ./backend
@@ -29,16 +11,13 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - ENGINE=django.db.backends.postgresql
-      - NAME=lab_signoff_db
-      - USER=lab_user
-      - PASSWORD=your_secure_password
-      - HOST=db
-      - PORT=5432
+      - ENGINE=django.db.backends.mysql
+      - NAME=labdatabase
+      - USER=root
+      - PASSWORD=password
+      - HOST=host.docker.internal
+      - PORT=3306
       - DEBUG=True
-    depends_on:
-      db:
-        condition: service_healthy
     networks:
       - lab_network
 
@@ -55,9 +34,6 @@ services:
       - CHOKIDAR_USEPOLLING=true
     networks:
       - lab_network
-
-volumes:
-  postgres_data:
 
 networks:
   lab_network:
