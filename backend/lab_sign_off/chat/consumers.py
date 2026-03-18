@@ -1,13 +1,32 @@
 # chat/consumers.py
 import json
 import logging
+import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from asgiref.sync import sync_to_async
 from .models import Room, Message
+from aiokafka import AIOKafkaProducer
 
 logger = logging.getLogger(__name__)
+
+# Global producer instance
+producer = None
+
+async def get_producer():
+    global producer
+    if producer is None:
+        producer = AIOKafkaProducer(
+            bootstrap_servers='localhost:9092',
+            value_serializer=lambda v: json.dumps(v).encode('utf-8')
+        )
+        try:
+            await producer.start()
+        except Exception as e:
+            logger.error(f"Kafka producer failed to start: {e}")
+            producer = None
+    return producer
 
 class ChatConsumer(AsyncWebsocketConsumer):
     """ This is the consumer that is used for connecting the websocket for chat
@@ -45,8 +64,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json['message']
         sender = text_data_json['sender']
 
-        await self.save_message(self.user, self.user_id, message)
+        prod_obj = await get_producer()
+        
+        if prod_obj:
+            message_data = {
+                'message': message,
+                'sender': sender,
+                'user_id': self.user.id,
+                'target_user_id': self.user_id,
+                'room_group_name': self.room_group_name
+            }
+            try:
+                await prod_obj.send_and_wait('chat_messages_topic', message_data)
+            except Exception as e:
+                logger.error(f"Failed to produce message to Kafka: {e}")
+                # Fallback inline execution
+                await self.fallback_sync_flow(message, sender)
+        else:
+            # Fallback inline execution if producer failed to initialize
+            await self.fallback_sync_flow(message, sender)
 
+    async def fallback_sync_flow(self, message, sender):
+        await self.save_message(self.user, self.user_id, message)
         await self.channel_layer.group_send(
             self.room_group_name,
             {
