@@ -1,0 +1,18 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY lab_sign_off_fe/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy application files
+COPY lab_sign_off_fe/ .
+
+# Expose port
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "run", "dev", "--", "--host"]

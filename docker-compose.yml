@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - ENGINE=django.db.backends.mysql
+      - NAME=labdatabase
+      - USER=root
+      - PASSWORD=password
+      - HOST=host.docker.internal
+      - PORT=3306
+      - DEBUG=True
+    networks:
+      - lab_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend/lab_sign_off_fe:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - lab_network
+
+networks:
+  lab_network:
+    driver: bridge
